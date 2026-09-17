@@ -1,0 +1,12 @@
+.env
+.idea/
+.vscode/
+*.iml
+.DS_Store
+api/target/
+web/node_modules/
+web/.next/
+web/out/
+web/.env*.local
+*.log
+*.tsbuildinfo

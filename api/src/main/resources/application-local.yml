@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    show-sql: true
+logging:
+  level:
+    org.hibernate.SQL: debug
