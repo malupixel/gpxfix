@@ -10,3 +10,33 @@ body {
   background: #f8fafc;
   color: #0f172a;
 }
+
+button, select { font: inherit; }
+
+.route-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: white;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+.route-button {
+  min-height: 2.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.community-marker { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; border: 2px solid white; box-shadow: 0 2px 5px rgb(15 23 42 / 0.25); }
+.community-marker-issue { background: #dc2626; color: white; }
+.community-marker-detour { background: #f59e0b; color: white; }
+.community-marker-note { background: #2563eb; color: white; }
+.community-marker-positive { background: #059669; color: white; }
+
+@media (max-width: 639px) {
+  .maplibregl-ctrl-top-right { top: 3.25rem; }
+  .maplibregl-ctrl button { width: 36px; height: 36px; }
+}

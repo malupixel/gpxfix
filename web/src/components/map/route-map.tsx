@@ -121,7 +121,7 @@ export function RouteMap({ geometry }: RouteMapProps) {
     <div className="relative">
       <div
         ref={containerRef}
-        className="h-[60vh] min-h-[500px] w-full overflow-hidden rounded-xl border border-slate-200"
+        className="h-[52vh] min-h-[360px] w-full overflow-hidden sm:min-h-[480px] lg:h-[570px] lg:min-h-0"
         aria-label="Interactive route map"
       />
       <label className="absolute right-3 top-3 z-10 rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">

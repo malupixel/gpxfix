@@ -21,7 +21,7 @@ class Route {
         this.publicId=publicId; this.name=name; this.description=description; this.originalFilename=originalFilename; this.storageKey=storageKey;
         this.distanceMeters=distanceMeters; this.elevationGainMeters=elevationGainMeters; this.trackGeometry=trackGeometry; this.createdAt=now; this.updatedAt=now;
     }
-    String getPublicId(){return publicId;} String getName(){return name;} String getDescription(){return description;}
+    String getPublicId(){return publicId;} String getName(){return name;} String getDescription(){return description;} String getOriginalFilename(){return originalFilename;}
     double getDistanceMeters(){return distanceMeters;} Double getElevationGainMeters(){return elevationGainMeters;}
     LineString getTrackGeometry(){return trackGeometry;} Instant getCreatedAt(){return createdAt;}
 }

@@ -35,7 +35,8 @@ class RouteApiIntegrationTest {
         String publicId=body.replaceAll(".*\\\"publicId\\\":\\\"([^\\\"]+)\\\".*","$1");
         mvc.perform(get("/api/routes/{id}",publicId)).andExpect(status().isOk()).andExpect(jsonPath("$.publicId").value(publicId))
                 .andExpect(jsonPath("$.geometry.type").value("LineString")).andExpect(jsonPath("$.geometry.coordinates[0][0]").value(21.0122))
-                .andExpect(jsonPath("$.elevationGainMeters").value(15.0));
+                .andExpect(jsonPath("$.elevationGainMeters").value(15.0))
+                .andExpect(jsonPath("$.originalFilename").value("sample.gpx"));
         assertThat(jdbc.queryForObject("select ST_SRID(track_geometry) from routes where public_id=?",Integer.class,publicId)).isEqualTo(4326);
         assertThat(Files.list(STORAGE).count()).isPositive();
     }

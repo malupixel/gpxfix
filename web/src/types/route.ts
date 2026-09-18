@@ -2,6 +2,7 @@ export interface RouteData {
   publicId: string;
   name: string;
   description: string | null;
+  originalFilename: string;
   distanceMeters: number;
   elevationGainMeters: number | null;
   geometry: { type: "LineString"; coordinates: [number, number][] };
