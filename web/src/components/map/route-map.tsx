@@ -6,7 +6,7 @@ import {
   type ErrorEvent as MapLibreErrorEvent,
   type LngLatBoundsLike,
 } from "maplibre-gl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   areRouteEndpointsClose,
@@ -31,9 +31,36 @@ type RouteMapProps = {
 };
 
 export function RouteMap({ geometry }: RouteMapProps) {
+  const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const fallbackFullscreenRef = useRef(false);
   const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   const [distanceInterval, setDistanceInterval] = useState(DEFAULT_DISTANCE_INTERVAL_METERS);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(async () => {
+    const fullscreenContainer = fullscreenContainerRef.current;
+    if (!fullscreenContainer) return;
+
+    if (document.fullscreenElement === fullscreenContainer) {
+      await document.exitFullscreen();
+      return;
+    }
+
+    if (fallbackFullscreenRef.current) {
+      fallbackFullscreenRef.current = false;
+      setIsFullscreen(false);
+      return;
+    }
+
+    try {
+      await fullscreenContainer.requestFullscreen();
+    } catch {
+      // Some embedded mobile browsers deny or do not expose the Fullscreen API.
+      fallbackFullscreenRef.current = true;
+      setIsFullscreen(true);
+    }
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -117,28 +144,111 @@ export function RouteMap({ geometry }: RouteMapProps) {
     return () => markers.forEach((marker) => marker.remove());
   }, [distanceInterval, geometry.coordinates, loadedMap]);
 
+  useEffect(() => {
+    const fullscreenContainer = fullscreenContainerRef.current;
+    if (!fullscreenContainer) return;
+
+    const handleFullscreenChange = () => {
+      fallbackFullscreenRef.current = false;
+      setIsFullscreen(document.fullscreenElement === fullscreenContainer);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && fallbackFullscreenRef.current) {
+        fallbackFullscreenRef.current = false;
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fullscreenContainer = fullscreenContainerRef.current;
+    if (!loadedMap || !fullscreenContainer) return;
+
+    let animationFrame = 0;
+    const resizeMap = () => {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => loadedMap.resize());
+    };
+    const resizeObserver = new ResizeObserver(resizeMap);
+    resizeObserver.observe(fullscreenContainer);
+    resizeMap();
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+    };
+  }, [isFullscreen, loadedMap]);
+
+  useEffect(() => {
+    if (!isFullscreen || !fallbackFullscreenRef.current) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isFullscreen]);
+
   return (
-    <div className="relative">
+    <div
+      ref={fullscreenContainerRef}
+      className={`relative bg-white ${isFullscreen ? "fixed inset-0 z-[9999] h-dvh w-screen overflow-hidden" : ""}`}
+    >
       <div
         ref={containerRef}
-        className="h-[52vh] min-h-[360px] w-full overflow-hidden sm:min-h-[480px] lg:h-[570px] lg:min-h-0"
+        className={`w-full overflow-hidden ${
+          isFullscreen
+            ? "h-dvh min-h-0"
+            : "h-[52vh] min-h-[360px] sm:min-h-[480px] lg:h-[570px] lg:min-h-0"
+        }`}
         aria-label="Interactive route map"
       />
-      <label className="absolute right-3 top-3 z-10 rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-        <span className="mr-2">Distance markers:</span>
-        <select
-          className="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900"
-          value={distanceInterval}
-          onChange={(event) => setDistanceInterval(Number(event.target.value))}
+      <div className="absolute right-3 top-3 z-10 flex items-start gap-2">
+        <label className="rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
+          <span className="mr-2">Distance markers:</span>
+          <select
+            className="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900"
+            value={distanceInterval}
+            onChange={(event) => setDistanceInterval(Number(event.target.value))}
+          >
+            {DISTANCE_INTERVAL_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          className="grid size-9 shrink-0 place-items-center rounded-md border border-slate-200 bg-white/95 text-slate-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          title={isFullscreen ? "Exit fullscreen" : "Fullscreen map"}
+          aria-label={isFullscreen ? "Exit fullscreen map" : "Fullscreen map"}
+          aria-pressed={isFullscreen}
+          onClick={toggleFullscreen}
         >
-          {DISTANCE_INTERVAL_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
+          <FullscreenIcon isFullscreen={isFullscreen} />
+        </button>
+      </div>
     </div>
+  );
+}
+
+function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {
+  return isFullscreen ? (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+    </svg>
+  ) : (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+    </svg>
   );
 }
 
