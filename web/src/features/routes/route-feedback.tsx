@@ -13,7 +13,7 @@ export function ShareRouteCard() {
   </section>;
 }
 
-export function RouteFeedbackSidebar() {
+export function RouteFeedbackSidebar({ onAddSuggestion }: { onAddSuggestion: () => void }) {
   return <aside className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm xl:p-4">
     <div className="flex items-center justify-between gap-3"><h2 className="text-xl font-bold">Route feedback</h2><span className="whitespace-nowrap text-sm font-semibold text-blue-600">12 suggestions</span></div>
     <div className="mt-4 flex flex-wrap gap-1 text-xs font-semibold">
@@ -22,7 +22,7 @@ export function RouteFeedbackSidebar() {
     </div>
     <label className="mt-4 flex items-center gap-3 text-xs font-semibold">Sort by <select className="rounded-md border border-slate-200 bg-white px-3 py-2 font-medium"><option>Route order</option></select></label>
     <div className="mt-3 space-y-2">{routeSuggestionsMock.map((suggestion) => <RouteSuggestionCard key={suggestion.id} suggestion={suggestion} />)}</div>
-    <button disabled title="Suggestions are coming soon" className="mt-4 w-full rounded-lg bg-emerald-700 px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-80">＋ Add your suggestion</button>
+    <button type="button" onClick={onAddSuggestion} className="mt-4 w-full rounded-lg bg-emerald-700 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-800">＋ Add your suggestion</button>
     <p className="mt-2 text-center text-xs text-slate-500">No account required. Just a name 🙂</p>
   </aside>;
 }
