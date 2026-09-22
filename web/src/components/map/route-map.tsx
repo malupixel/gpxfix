@@ -21,6 +21,8 @@ import {
   type RouteCoordinate,
   type RoutePosition,
 } from "@/features/routes/route-geometry";
+import { ElevationChart } from "@/features/routes/elevation-profile";
+import { elevationProfileModel } from "@/features/routes/elevation-profile-data";
 import type { RoutePageMode, SuggestionDraft } from "@/features/routes/route-page-state";
 import type { RouteData } from "@/types/route";
 
@@ -40,25 +42,29 @@ const DEFAULT_DISTANCE_INTERVAL_METERS = 10_000;
 
 type RouteMapProps = {
   geometry: RouteData["geometry"];
+  elevationProfile: RouteData["elevationProfile"];
   mode: RoutePageMode;
   draft: SuggestionDraft;
   highlightedCoordinate: RouteCoordinate | null;
+  onElevationHighlight: (coordinate: RouteCoordinate | null) => void;
   onRouteClick: (position: RoutePosition) => void;
   onMapClick: (coordinate: RouteCoordinate) => void;
   onCancelSelection: () => void;
 };
 
-export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
+export function RouteMap({ geometry, elevationProfile, mode, draft, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
   const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   const [distanceInterval, setDistanceInterval] = useState(DEFAULT_DISTANCE_INTERVAL_METERS);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isElevationExpanded, setIsElevationExpanded] = useState(true);
   const { t, i18n } = useTranslation();
   const labelsRef = useRef({ start: t("route.start"), finish: t("route.finish") });
   const distanceOptions = [{ label: t("route.off"), value: 0 }, { label: "5 km", value: 5_000 }, { label: "10 km", value: 10_000 }, { label: "20 km", value: 20_000 }];
   const routeMeasure = useMemo(() => createRouteMeasure(geometry.coordinates), [geometry.coordinates]);
+  const elevationModel = useMemo(() => elevationProfileModel(elevationProfile), [elevationProfile]);
 
   useEffect(() => { labelsRef.current = { start: t("route.start"), finish: t("route.finish") }; }, [i18n.language, t]);
 
@@ -74,9 +80,11 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
     if (fallbackFullscreenRef.current) {
       fallbackFullscreenRef.current = false;
       setIsFullscreen(false);
+      onElevationHighlight(null);
       return;
     }
 
+    setIsElevationExpanded(true);
     try {
       await fullscreenContainer.requestFullscreen();
     } catch {
@@ -84,7 +92,7 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
       fallbackFullscreenRef.current = true;
       setIsFullscreen(true);
     }
-  }, []);
+  }, [onElevationHighlight]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -264,12 +272,16 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
 
     const handleFullscreenChange = () => {
       fallbackFullscreenRef.current = false;
-      setIsFullscreen(document.fullscreenElement === fullscreenContainer);
+      const active = document.fullscreenElement === fullscreenContainer;
+      if (active) setIsElevationExpanded(true);
+      else onElevationHighlight(null);
+      setIsFullscreen(active);
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && fallbackFullscreenRef.current) {
         fallbackFullscreenRef.current = false;
         setIsFullscreen(false);
+        onElevationHighlight(null);
       }
     };
 
@@ -279,7 +291,7 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [onElevationHighlight]);
 
   useEffect(() => {
     const fullscreenContainer = fullscreenContainerRef.current;
@@ -301,6 +313,25 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
   }, [isFullscreen, loadedMap]);
 
   useEffect(() => {
+    if (!loadedMap) return;
+
+    const updateMapViewport = () => {
+      const bottom = isFullscreen && isElevationExpanded && elevationModel
+        ? fullscreenElevationPanelHeight(window.innerHeight)
+        : 0;
+      loadedMap.setPadding({ top: 0, right: 0, bottom, left: 0 });
+      loadedMap.resize();
+    };
+    updateMapViewport();
+    window.addEventListener("resize", updateMapViewport);
+    const transitionTimer = window.setTimeout(() => loadedMap.resize(), 280);
+    return () => {
+      window.removeEventListener("resize", updateMapViewport);
+      window.clearTimeout(transitionTimer);
+    };
+  }, [elevationModel, isElevationExpanded, isFullscreen, loadedMap]);
+
+  useEffect(() => {
     if (!isFullscreen || !fallbackFullscreenRef.current) return;
 
     const previousOverflow = document.body.style.overflow;
@@ -313,7 +344,7 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
   return (
     <div
       ref={fullscreenContainerRef}
-      className={`relative bg-white ${isFullscreen ? "fixed inset-0 z-[9999] h-dvh w-screen overflow-hidden" : ""}`}
+      className={`relative bg-white ${isFullscreen ? "fixed inset-0 z-[9999] h-dvh w-screen overflow-hidden" : ""} ${isFullscreen && isElevationExpanded && elevationModel ? "fullscreen-elevation-open" : ""}`}
     >
       <div
         ref={containerRef}
@@ -350,8 +381,48 @@ export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRoute
           <FullscreenIcon isFullscreen={isFullscreen} />
         </button>
       </div>
+      {isFullscreen && elevationModel && (
+        <FullscreenElevationDrawer
+          model={elevationModel}
+          expanded={isElevationExpanded}
+          onExpandedChange={(expanded) => {
+            if (!expanded) onElevationHighlight(null);
+            setIsElevationExpanded(expanded);
+          }}
+          onHighlight={onElevationHighlight}
+        />
+      )}
     </div>
   );
+}
+
+function FullscreenElevationDrawer({ model, expanded, onExpandedChange, onHighlight }: {
+  model: NonNullable<ReturnType<typeof elevationProfileModel>>;
+  expanded: boolean;
+  onExpandedChange: (expanded: boolean) => void;
+  onHighlight: (coordinate: RouteCoordinate | null) => void;
+}) {
+  const { t } = useTranslation();
+  return <>
+    <div className={`absolute inset-x-0 bottom-0 z-20 flex h-[clamp(150px,24dvh,230px)] flex-col border-t border-slate-200 bg-white/[0.92] px-2 pb-2 pt-3 shadow-[0_-8px_28px_rgba(15,23,42,0.16)] backdrop-blur-md transition-transform duration-[250ms] ease-out motion-reduce:transition-none sm:px-4 ${expanded ? "translate-y-0" : "pointer-events-none translate-y-full"}`}>
+      {expanded && <button type="button" className="absolute -top-5 left-1/2 grid h-8 w-14 -translate-x-1/2 place-items-center rounded-t-xl border border-b-0 border-slate-200 bg-white/95 text-slate-700 shadow-sm backdrop-blur-md hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" onClick={() => onExpandedChange(false)} title={t("elevation.hideProfile")} aria-label={t("elevation.hideProfile")}>
+        <Chevron direction="down" />
+      </button>}
+      <div className="mb-1 pl-1 text-sm font-bold text-slate-800">{t("elevation.title")}</div>
+      <ElevationChart model={model} onHighlight={onHighlight} className="min-h-0 flex-1" />
+    </div>
+    {!expanded && <button type="button" className="absolute bottom-0 left-1/2 z-20 grid h-10 w-16 -translate-x-1/2 place-items-center rounded-t-xl border border-b-0 border-slate-200 bg-white/95 text-slate-700 shadow-lg backdrop-blur-md hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" onClick={() => onExpandedChange(true)} title={t("elevation.showProfile")} aria-label={t("elevation.showProfile")}>
+      <Chevron direction="up" />
+    </button>}
+  </>;
+}
+
+function Chevron({ direction }: { direction: "up" | "down" }) {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"><path d={direction === "up" ? "m6 15 6-6 6 6" : "m6 9 6 6 6-6"} /></svg>;
+}
+
+export function fullscreenElevationPanelHeight(viewportHeight: number): number {
+  return Math.min(230, Math.max(150, viewportHeight * 0.24));
 }
 
 function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {

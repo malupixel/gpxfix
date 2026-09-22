@@ -42,6 +42,17 @@ button, select { font: inherit; }
 .community-marker-note { background: #2563eb; color: white; }
 .community-marker-positive { background: #059669; color: white; }
 
+.fullscreen-elevation-open .maplibregl-ctrl-bottom-left,
+.fullscreen-elevation-open .maplibregl-ctrl-bottom-right {
+  bottom: clamp(150px, 24dvh, 230px);
+  transition: bottom 250ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fullscreen-elevation-open .maplibregl-ctrl-bottom-left,
+  .fullscreen-elevation-open .maplibregl-ctrl-bottom-right { transition: none; }
+}
+
 @media (max-width: 639px) {
   .maplibregl-ctrl-top-right { top: 3.25rem; }
   .maplibregl-ctrl button { width: 36px; height: 36px; }

@@ -66,7 +66,7 @@ export function RoutePageContent({ route }: { route: RouteData }) {
       <div className="min-w-0 space-y-4">
         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <RouteMapToolbar mode={mode} selectedTool={draft.type} onView={enterViewMode} onSuggest={enterSuggestMode} onSelectTool={selectTool} />
-          <RouteMap geometry={route.geometry} mode={mode} draft={draft} highlightedCoordinate={profileHighlight} onRouteClick={handleRouteClick} onMapClick={handleMapClick} onCancelSelection={resetSelection} />
+          <RouteMap geometry={route.geometry} elevationProfile={route.elevationProfile} mode={mode} draft={draft} highlightedCoordinate={profileHighlight} onElevationHighlight={setProfileHighlight} onRouteClick={handleRouteClick} onMapClick={handleMapClick} onCancelSelection={resetSelection} />
           <CommunityMarkerLegend />
         </section>
         {mode === "view" && (

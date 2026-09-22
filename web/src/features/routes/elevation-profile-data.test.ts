@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { ElevationSample } from "@/types/route";
-import { chartElevationSamples, elevationSummary, nearestElevationSample } from "./elevation-profile-data";
+import { chartElevationSamples, elevationProfileModel, elevationSummary, nearestElevationSample } from "./elevation-profile-data";
 
 const sample = (distanceMeters: number, elevationMeters: number | null): ElevationSample => ({ distanceMeters, elevationMeters, longitude: 21 + distanceMeters / 100_000, latitude: 52 });
 
@@ -12,7 +12,15 @@ test("summarizes gain/loss while ignoring sub-three-metre GPS noise", () => {
 
 test("missing elevation produces no summary or chart", () => {
   const samples = [sample(0,null),sample(100,null)];
-  assert.equal(elevationSummary(samples), null); assert.deepEqual(chartElevationSamples(samples), []);
+  assert.equal(elevationSummary(samples), null); assert.deepEqual(chartElevationSamples(samples), []); assert.equal(elevationProfileModel(samples), null);
+});
+
+test("shared profile model prepares one chart representation for every view", () => {
+  const model = elevationProfileModel([sample(0, 100), sample(1_000, 120), sample(2_000, 110)]);
+  assert.ok(model);
+  assert.equal(model.maximumDistance, 2_000);
+  assert.deepEqual(model.summary, { gainMeters: 20, lossMeters: 10, minMeters: 100, maxMeters: 120 });
+  assert.equal(model.chartSamples.length, 3);
 });
 
 test("dense profiles are bounded and retain route endpoints", () => {

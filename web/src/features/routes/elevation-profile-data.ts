@@ -2,11 +2,27 @@ import type { ElevationSample } from "@/types/route";
 
 export type ValidElevationSample = ElevationSample & { elevationMeters: number };
 export type ElevationSummary = { gainMeters: number; lossMeters: number; minMeters: number; maxMeters: number };
+export type ElevationProfileModel = {
+  chartSamples: ValidElevationSample[];
+  summary: ElevationSummary;
+  maximumDistance: number;
+};
 
 const ELEVATION_NOISE_THRESHOLD_METERS = 3;
 
 export function validElevationSamples(samples: ElevationSample[]): ValidElevationSample[] {
   return samples.filter((sample): sample is ValidElevationSample => sample.elevationMeters !== null && Number.isFinite(sample.elevationMeters));
+}
+
+export function elevationProfileModel(samples: ElevationSample[]): ElevationProfileModel | null {
+  const summary = elevationSummary(samples);
+  const chartSamples = chartElevationSamples(samples);
+  if (!summary || chartSamples.length < 2) return null;
+  return {
+    chartSamples,
+    summary,
+    maximumDistance: samples.at(-1)?.distanceMeters || chartSamples.at(-1)!.distanceMeters || 1,
+  };
 }
 
 export function elevationSummary(samples: ElevationSample[]): ElevationSummary | null {
