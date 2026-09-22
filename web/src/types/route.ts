@@ -8,4 +8,4 @@ export interface RouteData {
   geometry: { type: "LineString"; coordinates: [number, number][] };
   createdAt: string;
 }
-export interface CreateRouteResponse { publicId: string }
+export interface CreateRouteResponse { publicId: string; managementToken: string }

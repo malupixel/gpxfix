@@ -7,3 +7,6 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+app:
+  ownership:
+    cookie-secure: false

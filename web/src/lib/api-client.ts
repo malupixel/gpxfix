@@ -9,6 +9,7 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
   const isFormData = options?.body instanceof FormData;
   const response = await fetch(`${apiUrl()}${path}`, {
     ...options,
+    credentials: "include",
     headers: { ...(isFormData ? {} : { "Content-Type": "application/json" }), ...options?.headers },
   });
   if (!response.ok) {
@@ -16,5 +17,6 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
     try { const body = await response.json() as { error?: string }; if (body.error) message = body.error; } catch { }
     throw new ApiError(response.status, message);
   }
+  if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }

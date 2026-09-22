@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint .",
-    "test": "tsx --test src/features/routes/route-geometry.test.ts",
+    "test": "tsx --test src/features/routes/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

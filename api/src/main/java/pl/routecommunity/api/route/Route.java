@@ -16,12 +16,14 @@ class Route {
     @Column(name="track_geometry", nullable=false, columnDefinition="geometry(LineString,4326)") private LineString trackGeometry;
     @Column(name="created_at", nullable=false) private Instant createdAt;
     @Column(name="updated_at", nullable=false) private Instant updatedAt;
+    @Column(name="owner_token_hash", length=32) private byte[] ownerTokenHash;
     protected Route() { }
-    Route(String publicId, String name, String description, String originalFilename, String storageKey, double distanceMeters, Double elevationGainMeters, LineString trackGeometry, Instant now) {
+    Route(String publicId, String name, String description, String originalFilename, String storageKey, double distanceMeters, Double elevationGainMeters, LineString trackGeometry, byte[] ownerTokenHash, Instant now) {
         this.publicId=publicId; this.name=name; this.description=description; this.originalFilename=originalFilename; this.storageKey=storageKey;
-        this.distanceMeters=distanceMeters; this.elevationGainMeters=elevationGainMeters; this.trackGeometry=trackGeometry; this.createdAt=now; this.updatedAt=now;
+        this.distanceMeters=distanceMeters; this.elevationGainMeters=elevationGainMeters; this.trackGeometry=trackGeometry; this.ownerTokenHash=ownerTokenHash; this.createdAt=now; this.updatedAt=now;
     }
     String getPublicId(){return publicId;} String getName(){return name;} String getDescription(){return description;} String getOriginalFilename(){return originalFilename;}
     double getDistanceMeters(){return distanceMeters;} Double getElevationGainMeters(){return elevationGainMeters;}
     LineString getTrackGeometry(){return trackGeometry;} Instant getCreatedAt(){return createdAt;}
+    byte[] getOwnerTokenHash(){return ownerTokenHash;}
 }

@@ -5,15 +5,16 @@ import { useState } from "react";
 
 import type { RouteData } from "@/types/route";
 import { formatRouteDate } from "./route-format";
+import { publicRoutePath, publicRouteUrl } from "./route-links";
 
-type Props = { route: RouteData };
+type Props = { route: RouteData; isOwner: boolean };
 
-export function RouteHeader({ route }: Props) {
+export function RouteHeader({ route, isOwner }: Props) {
   const [copied, setCopied] = useState(false);
-  const routePath = `/route/${route.publicId}`;
+  const routePath = publicRoutePath(route.publicId);
 
   async function copyRouteUrl() {
-    const url = new URL(routePath, window.location.origin).toString();
+    const url = publicRouteUrl(route.publicId, window.location.origin);
     await navigator.clipboard.writeText(url);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
@@ -29,6 +30,7 @@ export function RouteHeader({ route }: Props) {
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="min-w-0 break-words text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{route.name}</h1>
             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">Open for suggestions</span>
+            {isOwner && <span className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">Owner mode</span>}
           </div>
           {route.description && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{route.description}</p>}
           <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">

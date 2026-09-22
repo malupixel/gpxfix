@@ -7,3 +7,6 @@ spring:
 logging:
   level:
     root: warn
+app:
+  ownership:
+    cookie-secure: false

@@ -19,13 +19,13 @@ import pl.routecommunity.api.storage.FileStorage;
 @Service
 public class RouteService {
     private final RouteRepository repository; private final GpxParser parser; private final FileStorage storage;
-    private final PublicIdGenerator ids; private final RouteMapper mapper; private final long maxBytes;
+    private final PublicIdGenerator ids; private final RouteMapper mapper; private final RouteOwnershipService ownership; private final long maxBytes;
     private final GeometryFactory geometries=new GeometryFactory(new PrecisionModel(),4326);
-    public RouteService(RouteRepository repository,GpxParser parser,FileStorage storage,PublicIdGenerator ids,RouteMapper mapper,@Value("${app.gpx.max-file-size-bytes}") long maxBytes){
-        this.repository=repository;this.parser=parser;this.storage=storage;this.ids=ids;this.mapper=mapper;this.maxBytes=maxBytes;
+    public RouteService(RouteRepository repository,GpxParser parser,FileStorage storage,PublicIdGenerator ids,RouteMapper mapper,RouteOwnershipService ownership,@Value("${app.gpx.max-file-size-bytes}") long maxBytes){
+        this.repository=repository;this.parser=parser;this.storage=storage;this.ids=ids;this.mapper=mapper;this.ownership=ownership;this.maxBytes=maxBytes;
     }
     @Transactional
-    public CreateRouteResponse create(MultipartFile file,String requestedName,String description){
+    public CreatedRoute create(MultipartFile file,String requestedName,String description){
         if(file==null||file.isEmpty())throw new ApiException(HttpStatus.BAD_REQUEST,"A non-empty GPX file is required");
         if(file.getSize()>maxBytes)throw new ApiException(HttpStatus.PAYLOAD_TOO_LARGE,"The uploaded GPX file is too large");
         byte[] content; try{content=file.getBytes();}catch(IOException e){throw new ApiException(HttpStatus.BAD_REQUEST,"The uploaded GPX file could not be read");}
@@ -33,9 +33,11 @@ public class RouteService {
         String key=storage.store(content);
         try{
             String publicId=uniquePublicId();
+            String managementToken=ownership.newSecret();
             Route route=new Route(publicId,routeName(requestedName,file.getOriginalFilename()),optional(description),safeFilename(file.getOriginalFilename()),key,
-                    track.distanceMeters(),track.elevationGainMeters(),geometry(track.points()),Instant.now());
-            repository.saveAndFlush(route); return new CreateRouteResponse(publicId);
+                    track.distanceMeters(),track.elevationGainMeters(),geometry(track.points()),ownership.hash(managementToken),Instant.now());
+            repository.saveAndFlush(route);
+            return new CreatedRoute(publicId,managementToken,ownership.establish(publicId,managementToken));
         }catch(RuntimeException e){storage.delete(key);throw e;}
     }
     @Transactional(readOnly=true)

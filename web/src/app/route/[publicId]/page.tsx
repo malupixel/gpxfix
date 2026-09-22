@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getRoute } from "@/features/routes/api";
-import { RouteHeader } from "@/features/routes/route-header";
-import { RoutePageContent } from "@/features/routes/route-page-content";
 import { ApiError } from "@/lib/api-client";
+import { OwnershipGate } from "@/features/routes/ownership-gate";
 
 type Props = { params: Promise<{ publicId: string }> };
 
@@ -24,7 +23,6 @@ export default async function RoutePage({ params }: Props) {
   const route = await load(publicId);
 
   return <main className="min-h-screen bg-slate-50 px-3 py-6 sm:px-6 lg:py-8"><div className="mx-auto max-w-[1450px]">
-    <RouteHeader route={route} />
-    <RoutePageContent route={route} />
+    <OwnershipGate route={route} />
   </div></main>;
 }
