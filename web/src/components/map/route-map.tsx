@@ -10,6 +10,7 @@ import {
   type MapMouseEvent,
 } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   areRouteEndpointsClose,
@@ -37,13 +38,6 @@ const HANDLES_SOURCE_ID = "suggestion-handles-source";
 const HANDLES_LAYER_ID = "suggestion-handles";
 const DEFAULT_DISTANCE_INTERVAL_METERS = 10_000;
 
-const DISTANCE_INTERVAL_OPTIONS = [
-  { label: "Off", value: 0 },
-  { label: "5 km", value: 5_000 },
-  { label: "10 km", value: 10_000 },
-  { label: "20 km", value: 20_000 },
-] as const;
-
 type RouteMapProps = {
   geometry: RouteData["geometry"];
   mode: RoutePageMode;
@@ -60,7 +54,12 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
   const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   const [distanceInterval, setDistanceInterval] = useState(DEFAULT_DISTANCE_INTERVAL_METERS);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const labelsRef = useRef({ start: t("route.start"), finish: t("route.finish") });
+  const distanceOptions = [{ label: t("route.off"), value: 0 }, { label: "5 km", value: 5_000 }, { label: "10 km", value: 10_000 }, { label: "20 km", value: 20_000 }];
   const routeMeasure = useMemo(() => createRouteMeasure(geometry.coordinates), [geometry.coordinates]);
+
+  useEffect(() => { labelsRef.current = { start: t("route.start"), finish: t("route.finish") }; }, [i18n.language, t]);
 
   const toggleFullscreen = useCallback(async () => {
     const fullscreenContainer = fullscreenContainerRef.current;
@@ -147,7 +146,7 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
 
       // Layers appended without `beforeId` render above every existing style layer.
       map.moveLayer(ROUTE_LAYER_ID);
-      endpointMarkers.push(...addEndpointMarkers(map, coordinates));
+      endpointMarkers.push(...addEndpointMarkers(map, coordinates, labelsRef.current));
       map.resize();
       map.fitBounds(getRouteBounds(coordinates), {
         padding: 50,
@@ -233,13 +232,22 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
 
     const markers = calculateDistanceMarkers(geometry.coordinates, distanceInterval).map(
       ({ coordinate, distanceMeters }) =>
-        new Marker({ element: createDistanceMarkerElement(distanceMeters), anchor: "center" })
+        new Marker({ element: createDistanceMarkerElement(distanceMeters, t("route.markerAria", { distance: distanceMeters / 1_000 })), anchor: "center" })
           .setLngLat(coordinate)
           .addTo(loadedMap),
     );
 
     return () => markers.forEach((marker) => marker.remove());
-  }, [distanceInterval, geometry.coordinates, loadedMap]);
+  }, [distanceInterval, geometry.coordinates, loadedMap, i18n.language, t]);
+
+  useEffect(() => {
+    const root = fullscreenContainerRef.current;
+    const labels = labelsRef.current;
+    for (const kind of ["start", "finish"] as const) {
+      const element = root?.querySelector<HTMLElement>(`[data-route-endpoint="${kind}"]`);
+      if (element) { element.textContent = endpointGlyph(labels[kind]); element.title = labels[kind]; element.setAttribute("aria-label", labels[kind]); }
+    }
+  }, [i18n.language]);
 
   useEffect(() => {
     const fullscreenContainer = fullscreenContainerRef.current;
@@ -305,17 +313,17 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
             ? "h-dvh min-h-0"
             : "h-[52vh] min-h-[360px] sm:min-h-[480px] lg:h-[570px] lg:min-h-0"
         }`}
-        aria-label="Interactive route map"
+        aria-label={t("route.interactiveMap")}
       />
       <div className="absolute right-3 top-3 z-10 flex items-start gap-2">
         <label className="rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-          <span className="mr-2">Distance markers:</span>
+          <span className="mr-2">{t("route.distanceMarkers")}</span>
           <select
             className="rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900"
             value={distanceInterval}
             onChange={(event) => setDistanceInterval(Number(event.target.value))}
           >
-            {DISTANCE_INTERVAL_OPTIONS.map((option) => (
+            {distanceOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -325,8 +333,8 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
         <button
           type="button"
           className="grid size-9 shrink-0 place-items-center rounded-md border border-slate-200 bg-white/95 text-slate-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          title={isFullscreen ? "Exit fullscreen" : "Fullscreen map"}
-          aria-label={isFullscreen ? "Exit fullscreen map" : "Fullscreen map"}
+          title={isFullscreen ? t("route.exitFullscreen") : t("route.fullscreen")}
+          aria-label={isFullscreen ? t("route.exitFullscreen") : t("route.fullscreen")}
           aria-pressed={isFullscreen}
           onClick={toggleFullscreen}
         >
@@ -349,13 +357,13 @@ function FullscreenIcon({ isFullscreen }: { isFullscreen: boolean }) {
   );
 }
 
-function addEndpointMarkers(map: MapLibreMap, coordinates: [number, number][]): Marker[] {
+function addEndpointMarkers(map: MapLibreMap, coordinates: [number, number][], labels: { start: string; finish: string }): Marker[] {
   const endpointsAreClose = areRouteEndpointsClose(coordinates);
   const startOffset: [number, number] = endpointsAreClose ? [-18, 0] : [0, 0];
   const finishOffset: [number, number] = endpointsAreClose ? [18, 0] : [0, 0];
 
   const startMarker = new Marker({
-    element: createEndpointMarkerElement("S", "Start", "bg-emerald-600"),
+    element: createEndpointMarkerElement("start", labels.start, "bg-emerald-600"),
     anchor: "bottom",
     offset: startOffset,
   })
@@ -363,7 +371,7 @@ function addEndpointMarkers(map: MapLibreMap, coordinates: [number, number][]): 
     .addTo(map);
 
   const finishMarker = new Marker({
-    element: createEndpointMarkerElement("F", "Finish", "bg-red-600"),
+    element: createEndpointMarkerElement("finish", labels.finish, "bg-red-600"),
     anchor: "bottom",
     offset: finishOffset,
   })
@@ -373,23 +381,26 @@ function addEndpointMarkers(map: MapLibreMap, coordinates: [number, number][]): 
   return [startMarker, finishMarker];
 }
 
-function createEndpointMarkerElement(label: string, title: string, colorClass: string): HTMLElement {
+function createEndpointMarkerElement(kind: "start" | "finish", title: string, colorClass: string): HTMLElement {
   const element = document.createElement("div");
   element.className = `${colorClass} flex size-9 items-center justify-center rounded-full border-2 border-white text-sm font-bold text-white shadow-lg`;
-  element.textContent = label;
+  element.textContent = endpointGlyph(title);
+  element.dataset.routeEndpoint = kind;
   element.title = title;
   element.setAttribute("aria-label", title);
   return element;
 }
 
-function createDistanceMarkerElement(distanceMeters: number): HTMLElement {
+function endpointGlyph(label: string): string { return label.charAt(0).toUpperCase(); }
+
+function createDistanceMarkerElement(distanceMeters: number, ariaLabel: string): HTMLElement {
   const distanceKilometers = distanceMeters / 1_000;
   const element = document.createElement("div");
   element.className =
     "min-w-7 rounded-full border border-slate-400 bg-white/95 px-1.5 py-0.5 text-center text-[11px] font-semibold leading-4 text-slate-800 shadow-sm";
   element.textContent = String(distanceKilometers);
   element.title = `${distanceKilometers} km`;
-  element.setAttribute("aria-label", `${distanceKilometers} km route marker`);
+  element.setAttribute("aria-label", ariaLabel);
   return element;
 }
 

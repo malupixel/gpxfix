@@ -2,16 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Providers } from "@/components/providers";
+import { cookies, headers } from "next/headers";
+import { localeCookieName, resolveLocale } from "@/i18n/config";
 
 export const metadata: Metadata = {
   title: "Route Community",
-  description: "Community GPX route sharing and review",
+  description: "Społecznościowe udostępnianie i ulepszanie tras GPX",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+  const locale = resolveLocale(cookieStore.get(localeCookieName)?.value, headerStore.get("accept-language"));
   return (
-    <html lang="en">
-      <body><Providers>{children}</Providers></body>
+    <html lang={locale}>
+      <body><Providers initialLocale={locale}>{children}</Providers></body>
     </html>
   );
 }
