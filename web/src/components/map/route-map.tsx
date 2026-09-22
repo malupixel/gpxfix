@@ -1,22 +1,40 @@
 "use client";
 
+import type * as GeoJSON from "geojson";
 import {
   Map as MapLibreMap,
   Marker,
   type ErrorEvent as MapLibreErrorEvent,
+  type GeoJSONSource,
   type LngLatBoundsLike,
+  type MapMouseEvent,
 } from "maplibre-gl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   areRouteEndpointsClose,
   calculateDistanceMarkers,
+  createRouteMeasure,
+  extractRouteSection,
+  findNearestPositionOnRoute,
+  type RouteCoordinate,
+  type RoutePosition,
 } from "@/features/routes/route-geometry";
+import type { RoutePageMode, SuggestionDraft } from "@/features/routes/route-page-state";
 import type { RouteData } from "@/types/route";
 
 const DEFAULT_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 const ROUTE_SOURCE_ID = "route-source";
 const ROUTE_LAYER_ID = "route-line";
+const ROUTE_INTERACTION_LAYER_ID = "route-interaction";
+const SELECTION_SOURCE_ID = "suggestion-selected-section-source";
+const SELECTION_LAYER_ID = "suggestion-selected-section";
+const DETOUR_SOURCE_ID = "suggestion-detour-source";
+const DETOUR_LAYER_ID = "suggestion-detour";
+const DETOUR_PREVIEW_SOURCE_ID = "suggestion-detour-preview-source";
+const DETOUR_PREVIEW_LAYER_ID = "suggestion-detour-preview";
+const HANDLES_SOURCE_ID = "suggestion-handles-source";
+const HANDLES_LAYER_ID = "suggestion-handles";
 const DEFAULT_DISTANCE_INTERVAL_METERS = 10_000;
 
 const DISTANCE_INTERVAL_OPTIONS = [
@@ -28,15 +46,21 @@ const DISTANCE_INTERVAL_OPTIONS = [
 
 type RouteMapProps = {
   geometry: RouteData["geometry"];
+  mode: RoutePageMode;
+  draft: SuggestionDraft;
+  onRouteClick: (position: RoutePosition) => void;
+  onMapClick: (coordinate: RouteCoordinate) => void;
+  onCancelSelection: () => void;
 };
 
-export function RouteMap({ geometry }: RouteMapProps) {
+export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
   const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   const [distanceInterval, setDistanceInterval] = useState(DEFAULT_DISTANCE_INTERVAL_METERS);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const routeMeasure = useMemo(() => createRouteMeasure(geometry.coordinates), [geometry.coordinates]);
 
   const toggleFullscreen = useCallback(async () => {
     const fullscreenContainer = fullscreenContainerRef.current;
@@ -111,6 +135,16 @@ export function RouteMap({ geometry }: RouteMapProps) {
         });
       }
 
+      map.addLayer({ id: ROUTE_INTERACTION_LAYER_ID, type: "line", source: ROUTE_SOURCE_ID, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-width": 24, "line-opacity": 0 } });
+      addGeoJsonSource(map, SELECTION_SOURCE_ID);
+      map.addLayer({ id: SELECTION_LAYER_ID, type: "line", source: SELECTION_SOURCE_ID, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#dc2626", "line-opacity": 0.78, "line-width": 9 } });
+      addGeoJsonSource(map, DETOUR_SOURCE_ID);
+      map.addLayer({ id: DETOUR_LAYER_ID, type: "line", source: DETOUR_SOURCE_ID, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#059669", "line-width": 6, "line-dasharray": [1, 1.2] } });
+      addGeoJsonSource(map, DETOUR_PREVIEW_SOURCE_ID);
+      map.addLayer({ id: DETOUR_PREVIEW_LAYER_ID, type: "line", source: DETOUR_PREVIEW_SOURCE_ID, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#10b981", "line-opacity": 0.75, "line-width": 4, "line-dasharray": [1, 1.5] } });
+      addGeoJsonSource(map, HANDLES_SOURCE_ID);
+      map.addLayer({ id: HANDLES_LAYER_ID, type: "circle", source: HANDLES_SOURCE_ID, paint: { "circle-radius": 7, "circle-color": ["match", ["get", "kind"], "note", "#2563eb", "waypoint", "#ffffff", "#059669"], "circle-stroke-color": ["match", ["get", "kind"], "note", "#ffffff", "#047857"], "circle-stroke-width": 3 } });
+
       // Layers appended without `beforeId` render above every existing style layer.
       map.moveLayer(ROUTE_LAYER_ID);
       endpointMarkers.push(...addEndpointMarkers(map, coordinates));
@@ -130,6 +164,69 @@ export function RouteMap({ geometry }: RouteMapProps) {
       map.remove();
     };
   }, [geometry]);
+
+  useEffect(() => {
+    if (!loadedMap) return;
+    const empty = emptyFeatureCollection();
+    let selected: GeoJSON.FeatureCollection = empty;
+    let detour: GeoJSON.FeatureCollection = empty;
+    const handles: GeoJSON.Feature[] = [];
+
+    if (mode === "suggest" && draft.type === "note" && draft.position) handles.push(pointFeature([draft.position.lng, draft.position.lat], "note"));
+    if (mode === "suggest" && (draft.type === "issue" || draft.type === "detour")) {
+      if (draft.start) handles.push(pointFeature([draft.start.lng, draft.start.lat], "anchor"));
+      if (draft.end) handles.push(pointFeature([draft.end.lng, draft.end.lat], "anchor"));
+      if (draft.start && draft.end) selected = featureCollection([lineFeature(extractRouteSection(routeMeasure, draft.start, draft.end).coordinates)]);
+      if (draft.type === "detour") {
+        handles.push(...draft.waypoints.map((point) => pointFeature(point, "waypoint")));
+        const points = detourCoordinates(draft);
+        if (points.length >= 2) detour = featureCollection([lineFeature(points)]);
+      }
+    }
+    setSourceData(loadedMap, SELECTION_SOURCE_ID, selected);
+    setSourceData(loadedMap, DETOUR_SOURCE_ID, detour);
+    setSourceData(loadedMap, DETOUR_PREVIEW_SOURCE_ID, empty);
+    setSourceData(loadedMap, HANDLES_SOURCE_ID, featureCollection(handles));
+    loadedMap.setPaintProperty(SELECTION_LAYER_ID, "line-color", draft.type === "detour" ? "#f59e0b" : "#dc2626");
+    loadedMap.setPaintProperty(SELECTION_LAYER_ID, "line-opacity", draft.type === "detour" ? 0.55 : 0.78);
+  }, [draft, loadedMap, mode, routeMeasure]);
+
+  useEffect(() => {
+    if (!loadedMap) return;
+    const canvas = loadedMap.getCanvas();
+    const suggestionActive = mode === "suggest" && draft.type !== null && draft.step === "edit";
+    const onClick = (event: MapMouseEvent) => {
+      if (!suggestionActive) return;
+      const coordinate: RouteCoordinate = [event.lngLat.lng, event.lngLat.lat];
+      const hitsRoute = loadedMap.queryRenderedFeatures(event.point, { layers: [ROUTE_INTERACTION_LAYER_ID] }).length > 0;
+      if (hitsRoute) {
+        const position = findNearestPositionOnRoute(coordinate, routeMeasure);
+        if (position) onRouteClick(position);
+      } else if (draft.type === "detour" && draft.start && !draft.end) onMapClick(coordinate);
+    };
+    const onMouseMove = (event: MapMouseEvent) => {
+      if (draft.type !== "detour" || !draft.start || draft.end || draft.step !== "edit") return;
+      const preview = [...detourCoordinates(draft), [event.lngLat.lng, event.lngLat.lat] as RouteCoordinate];
+      setSourceData(loadedMap, DETOUR_PREVIEW_SOURCE_ID, preview.length >= 2 ? featureCollection([lineFeature(preview)]) : emptyFeatureCollection());
+    };
+    const onRouteEnter = () => { if (suggestionActive) canvas.style.cursor = draft.type === "detour" && draft.start ? "crosshair" : "pointer"; };
+    const onRouteLeave = () => { canvas.style.cursor = draft.type === "detour" && draft.start && !draft.end ? "crosshair" : ""; };
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape" && suggestionActive) onCancelSelection(); };
+    if (draft.type === "detour" && draft.start && !draft.end) canvas.style.cursor = "crosshair";
+    loadedMap.on("click", onClick);
+    loadedMap.on("mousemove", onMouseMove);
+    loadedMap.on("mouseenter", ROUTE_INTERACTION_LAYER_ID, onRouteEnter);
+    loadedMap.on("mouseleave", ROUTE_INTERACTION_LAYER_ID, onRouteLeave);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      loadedMap.off("click", onClick);
+      loadedMap.off("mousemove", onMouseMove);
+      loadedMap.off("mouseenter", ROUTE_INTERACTION_LAYER_ID, onRouteEnter);
+      loadedMap.off("mouseleave", ROUTE_INTERACTION_LAYER_ID, onRouteLeave);
+      document.removeEventListener("keydown", onKeyDown);
+      canvas.style.cursor = "";
+    };
+  }, [draft, loadedMap, mode, onCancelSelection, onMapClick, onRouteClick, routeMeasure]);
 
   useEffect(() => {
     if (!loadedMap || distanceInterval === 0) return;
@@ -330,4 +427,33 @@ function unwrapLongitudes(coordinates: [number, number][]): [number, number][] {
   }
 
   return result;
+}
+
+function addGeoJsonSource(map: MapLibreMap, id: string) {
+  map.addSource(id, { type: "geojson", data: emptyFeatureCollection() });
+}
+
+function setSourceData(map: MapLibreMap, id: string, data: GeoJSON.FeatureCollection) {
+  (map.getSource(id) as GeoJSONSource | undefined)?.setData(data);
+}
+
+function emptyFeatureCollection(): GeoJSON.FeatureCollection {
+  return { type: "FeatureCollection", features: [] };
+}
+
+function featureCollection(features: GeoJSON.Feature[]): GeoJSON.FeatureCollection {
+  return { type: "FeatureCollection", features };
+}
+
+function lineFeature(coordinates: RouteCoordinate[]): GeoJSON.Feature<GeoJSON.LineString> {
+  return { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates } };
+}
+
+function pointFeature(coordinate: RouteCoordinate, kind: string): GeoJSON.Feature<GeoJSON.Point> {
+  return { type: "Feature", properties: { kind }, geometry: { type: "Point", coordinates: coordinate } };
+}
+
+function detourCoordinates(draft: Extract<SuggestionDraft, { type: "detour" }>): RouteCoordinate[] {
+  if (!draft.start) return [];
+  return [[draft.start.lng, draft.start.lat], ...draft.waypoints, ...(draft.end ? [[draft.end.lng, draft.end.lat] as RouteCoordinate] : [])];
 }
