@@ -19,6 +19,10 @@ public class LocalFileStorage implements FileStorage {
         try { Files.write(root.resolve(key), content, StandardOpenOption.CREATE_NEW); return key; }
         catch (IOException exception) { throw new IllegalStateException("Cannot store GPX file", exception); }
     }
+    public byte[] load(String storageKey) {
+        try { return Files.readAllBytes(root.resolve(storageKey)); }
+        catch (IOException exception) { throw new IllegalStateException("Cannot read stored GPX file", exception); }
+    }
     public void delete(String storageKey) {
         try { Files.deleteIfExists(root.resolve(storageKey)); } catch (IOException ignored) { }
     }

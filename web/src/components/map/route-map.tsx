@@ -42,12 +42,13 @@ type RouteMapProps = {
   geometry: RouteData["geometry"];
   mode: RoutePageMode;
   draft: SuggestionDraft;
+  highlightedCoordinate: RouteCoordinate | null;
   onRouteClick: (position: RoutePosition) => void;
   onMapClick: (coordinate: RouteCoordinate) => void;
   onCancelSelection: () => void;
 };
 
-export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
+export function RouteMap({ geometry, mode, draft, highlightedCoordinate, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
@@ -239,6 +240,14 @@ export function RouteMap({ geometry, mode, draft, onRouteClick, onMapClick, onCa
 
     return () => markers.forEach((marker) => marker.remove());
   }, [distanceInterval, geometry.coordinates, loadedMap, i18n.language, t]);
+
+  useEffect(() => {
+    if (!loadedMap || !highlightedCoordinate) return;
+    const element = document.createElement("div");
+    element.className = "size-4 rounded-full border-[3px] border-white bg-violet-600 shadow-lg";
+    const marker = new Marker({ element, anchor: "center" }).setLngLat(highlightedCoordinate).addTo(loadedMap);
+    return () => { marker.remove(); };
+  }, [highlightedCoordinate, loadedMap]);
 
   useEffect(() => {
     const root = fullscreenContainerRef.current;

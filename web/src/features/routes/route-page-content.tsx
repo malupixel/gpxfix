@@ -15,6 +15,7 @@ import { SuggestionWorkspace } from "./suggestion-workspace";
 export function RoutePageContent({ route }: { route: RouteData }) {
   const [mode, setMode] = useState<RoutePageMode>("view");
   const [draft, setDraft] = useState<SuggestionDraft>(EMPTY_SUGGESTION_DRAFT);
+  const [profileHighlight, setProfileHighlight] = useState<RouteCoordinate | null>(null);
 
   function enterViewMode() {
     setMode("view");
@@ -65,12 +66,12 @@ export function RoutePageContent({ route }: { route: RouteData }) {
       <div className="min-w-0 space-y-4">
         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <RouteMapToolbar mode={mode} selectedTool={draft.type} onView={enterViewMode} onSuggest={enterSuggestMode} onSelectTool={selectTool} />
-          <RouteMap geometry={route.geometry} mode={mode} draft={draft} onRouteClick={handleRouteClick} onMapClick={handleMapClick} onCancelSelection={resetSelection} />
+          <RouteMap geometry={route.geometry} mode={mode} draft={draft} highlightedCoordinate={profileHighlight} onRouteClick={handleRouteClick} onMapClick={handleMapClick} onCancelSelection={resetSelection} />
           <CommunityMarkerLegend />
         </section>
         {mode === "view" && (
           <>
-            <ElevationProfile elevationGainMeters={route.elevationGainMeters} />
+            <ElevationProfile samples={route.elevationProfile} onHighlight={setProfileHighlight} />
             <RouteInformation route={route} />
           </>
         )}

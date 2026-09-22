@@ -22,7 +22,7 @@ export default async function RoutePage({ params }: Props) {
   const { publicId } = await params;
   const route = await load(publicId);
 
-  return <main className="min-h-screen bg-slate-50 px-3 py-6 sm:px-6 lg:py-8"><div className="mx-auto max-w-[1450px]">
+  return <main className="min-h-screen bg-transparent px-3 py-6 sm:px-6 lg:py-8"><div className="mx-auto max-w-[1450px]">
     <OwnershipGate route={route} />
   </div></main>;
 }

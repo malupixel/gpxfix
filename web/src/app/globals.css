@@ -7,7 +7,13 @@
 
 body {
   margin: 0;
-  background: #f8fafc;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  background-image: linear-gradient(rgb(248 250 252 / 0.28), rgb(248 250 252 / 0.28)), url("/bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
   color: #0f172a;
 }
 

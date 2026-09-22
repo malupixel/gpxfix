@@ -23,6 +23,7 @@ class Route {
         this.distanceMeters=distanceMeters; this.elevationGainMeters=elevationGainMeters; this.trackGeometry=trackGeometry; this.ownerTokenHash=ownerTokenHash; this.createdAt=now; this.updatedAt=now;
     }
     String getPublicId(){return publicId;} String getName(){return name;} String getDescription(){return description;} String getOriginalFilename(){return originalFilename;}
+    String getStorageKey(){return storageKey;}
     double getDistanceMeters(){return distanceMeters;} Double getElevationGainMeters(){return elevationGainMeters;}
     LineString getTrackGeometry(){return trackGeometry;} Instant getCreatedAt(){return createdAt;}
     byte[] getOwnerTokenHash(){return ownerTokenHash;}

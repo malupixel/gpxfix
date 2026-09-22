@@ -41,7 +41,7 @@ public class RouteService {
         }catch(RuntimeException e){storage.delete(key);throw e;}
     }
     @Transactional(readOnly=true)
-    public RouteDto get(String publicId){return repository.findByPublicId(publicId).map(mapper::toDto).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));}
+    public RouteDto get(String publicId){return repository.findByPublicId(publicId).map(route->mapper.toDto(route,parser.parse(storage.load(route.getStorageKey())))).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));}
     private String uniquePublicId(){for(int i=0;i<5;i++){String id=ids.next();if(!repository.existsByPublicId(id))return id;}throw new DataIntegrityViolationException("Could not allocate public ID");}
     private LineString geometry(List<GpxPoint> points){Coordinate[] cs=points.stream().map(p->new Coordinate(p.longitude(),p.latitude())).toArray(Coordinate[]::new);return geometries.createLineString(cs);}
     private String routeName(String requested,String filename){String value=optional(requested);if(value!=null){if(value.length()>200)throw new ApiException(HttpStatus.BAD_REQUEST,"Route name must not exceed 200 characters");return value;}String safe=safeFilename(filename);int dot=safe.lastIndexOf('.');String fallback=dot>0?safe.substring(0,dot):safe;return fallback.isBlank()?"Untitled route":fallback.substring(0,Math.min(200,fallback.length()));}

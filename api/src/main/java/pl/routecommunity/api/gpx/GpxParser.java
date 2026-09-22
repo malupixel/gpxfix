@@ -91,7 +91,7 @@ public class GpxParser {
         return new GpxTrack(List.copyOf(segments), distance, elevationFound ? gain : null);
     }
 
-    static double haversineMeters(GpxPoint first, GpxPoint second) {
+    public static double haversineMeters(GpxPoint first, GpxPoint second) {
         double lat1 = Math.toRadians(first.latitude()), lat2 = Math.toRadians(second.latitude());
         double deltaLat = lat2 - lat1, deltaLon = Math.toRadians(second.longitude() - first.longitude());
         double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
