@@ -49,7 +49,8 @@ public class RouteOwnershipService {
         Route route = routes.findByPublicId(publicId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Route not found"));
         byte[] expected = route.getOwnerTokenHash();
-        if (managementToken == null || expected == null || !MessageDigest.isEqual(expected, hash(managementToken)))
+        if (managementToken == null || !isManagementToken(expected, managementToken)
+                && sessions.findByRoute_PublicIdAndTokenHashAndExpiresAtAfter(publicId, hash(managementToken), Instant.now()).isEmpty())
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid management token");
         String sessionToken = newSecret();
         Instant now = Instant.now();
@@ -58,9 +59,14 @@ public class RouteOwnershipService {
     }
 
     void requireOwner(String publicId, HttpServletRequest request) {
+        ownerSessionToken(publicId, request);
+    }
+
+    String ownerSessionToken(String publicId, HttpServletRequest request) {
         String token = cookieToken(request);
         if (token == null || sessions.findByRoute_PublicIdAndTokenHashAndExpiresAtAfter(publicId, hash(token), Instant.now()).isEmpty())
             throw new ApiException(HttpStatus.FORBIDDEN, "Route owner authorization required");
+        return token;
     }
 
     String cookieHeader(String publicId, String sessionToken) {
@@ -72,5 +78,9 @@ public class RouteOwnershipService {
         if (request.getCookies() == null) return null;
         return Arrays.stream(request.getCookies()).filter(cookie -> COOKIE_NAME.equals(cookie.getName()))
                 .map(Cookie::getValue).findFirst().orElse(null);
+    }
+
+    private boolean isManagementToken(byte[] expected, String token) {
+        return expected != null && MessageDigest.isEqual(expected, hash(token));
     }
 }

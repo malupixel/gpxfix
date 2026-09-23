@@ -68,6 +68,14 @@ class RouteApiIntegrationTest {
         Cookie cookie=authorized.getResponse().getCookie("route_owner");
         assertThat(cookie).isNotNull(); assertThat(cookie.isHttpOnly()).isTrue();
         mvc.perform(get("/api/routes/{id}/owner",firstId).cookie(cookie)).andExpect(status().isOk()).andExpect(jsonPath("$.owner").value(true));
+        mvc.perform(get("/api/routes/{id}/owner/access-token",firstId)).andExpect(status().isForbidden());
+        var access=mvc.perform(get("/api/routes/{id}/owner/access-token",firstId).cookie(cookie))
+                .andExpect(status().isOk()).andExpect(header().string("Cache-Control",org.hamcrest.Matchers.containsString("no-store")))
+                .andExpect(jsonPath("$.token").isString()).andReturn();
+        String accessToken=json.readTree(access.getResponse().getContentAsString()).get("token").asText();
+        mvc.perform(post("/api/routes/{id}/ownership",firstId).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\":\""+accessToken+"\"}"))
+                .andExpect(status().isNoContent()).andExpect(cookie().exists("route_owner"));
         mvc.perform(get("/api/routes/{id}/owner",secondId).cookie(cookie)).andExpect(status().isForbidden());
         mvc.perform(get("/api/routes/{id}",secondId)).andExpect(status().isOk());
     }

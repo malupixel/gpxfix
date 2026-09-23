@@ -9,3 +9,6 @@ export async function getRouteOwnerStatus(publicId: string): Promise<boolean> {
   try { await apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner`, { cache: "no-store" }); return true; }
   catch { return false; }
 }
+export function getOwnerAccessToken(publicId: string): Promise<{ token: string }> {
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/access-token`, { cache: "no-store" });
+}
