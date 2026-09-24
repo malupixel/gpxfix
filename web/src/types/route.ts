@@ -13,12 +13,17 @@ export interface ElevationSample { distanceMeters: number; elevationMeters: numb
 export interface CreateRouteResponse { publicId: string; managementToken: string }
 
 export type SuggestionType = "NOTE" | "PROBLEM" | "DETOUR";
-export type SuggestionStatus = "PENDING" | "ACCEPTED" | "REJECTED";
+export type ModerationStatus = "PENDING" | "PUBLISHED" | "REJECTED";
+export type SuggestionIntegrationStatus = "NOT_APPLICABLE" | "NOT_MERGED" | "MERGED";
+export type SuggestionApplicability = "NOT_APPLICABLE" | "CLEAN" | "CONFLICT" | "OUTDATED";
+export interface SuggestionComment { publicId:string;authorName:string;content:string;moderationStatus:ModerationStatus;createdAt:string;updatedAt:string }
 export interface SuggestionAnchor { longitude: number; latitude: number; distanceMeters: number }
 export interface RouteSuggestion {
   publicId: string;
   type: SuggestionType;
-  status: SuggestionStatus;
+  moderationStatus: ModerationStatus;
+  integrationStatus: SuggestionIntegrationStatus;
+  applicability: SuggestionApplicability;
   authorName: string;
   description: string;
   category: string | null;
@@ -29,5 +34,7 @@ export interface RouteSuggestion {
   baseRouteUpdatedAt: string;
   createdAt: string;
   updatedAt: string;
+  commentCount: number;
+  comments: SuggestionComment[];
 }
-export type CreateSuggestionRequest = Omit<RouteSuggestion, "publicId" | "status" | "baseRouteUpdatedAt" | "createdAt" | "updatedAt">;
+export type CreateSuggestionRequest = Omit<RouteSuggestion, "publicId" | "moderationStatus" | "integrationStatus" | "applicability" | "baseRouteUpdatedAt" | "createdAt" | "updatedAt" | "commentCount" | "comments">;

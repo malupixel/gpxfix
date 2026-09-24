@@ -84,15 +84,16 @@ class RouteApiIntegrationTest {
     @Test void createsAndRetrievesEverySuggestionTypeAsPending() throws Exception {
         String routeId=upload("suggestions.gpx").get("publicId").asText();
         mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Spring","REJECTED")))
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("NOTE")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("NOTE")).andExpect(jsonPath("$.moderationStatus").value("PENDING"))
                 .andExpect(jsonPath("$.publicId").isString()).andExpect(jsonPath("$.start.longitude").value(21.0122));
         mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(problemJson()))
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("PROBLEM")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("PROBLEM")).andExpect(jsonPath("$.moderationStatus").value("PENDING"))
                 .andExpect(jsonPath("$.end.distanceMeters").value(800.0));
         mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(detourJson()))
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("DETOUR")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("DETOUR")).andExpect(jsonPath("$.moderationStatus").value("PENDING"))
+                .andExpect(jsonPath("$.integrationStatus").value("NOT_MERGED")).andExpect(jsonPath("$.applicability").value("CLEAN"))
                 .andExpect(jsonPath("$.proposedGeometry.type").value("LineString")).andExpect(jsonPath("$.proposedGeometry.coordinates.length()").value(3));
-        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
     }
     @Test void suggestionValidationRejectsUnknownRoutesMalformedRequestsAndInvalidGeometry() throws Exception {
         String routeId=upload("validation.gpx").get("publicId").asText();
@@ -108,9 +109,51 @@ class RouteApiIntegrationTest {
     @Test void suggestionsAreScopedToTheirRoute() throws Exception {
         String first=upload("scope-first.gpx").get("publicId").asText(); String second=upload("scope-second.gpx").get("publicId").asText();
         mvc.perform(post("/api/routes/{id}/suggestions",first).contentType(MediaType.APPLICATION_JSON).content(noteJson("View",null))).andExpect(status().isCreated());
-        mvc.perform(get("/api/routes/{id}/suggestions",first)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1));
+        mvc.perform(get("/api/routes/{id}/suggestions",first)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
         mvc.perform(get("/api/routes/{id}/suggestions",second)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
     }
+    @Test void moderationAndDiscussionArePrivateRouteScopedAndDoNotMutateRoute() throws Exception {
+        JsonNode first=upload("moderation.gpx"), second=upload("other.gpx");String routeId=first.get("publicId").asText();
+        var created=mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Spring","PUBLISHED")))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.moderationStatus").value("PENDING")).andReturn();
+        String suggestionId=json.readTree(created.getResponse().getContentAsString()).get("publicId").asText();
+        Double distance=jdbc.queryForObject("select distance_meters from routes where public_id=?",Double.class,routeId);
+        byte[] geometry=jdbc.queryForObject("select ST_AsBinary(track_geometry) from routes where public_id=?",byte[].class,routeId);
+        mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,suggestionId).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\" Ola \",\"content\":\" hello \"}"))
+                .andExpect(status().isConflict());
+        Cookie firstOwner=ownerCookie(routeId,first.get("managementToken").asText());Cookie secondOwner=ownerCookie(second.get("publicId").asText(),second.get("managementToken").asText());
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(firstOwner)).andExpect(status().isOk()).andExpect(jsonPath("$[0].moderationStatus").value("PENDING"));
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,suggestionId).cookie(secondOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}"))
+                .andExpect(status().isForbidden());
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,suggestionId).cookie(firstOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.moderationStatus").value("PUBLISHED"));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1));
+        var rejected=mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Private",null))).andReturn();
+        String rejectedId=json.readTree(rejected.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,rejectedId).cookie(firstOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"REJECTED\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/routes/{id}/suggestions/{sid}",routeId,rejectedId)).andExpect(status().isNotFound());
+        mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,rejectedId).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\"Ola\",\"content\":\"hidden\"}"))
+                .andExpect(status().isConflict());
+        var comment=mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,suggestionId).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\" Ola \",\"content\":\" hello \" ,\"moderationStatus\":\"PUBLISHED\"}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.moderationStatus").value("PENDING")).andExpect(jsonPath("$.content").value("hello")).andReturn();
+        String commentId=json.readTree(comment.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(firstOwner)).andExpect(jsonPath("$[0].comments[0].moderationStatus").value("PENDING"));
+        mvc.perform(get("/api/routes/{id}/suggestions/owner/moderation-queue",routeId).cookie(firstOwner)).andExpect(jsonPath("$[0].kind").value("COMMENT"));
+        var rejectedComment=mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,suggestionId).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\"Jan\",\"content\":\"reject me\"}" )).andReturn();
+        String rejectedCommentId=json.readTree(rejectedComment.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/comments/{cid}/moderation",routeId,rejectedCommentId).cookie(firstOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"REJECTED\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/routes/{id}/suggestions/{sid}",routeId,suggestionId)).andExpect(jsonPath("$.comments.length()").value(0));
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/comments/{cid}/moderation",second.get("publicId").asText(),commentId).cookie(secondOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}"))
+                .andExpect(status().isNotFound());
+        mvc.perform(patch("/api/routes/{id}/suggestions/owner/comments/{cid}/moderation",routeId,commentId).cookie(firstOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}"))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/routes/{id}/suggestions/{sid}",routeId,suggestionId)).andExpect(jsonPath("$.comments[0].content").value("hello")).andExpect(jsonPath("$.commentCount").value(1));
+        assertThat(jdbc.queryForObject("select distance_meters from routes where public_id=?",Double.class,routeId)).isEqualTo(distance);
+        assertThat(jdbc.queryForObject("select ST_AsBinary(track_geometry) from routes where public_id=?",byte[].class,routeId)).isEqualTo(geometry);
+    }
+    private Cookie ownerCookie(String routeId,String token)throws Exception{return mvc.perform(post("/api/routes/{id}/ownership",routeId).contentType(MediaType.APPLICATION_JSON).content("{\"token\":\""+token+"\"}" )).andExpect(status().isNoContent()).andReturn().getResponse().getCookie("route_owner");}
     private JsonNode upload(String filename) throws Exception {
         byte[] bytes=new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes();
         MockMultipartFile file=new MockMultipartFile("file",filename,"application/gpx+xml",bytes);

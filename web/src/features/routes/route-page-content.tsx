@@ -12,10 +12,10 @@ import { CommunityMarkerLegend, RouteMapToolbar } from "./route-map-toolbar";
 import { normalizeRoutePositions, type RouteCoordinate, type RoutePosition } from "./route-geometry";
 import { createSuggestionDraft, EMPTY_SUGGESTION_DRAFT, type RoutePageMode, type SuggestionDraft, type SuggestionTool } from "./route-page-state";
 import { SuggestionWorkspace } from "./suggestion-workspace";
-import { createRouteSuggestion, getRouteSuggestions } from "./api";
+import { createRouteSuggestion, getOwnerRouteSuggestions, getRouteSuggestions } from "./api";
 import type { CreateSuggestionRequest, RouteSuggestion } from "@/types/route";
 
-export function RoutePageContent({ route }: { route: RouteData }) {
+export function RoutePageContent({ route,isOwner }: { route: RouteData;isOwner:boolean }) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<RoutePageMode>("view");
   const [draft, setDraft] = useState<SuggestionDraft>(EMPTY_SUGGESTION_DRAFT);
@@ -25,7 +25,7 @@ export function RoutePageContent({ route }: { route: RouteData }) {
   const [selectedSuggestionId,setSelectedSuggestionId]=useState<string|null>(null);
   const [success,setSuccess]=useState(false);
 
-  useEffect(()=>{let active=true;getRouteSuggestions(route.publicId).then(items=>{if(active)setSuggestions(items)}).catch(()=>{if(active)setSuggestions([])}).finally(()=>{if(active)setSuggestionsLoading(false)});return()=>{active=false}},[route.publicId]);
+  useEffect(()=>{let active=true;(isOwner?getOwnerRouteSuggestions(route.publicId):getRouteSuggestions(route.publicId)).then(items=>{if(active)setSuggestions(items)}).catch(()=>{if(active)setSuggestions([])}).finally(()=>{if(active)setSuggestionsLoading(false)});return()=>{active=false}},[route.publicId,isOwner]);
 
   function enterViewMode() {
     setMode("view");
@@ -39,9 +39,8 @@ export function RoutePageContent({ route }: { route: RouteData }) {
   }
 
   async function submitSuggestion(request:CreateSuggestionRequest){
-    const created=await createRouteSuggestion(route.publicId,request);
-    setSuggestions(current=>[...current,created].sort((a,b)=>a.start.distanceMeters-b.start.distanceMeters));
-    setSelectedSuggestionId(created.publicId); setSuccess(true); enterViewMode();
+    await createRouteSuggestion(route.publicId,request);
+    setSuccess(true); enterViewMode();
   }
 
   function selectTool(tool: Exclude<SuggestionTool, null>) {
@@ -95,7 +94,7 @@ export function RoutePageContent({ route }: { route: RouteData }) {
       </div>
       <div className="space-y-4 xl:sticky xl:top-4">
         {mode === "view" ? (
-          <>{success&&<div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{t("persistence.saved")}</div>}<ShareRouteCard /><RouteFeedbackSidebar suggestions={suggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item)=>setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></>
+          <>{success&&<div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{t("persistence.awaitingModeration")}</div>}<ShareRouteCard /><RouteFeedbackSidebar routeId={route.publicId} isOwner={isOwner} suggestions={suggestions} onSuggestionsChange={setSuggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item)=>setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></>
         ) : (
           <SuggestionWorkspace draft={draft} onDraftChange={setDraft} onSelectTool={selectTool} onSubmit={submitSuggestion} />
         )}

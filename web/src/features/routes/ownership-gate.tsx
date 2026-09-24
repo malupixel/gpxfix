@@ -30,5 +30,5 @@ export function OwnershipGate({ route }: { route: RouteData }) {
     return () => { active = false; };
   }, [params, publicId, router]);
 
-  return <><RouteHeader route={route} isOwner={isOwner} /><RoutePageContent route={route} /></>;
+  return <><RouteHeader route={route} isOwner={isOwner} /><RoutePageContent route={route} isOwner={isOwner} /></>;
 }

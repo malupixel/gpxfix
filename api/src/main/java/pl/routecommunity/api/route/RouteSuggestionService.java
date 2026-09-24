@@ -15,9 +15,9 @@ public class RouteSuggestionService {
     private static final Set<String> NOTE_CATEGORIES=Set.of("water","food","surface","view","services","other");
     private static final Set<String> PROBLEM_CATEGORIES=Set.of("highTraffic","badSurface","roadClosed","construction","dangerous","unpaved","other");
     private static final Set<String> DETOUR_TAGS=Set.of("betterSurface","lessTraffic","safer","scenic","avoidsClosure","other");
-    private final RouteRepository routes; private final RouteSuggestionRepository suggestions; private final PublicIdGenerator ids;
+    private final RouteRepository routes; private final RouteSuggestionRepository suggestions; private final SuggestionCommentRepository comments; private final PublicIdGenerator ids;
     private final GeometryFactory geometries=new GeometryFactory(new PrecisionModel(),4326);
-    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,PublicIdGenerator ids){this.routes=routes;this.suggestions=suggestions;this.ids=ids;}
+    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,SuggestionCommentRepository comments,PublicIdGenerator ids){this.routes=routes;this.suggestions=suggestions;this.comments=comments;this.ids=ids;}
 
     @Transactional
     public SuggestionDto create(String routePublicId,CreateSuggestionRequest request){
@@ -50,13 +50,25 @@ public class RouteSuggestionService {
         String publicId=uniquePublicId(); Instant now=Instant.now();
         RouteSuggestion entity=new RouteSuggestion(publicId,route,request.type(),request.authorName().trim(),request.description().trim(),optional(request.category()),
                 request.tags()==null?null:String.join(",",request.tags()),start,end,proposed,request.start().distanceMeters(),endDistance,now);
-        suggestions.saveAndFlush(entity); return dto(entity);
+        suggestions.saveAndFlush(entity); return dto(entity,false);
     }
 
     @Transactional(readOnly=true)
-    public List<SuggestionDto> list(String routePublicId){
+    public List<SuggestionDto> listPublic(String routePublicId){
         if(!routes.existsByPublicId(routePublicId))throw new ApiException(HttpStatus.NOT_FOUND,"Route not found");
-        return suggestions.findByRoute_PublicIdOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId).stream().map(this::dto).toList();
+        return suggestions.findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId,ModerationStatus.PUBLISHED).stream().map(value->dto(value,false)).toList();
+    }
+    @Transactional(readOnly=true)
+    public SuggestionDto getPublic(String routePublicId,String suggestionPublicId){return dto(suggestions.findByRoute_PublicIdAndPublicIdAndModerationStatus(routePublicId,suggestionPublicId,ModerationStatus.PUBLISHED).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found")),false);}
+    @Transactional(readOnly=true)
+    public List<SuggestionDto> listOwner(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().map(value->dto(value,true)).toList();}
+    @Transactional(readOnly=true)
+    List<RouteSuggestion> pendingForRoute(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().filter(s->s.getModerationStatus()==ModerationStatus.PENDING).toList();}
+    @Transactional
+    public SuggestionDto moderate(String routePublicId,String suggestionPublicId,ModerationStatus target){
+        RouteSuggestion value=suggestions.findByRoute_PublicIdAndPublicId(routePublicId,suggestionPublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found"));
+        try{value.moderate(target,Instant.now());}catch(IllegalArgumentException|IllegalStateException e){throw bad(e.getMessage());}
+        return dto(value,true);
     }
     private void requireOnRoute(Route route,Point point,String label){if(route.getTrackGeometry().distance(point)>ANCHOR_TOLERANCE_DEGREES)throw bad(label+" must lie on the route");}
     private void validateFinite(CreateSuggestionRequest.Anchor anchor){if(!Double.isFinite(anchor.longitude())||!Double.isFinite(anchor.latitude())||!Double.isFinite(anchor.distanceMeters()))throw bad("Coordinates and route distance must be finite");}
@@ -73,11 +85,16 @@ public class RouteSuggestionService {
     private String optional(String value){return value==null||value.isBlank()?null:value.trim();}
     private String uniquePublicId(){for(int i=0;i<5;i++){String id=ids.next();if(!suggestions.existsByPublicId(id))return id;}throw new DataIntegrityViolationException("Could not allocate suggestion public ID");}
     private ApiException bad(String message){return new ApiException(HttpStatus.BAD_REQUEST,message);}
-    private SuggestionDto dto(RouteSuggestion value){
+    SuggestionDto dto(RouteSuggestion value,boolean owner){
         SuggestionDto.Anchor start=new SuggestionDto.Anchor(value.getStartPoint().getX(),value.getStartPoint().getY(),value.getStartDistanceMeters());
         SuggestionDto.Anchor end=value.getEndPoint()==null?null:new SuggestionDto.Anchor(value.getEndPoint().getX(),value.getEndPoint().getY(),value.getEndDistanceMeters());
         SuggestionDto.GeoJsonLineString geometry=value.getProposedGeometry()==null?null:new SuggestionDto.GeoJsonLineString("LineString",Arrays.stream(value.getProposedGeometry().getCoordinates()).map(c->List.of(c.x,c.y)).toList());
         List<String> tags=value.getTags()==null||value.getTags().isBlank()?List.of():List.of(value.getTags().split(","));
-        return new SuggestionDto(value.getPublicId(),value.getType(),value.getStatus(),value.getAuthorName(),value.getDescription(),value.getCategory(),tags,start,end,geometry,value.getBaseRouteUpdatedAt(),value.getCreatedAt(),value.getUpdatedAt());
+        List<SuggestionCommentDto> discussion=(owner
+                ? comments.findBySuggestion_IdOrderByCreatedAtAsc(value.getId()).stream()
+                : comments.findBySuggestion_IdAndModerationStatusOrderByCreatedAtAsc(value.getId(),ModerationStatus.PUBLISHED).stream()).map(this::commentDto).toList();
+        long count=comments.countBySuggestion_IdAndModerationStatus(value.getId(),ModerationStatus.PUBLISHED);
+        return new SuggestionDto(value.getPublicId(),value.getType(),value.getModerationStatus(),value.getIntegrationStatus(),value.getApplicability(),value.getAuthorName(),value.getDescription(),value.getCategory(),tags,start,end,geometry,value.getBaseRouteUpdatedAt(),value.getCreatedAt(),value.getUpdatedAt(),count,discussion);
     }
+    SuggestionCommentDto commentDto(SuggestionComment value){return new SuggestionCommentDto(value.getPublicId(),value.getAuthorName(),value.getContent(),value.getModerationStatus(),value.getCreatedAt(),value.getUpdatedAt());}
 }
