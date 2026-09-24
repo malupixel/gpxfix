@@ -1,8 +1,9 @@
-import type { ButtonHTMLAttributes, Dispatch, SetStateAction } from "react";
+import { useState, type ButtonHTMLAttributes, type Dispatch, type SetStateAction } from "react";
 
 import { calculatePolylineDistance, type RouteCoordinate } from "./route-geometry";
 import { createSuggestionDraft, type SuggestionDraft, type SuggestionTool } from "./route-page-state";
 import { useTranslation } from "react-i18next";
+import type { CreateSuggestionRequest } from "@/types/route";
 
 const suggestionTypes = [
   { type: "issue", icon: "!", labelKey: "suggestion.reportIssue", descriptionKey: "suggestion.reportIssueHelp" },
@@ -14,15 +15,16 @@ type Props = {
   draft: SuggestionDraft;
   onDraftChange: Dispatch<SetStateAction<SuggestionDraft>>;
   onSelectTool: (tool: Exclude<SuggestionTool, null>) => void;
+  onSubmit: (request: CreateSuggestionRequest) => Promise<void>;
 };
 
-export function SuggestionWorkspace({ draft, onDraftChange, onSelectTool }: Props) {
+export function SuggestionWorkspace({ draft, onDraftChange, onSelectTool, onSubmit }: Props) {
   const { t } = useTranslation();
   const setField = (field: "message" | "authorName", value: string) => onDraftChange((current) => current.type ? { ...current, [field]: value } : current);
   const review = () => onDraftChange((current) => current.type ? { ...current, step: "review" } : current);
   const edit = () => onDraftChange((current) => current.type ? { ...current, step: "edit" } : current);
 
-  if (draft.type && draft.step === "review") return <ReviewSuggestion draft={draft} onBack={edit} />;
+  if (draft.type && draft.step === "review") return <ReviewSuggestion draft={draft} onBack={edit} onSubmit={onSubmit} />;
 
   return (
     <aside className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm xl:p-5">
@@ -92,8 +94,9 @@ function DetourEditor({ draft, setDraft, setField, review }: EditorProps<"detour
   </>;
 }
 
-function ReviewSuggestion({ draft, onBack }: { draft: Exclude<SuggestionDraft, { type: null }>; onBack: () => void }) {
+function ReviewSuggestion({ draft, onBack, onSubmit }: { draft: Exclude<SuggestionDraft, { type: null }>; onBack: () => void; onSubmit: Props["onSubmit"] }) {
   const { t } = useTranslation();
+  const [saving,setSaving]=useState(false); const [error,setError]=useState(false);
   let location = "";
   if (draft.type === "note" && draft.position) location = formatKilometer(draft.position.distanceMeters);
   if ((draft.type === "issue" || draft.type === "detour") && draft.start && draft.end) location = `${formatKilometer(draft.start.distanceMeters)} – ${formatKilometer(draft.end.distanceMeters)}`;
@@ -102,14 +105,16 @@ function ReviewSuggestion({ draft, onBack }: { draft: Exclude<SuggestionDraft, {
   return <aside className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm xl:p-5">
     <h2 className="text-xl font-bold">{t("suggestion.reviewTitle")}</h2><p className="mt-1 text-sm text-slate-600">{t("suggestion.reviewHelp")}</p>
     <dl className="mt-5 space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm"><ReviewRow label={t("suggestion.type")} value={t(`suggestion.type${capitalize(draft.type)}`)} /><ReviewRow label={draft.type === "note" ? t("suggestion.location") : t("suggestion.section")} value={location} />{original !== null && proposed !== null && <><ReviewRow label={t("suggestion.originalDistance")} value={formatDistance(original)} /><ReviewRow label={t("suggestion.proposedDistance")} value={formatDistance(proposed)} /><ReviewRow label={t("suggestion.difference")} value={formatDifference(proposed - original)} /></>}<ReviewRow label={t("common.description")} value={draft.message} /><ReviewRow label={t("common.name")} value={draft.authorName} /></dl>
-    <PrimaryButton disabled title={t("suggestion.savingSoon")}>{t("suggestion.submit")}</PrimaryButton><p className="mt-2 text-center text-xs text-slate-500">{t("suggestion.savingSoon")}</p><SecondaryButton onClick={onBack}>{t("suggestion.backToEdit")}</SecondaryButton>
+    <PrimaryButton disabled={saving} onClick={async()=>{setSaving(true);setError(false);try{await onSubmit(suggestionRequest(draft));}catch{setError(true);setSaving(false);}}}>{saving?t("persistence.saving"):t("suggestion.submit")}</PrimaryButton>
+    {error&&<p role="alert" className="mt-2 text-center text-xs font-semibold text-red-700">{t("persistence.saveFailed")}</p>}
+    <div className="mt-2"><SecondaryButton disabled={saving} onClick={onBack}>{t("suggestion.backToEdit")}</SecondaryButton></div>
   </aside>;
 }
 
 type EditorProps<T extends Exclude<SuggestionTool, null>> = { draft: Extract<SuggestionDraft, { type: T }>; setDraft: Dispatch<SetStateAction<SuggestionDraft>>; setField: (field: "message" | "authorName", value: string) => void; review: () => void };
 function Instruction({ heading, text }: { heading: string; text: string }) { return <div className="rounded-xl border border-slate-200 bg-slate-50 p-4"><h3 className="text-sm font-bold">{heading}</h3><p className="mt-1 text-xs leading-5 text-slate-600">{text}</p></div>; }
 function SelectionSummary({ label, value, detail }: { label: string; value: string; detail?: string }) { return <div className="rounded-xl border border-blue-200 bg-blue-50 p-4"><p className="text-xs font-semibold text-blue-700">{label}</p><p className="mt-1 text-lg font-bold text-slate-900">{value}</p>{detail && <p className="mt-1 text-xs text-slate-600">{detail}</p>}</div>; }
-function DraftFields({ placeholder, draft, setField }: { placeholder: string; draft: Exclude<SuggestionDraft, { type: null }>; setField: EditorProps<"note">["setField"] }) { const { t } = useTranslation(); return <><label className="mt-4 block text-xs font-bold text-slate-700">{t("common.description")}<textarea rows={4} value={draft.message} onChange={(event) => setField("message", event.target.value)} placeholder={placeholder} className="mt-1.5 w-full resize-y rounded-lg border border-slate-300 bg-white p-3 text-sm font-normal outline-none focus:border-blue-500" /></label><label className="mt-4 block text-xs font-bold text-slate-700">{t("suggestion.yourName")}<input value={draft.authorName} onChange={(event) => setField("authorName", event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal outline-none focus:border-blue-500" /></label><p className="mt-1 text-xs text-slate-500">{t("common.noAccount")}</p></>; }
+function DraftFields({ placeholder, draft, setField }: { placeholder: string; draft: Exclude<SuggestionDraft, { type: null }>; setField: EditorProps<"note">["setField"] }) { const { t } = useTranslation(); return <><label className="mt-4 block text-xs font-bold text-slate-700">{t("common.description")}<textarea rows={4} maxLength={2000} required value={draft.message} onChange={(event) => setField("message", event.target.value)} placeholder={placeholder} className="mt-1.5 w-full resize-y rounded-lg border border-slate-300 bg-white p-3 text-sm font-normal outline-none focus:border-blue-500" /></label><label className="mt-4 block text-xs font-bold text-slate-700">{t("suggestion.yourName")}<input maxLength={80} required value={draft.authorName} onChange={(event) => setField("authorName", event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal outline-none focus:border-blue-500" /></label><p className="mt-1 text-xs text-slate-500">{t("common.noAccount")}</p></>; }
 function SelectField({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) { const { t } = useTranslation(); return <label className="mt-4 block text-xs font-bold text-slate-700">{label}<select value={value} onChange={(event) => onChange(event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-normal"><option value="">{t("common.select")}</option>{options.map((option) => <option key={option} value={option}>{t(`options.${option}`)}</option>)}</select></label>; }
 function TagSelector({ selected, onChange }: { selected: string[]; onChange: (tags: string[]) => void }) { const { t } = useTranslation(); const tags = ["betterSurface", "lessTraffic", "safer", "scenic", "avoidsClosure", "other"]; return <fieldset className="mt-4"><legend className="text-xs font-bold text-slate-700">{t("suggestion.tagsOptional")}</legend><div className="mt-2 flex flex-wrap gap-2">{tags.map((tag) => <button key={tag} type="button" aria-pressed={selected.includes(tag)} onClick={() => onChange(selected.includes(tag) ? selected.filter((item) => item !== tag) : [...selected, tag])} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${selected.includes(tag) ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600"}`}>{t(`options.${tag}`)}</button>)}</div></fieldset>; }
 function DistanceComparison({ original, proposed }: { original: number; proposed: number }) { const { t } = useTranslation(); return <div className="grid grid-cols-3 gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-center"><Metric label={t("suggestion.original")} value={formatDistance(original)} /><Metric label={t("suggestion.proposed")} value={formatDistance(proposed)} /><Metric label={t("suggestion.difference")} value={formatDifference(proposed - original)} /></div>; }
@@ -117,8 +122,15 @@ function Metric({ label, value }: { label: string; value: string }) { return <di
 function ReviewRow({ label, value }: { label: string; value: string }) { return <div><dt className="text-xs font-semibold text-slate-500">{label}</dt><dd className="mt-0.5 whitespace-pre-wrap font-medium text-slate-900">{value}</dd></div>; }
 function PrimaryButton({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) { return <button type="button" {...props} className="mt-5 w-full rounded-lg bg-emerald-700 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50">{children}</button>; }
 function SecondaryButton({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) { return <button type="button" {...props} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">{children}</button>; }
-function canReview(draft: Exclude<SuggestionDraft, { type: null }>) { return draft.message.trim().length > 0 && draft.authorName.trim().length > 0 && (draft.type !== "issue" || draft.category.length > 0); }
-function detourCoordinates(draft: Extract<SuggestionDraft, { type: "detour" }>): RouteCoordinate[] { return draft.start ? [[draft.start.lng, draft.start.lat], ...draft.waypoints, ...(draft.end ? [[draft.end.lng, draft.end.lat] as RouteCoordinate] : [])] : []; }
+function canReview(draft: Exclude<SuggestionDraft, { type: null }>) { const message=draft.message.trim();const author=draft.authorName.trim();return message.length>0&&message.length<=2000&&author.length>0&&author.length<=80&&(draft.type!=="issue"||draft.category.length>0); }
+export function detourCoordinates(draft: Extract<SuggestionDraft, { type: "detour" }>): RouteCoordinate[] { return draft.start ? [[draft.start.lng, draft.start.lat], ...draft.waypoints, ...(draft.end ? [[draft.end.lng, draft.end.lat] as RouteCoordinate] : [])] : []; }
+export function suggestionRequest(draft: Exclude<SuggestionDraft,{type:null}>):CreateSuggestionRequest {
+  const anchor=(position:{lng:number;lat:number;distanceMeters:number})=>({longitude:position.lng,latitude:position.lat,distanceMeters:position.distanceMeters});
+  if(draft.type==="note"&&draft.position)return {type:"NOTE",authorName:draft.authorName.trim(),description:draft.message.trim(),category:draft.category||null,tags:[],start:anchor(draft.position),end:null,proposedGeometry:null};
+  if(draft.type==="issue"&&draft.start&&draft.end)return {type:"PROBLEM",authorName:draft.authorName.trim(),description:draft.message.trim(),category:draft.category,tags:[],start:anchor(draft.start),end:anchor(draft.end),proposedGeometry:null};
+  if(draft.type==="detour"&&draft.start&&draft.end)return {type:"DETOUR",authorName:draft.authorName.trim(),description:draft.message.trim(),category:null,tags:draft.tags,start:anchor(draft.start),end:anchor(draft.end),proposedGeometry:{type:"LineString",coordinates:detourCoordinates(draft)}};
+  throw new Error("Incomplete suggestion draft");
+}
 function formatKilometer(meters: number) { return `km ${(meters / 1_000).toFixed(1)}`; }
 function formatDistance(meters: number) { return `${(meters / 1_000).toFixed(1)} km`; }
 function formatDifference(meters: number) { return `${meters >= 0 ? "+" : "−"}${formatDistance(Math.abs(meters))}`; }

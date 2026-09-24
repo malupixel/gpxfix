@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -16,5 +17,7 @@ public class GlobalExceptionHandler {
     ResponseEntity<Map<String,Object>> handleTooLarge(MaxUploadSizeExceededException exception){return error(HttpStatus.PAYLOAD_TOO_LARGE,"The uploaded GPX file is too large");}
     @ExceptionHandler({MethodArgumentNotValidException.class,MissingServletRequestParameterException.class})
     ResponseEntity<Map<String,Object>> handleValidation(Exception exception){return error(HttpStatus.BAD_REQUEST,"Validation failed: "+exception.getMessage());}
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<Map<String,Object>> handleMalformedJson(HttpMessageNotReadableException exception){return error(HttpStatus.BAD_REQUEST,"Malformed JSON request");}
     private ResponseEntity<Map<String,Object>> error(HttpStatus status,String message){return ResponseEntity.status(status).body(Map.of("timestamp",Instant.now().toString(),"status",status.value(),"error",message));}
 }

@@ -24,7 +24,7 @@ import {
 import { ElevationChart } from "@/features/routes/elevation-profile";
 import { elevationProfileModel } from "@/features/routes/elevation-profile-data";
 import type { RoutePageMode, SuggestionDraft } from "@/features/routes/route-page-state";
-import type { RouteData } from "@/types/route";
+import type { RouteData, RouteSuggestion } from "@/types/route";
 
 const DEFAULT_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 const ROUTE_SOURCE_ID = "route-source";
@@ -38,6 +38,9 @@ const DETOUR_PREVIEW_SOURCE_ID = "suggestion-detour-preview-source";
 const DETOUR_PREVIEW_LAYER_ID = "suggestion-detour-preview";
 const HANDLES_SOURCE_ID = "suggestion-handles-source";
 const HANDLES_LAYER_ID = "suggestion-handles";
+const PERSISTED_SOURCE_ID = "persisted-suggestions-source";
+const PERSISTED_LINES_LAYER_ID = "persisted-suggestions-lines";
+const PERSISTED_POINTS_LAYER_ID = "persisted-suggestions-points";
 const DEFAULT_DISTANCE_INTERVAL_METERS = 10_000;
 
 type RouteMapProps = {
@@ -45,6 +48,9 @@ type RouteMapProps = {
   elevationProfile: RouteData["elevationProfile"];
   mode: RoutePageMode;
   draft: SuggestionDraft;
+  suggestions: RouteSuggestion[];
+  selectedSuggestionId: string | null;
+  onSuggestionSelect: (publicId: string) => void;
   highlightedCoordinate: RouteCoordinate | null;
   onElevationHighlight: (coordinate: RouteCoordinate | null) => void;
   onRouteClick: (position: RoutePosition) => void;
@@ -52,7 +58,7 @@ type RouteMapProps = {
   onCancelSelection: () => void;
 };
 
-export function RouteMap({ geometry, elevationProfile, mode, draft, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
+export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions, selectedSuggestionId, onSuggestionSelect, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
@@ -152,9 +158,18 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, highlightedC
       map.addLayer({ id: DETOUR_PREVIEW_LAYER_ID, type: "line", source: DETOUR_PREVIEW_SOURCE_ID, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#10b981", "line-opacity": 0.75, "line-width": 4, "line-dasharray": [1, 1.5] } });
       addGeoJsonSource(map, HANDLES_SOURCE_ID);
       map.addLayer({ id: HANDLES_LAYER_ID, type: "circle", source: HANDLES_SOURCE_ID, paint: { "circle-radius": 7, "circle-color": ["match", ["get", "kind"], "note", "#2563eb", "waypoint", "#ffffff", "#059669"], "circle-stroke-color": ["match", ["get", "kind"], "note", "#ffffff", "#047857"], "circle-stroke-width": 3 } });
+      addGeoJsonSource(map, PERSISTED_SOURCE_ID);
+      map.addLayer({id:PERSISTED_LINES_LAYER_ID,type:"line",source:PERSISTED_SOURCE_ID,filter:["==",["geometry-type"],"LineString"],layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":["match",["get","type"],"PROBLEM","#dc2626","#059669"],"line-width":["case",["get","selected"],8,5],"line-opacity":["case",["get","selected"],1,0.72],"line-dasharray":[1,1.2]}});
+      map.addLayer({id:PERSISTED_POINTS_LAYER_ID,type:"circle",source:PERSISTED_SOURCE_ID,filter:["==",["geometry-type"],"Point"],paint:{"circle-radius":["case",["get","selected"],10,7],"circle-color":["match",["get","type"],"NOTE","#2563eb","PROBLEM","#dc2626","#059669"],"circle-stroke-color":"#ffffff","circle-stroke-width":3}});
 
       // Layers appended without `beforeId` render above every existing style layer.
       map.moveLayer(ROUTE_LAYER_ID);
+      map.moveLayer(PERSISTED_LINES_LAYER_ID);
+      map.moveLayer(PERSISTED_POINTS_LAYER_ID);
+      map.moveLayer(SELECTION_LAYER_ID);
+      map.moveLayer(DETOUR_LAYER_ID);
+      map.moveLayer(DETOUR_PREVIEW_LAYER_ID);
+      map.moveLayer(HANDLES_LAYER_ID);
       endpointMarkers.push(...addEndpointMarkers(map, coordinates, labelsRef.current));
       map.resize();
       map.fitBounds(getRouteBounds(coordinates), {
@@ -198,6 +213,38 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, highlightedC
     loadedMap.setPaintProperty(SELECTION_LAYER_ID, "line-color", draft.type === "detour" ? "#f59e0b" : "#dc2626");
     loadedMap.setPaintProperty(SELECTION_LAYER_ID, "line-opacity", draft.type === "detour" ? 0.55 : 0.78);
   }, [draft, loadedMap, mode, routeMeasure]);
+
+  useEffect(()=>{
+    if(!loadedMap)return;
+    const features:GeoJSON.Feature[]=[];
+    for(const suggestion of suggestions){
+      const properties={publicId:suggestion.publicId,type:suggestion.type,selected:suggestion.publicId===selectedSuggestionId};
+      if(suggestion.type==="NOTE")features.push({type:"Feature",properties,geometry:{type:"Point",coordinates:[suggestion.start.longitude,suggestion.start.latitude]}});
+      if(suggestion.type==="PROBLEM"&&suggestion.end){
+        const start=findNearestPositionOnRoute([suggestion.start.longitude,suggestion.start.latitude],routeMeasure);
+        const end=findNearestPositionOnRoute([suggestion.end.longitude,suggestion.end.latitude],routeMeasure);
+        if(start&&end)features.push({type:"Feature",properties,geometry:extractRouteSection(routeMeasure,start,end)});
+      }
+      if(suggestion.type==="DETOUR"&&suggestion.proposedGeometry)features.push({type:"Feature",properties,geometry:suggestion.proposedGeometry});
+    }
+    setSourceData(loadedMap,PERSISTED_SOURCE_ID,featureCollection(features));
+  },[loadedMap,routeMeasure,selectedSuggestionId,suggestions]);
+
+  useEffect(()=>{
+    if(!loadedMap||!selectedSuggestionId)return;
+    const suggestion=suggestions.find(item=>item.publicId===selectedSuggestionId);if(!suggestion)return;
+    const coordinates=suggestion.proposedGeometry?.coordinates??(suggestion.end?[[suggestion.start.longitude,suggestion.start.latitude],[suggestion.end.longitude,suggestion.end.latitude]]:[[suggestion.start.longitude,suggestion.start.latitude]]);
+    if(coordinates.length===1)loadedMap.easeTo({center:coordinates[0],zoom:Math.max(loadedMap.getZoom(),14),duration:500});
+    else loadedMap.fitBounds(getRouteBounds(coordinates),{padding:90,maxZoom:16,duration:500});
+  },[loadedMap,selectedSuggestionId,suggestions]);
+
+  useEffect(()=>{
+    if(!loadedMap)return;
+    const select=(event:MapMouseEvent)=>{const feature=loadedMap.queryRenderedFeatures(event.point,{layers:[PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]})[0];const publicId=feature?.properties?.publicId;if(typeof publicId==="string")onSuggestionSelect(publicId)};
+    const enter=()=>{loadedMap.getCanvas().style.cursor="pointer"}; const leave=()=>{loadedMap.getCanvas().style.cursor=""};
+    for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.on("click",layer,select);loadedMap.on("mouseenter",layer,enter);loadedMap.on("mouseleave",layer,leave)}
+    return()=>{for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.off("click",layer,select);loadedMap.off("mouseenter",layer,enter);loadedMap.off("mouseleave",layer,leave)}};
+  },[loadedMap,onSuggestionSelect]);
 
   useEffect(() => {
     if (!loadedMap) return;

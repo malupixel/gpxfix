@@ -81,9 +81,58 @@ class RouteApiIntegrationTest {
     }
     @Test void unknownRouteIs404() throws Exception {mvc.perform(get("/api/routes/doesNotExist")).andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Route not found"));}
     @Test void malformedUploadIsRejected() throws Exception {MockMultipartFile file=new MockMultipartFile("file","bad.gpx",MediaType.APPLICATION_XML_VALUE,"<not-gpx".getBytes());mvc.perform(multipart("/api/routes").file(file)).andExpect(status().isUnprocessableEntity());}
+    @Test void createsAndRetrievesEverySuggestionTypeAsPending() throws Exception {
+        String routeId=upload("suggestions.gpx").get("publicId").asText();
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Spring","REJECTED")))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("NOTE")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(jsonPath("$.publicId").isString()).andExpect(jsonPath("$.start.longitude").value(21.0122));
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(problemJson()))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("PROBLEM")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(jsonPath("$.end.distanceMeters").value(800.0));
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(detourJson()))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.type").value("DETOUR")).andExpect(jsonPath("$.status").value("PENDING"))
+                .andExpect(jsonPath("$.proposedGeometry.type").value("LineString")).andExpect(jsonPath("$.proposedGeometry.coordinates.length()").value(3));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3));
+    }
+    @Test void suggestionValidationRejectsUnknownRoutesMalformedRequestsAndInvalidGeometry() throws Exception {
+        String routeId=upload("validation.gpx").get("publicId").asText();
+        mvc.perform(post("/api/routes/missing/suggestions").contentType(MediaType.APPLICATION_JSON).content(noteJson("Water",null))).andExpect(status().isNotFound());
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content("{"))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Malformed JSON request"));
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJsonWithCoordinates(200,52.2297)))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").exists());
+        String detached=detourJson().replace("[21.0122,52.2297]","[21.5,52.5]");
+        mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(detached))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Detour geometry must start and end at its route anchors"));
+    }
+    @Test void suggestionsAreScopedToTheirRoute() throws Exception {
+        String first=upload("scope-first.gpx").get("publicId").asText(); String second=upload("scope-second.gpx").get("publicId").asText();
+        mvc.perform(post("/api/routes/{id}/suggestions",first).contentType(MediaType.APPLICATION_JSON).content(noteJson("View",null))).andExpect(status().isCreated());
+        mvc.perform(get("/api/routes/{id}/suggestions",first)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1));
+        mvc.perform(get("/api/routes/{id}/suggestions",second)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(0));
+    }
     private JsonNode upload(String filename) throws Exception {
         byte[] bytes=new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes();
         MockMultipartFile file=new MockMultipartFile("file",filename,"application/gpx+xml",bytes);
         return json.readTree(mvc.perform(multipart("/api/routes").file(file)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
     }
+    private String noteJson(String description,String attemptedStatus){return """
+            {"type":"NOTE","authorName":"Kasia","description":"%s","category":"water","tags":[],
+             "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},"end":null,"proposedGeometry":null%s}
+            """.formatted(description,attemptedStatus==null?"":",\"status\":\""+attemptedStatus+"\"");}
+    private String noteJsonWithCoordinates(double longitude,double latitude){return """
+            {"type":"NOTE","authorName":"Kasia","description":"Water","category":"water","tags":[],
+             "start":{"longitude":%s,"latitude":%s,"distanceMeters":0},"end":null,"proposedGeometry":null}
+            """.formatted(longitude,latitude);}
+    private String problemJson(){return """
+            {"type":"PROBLEM","authorName":"Adam","description":"Heavy traffic","category":"highTraffic","tags":[],
+             "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},
+             "end":{"longitude":21.0200,"latitude":52.2350,"distanceMeters":800},"proposedGeometry":null}
+            """;}
+    private String detourJson(){return """
+            {"type":"DETOUR","authorName":"Marek","description":"Safer road","category":null,"tags":["safer"],
+             "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},
+             "end":{"longitude":21.0200,"latitude":52.2350,"distanceMeters":800},
+             "proposedGeometry":{"type":"LineString","coordinates":[[21.0122,52.2297],[21.016,52.231],[21.0200,52.2350]]}}
+            """;}
 }
