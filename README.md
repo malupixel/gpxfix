@@ -47,12 +47,12 @@ Stop services with `docker compose down` (or `make down`). Database data remains
 
 ## Local endpoints
 
-- Frontend: http://localhost:3000
-- API health: http://localhost:8080/api/health
-- Swagger UI: http://localhost:8080/swagger-ui.html
-- OpenAPI JSON: http://localhost:8080/v3/api-docs
-- Actuator health: http://localhost:8080/actuator/health
-- PostgreSQL: `localhost:5432`
+- Frontend: http://localhost:8150
+- API health: http://localhost:8151/api/health
+- Swagger UI: http://localhost:8151/swagger-ui.html
+- OpenAPI JSON: http://localhost:8151/v3/api-docs
+- Actuator health: http://localhost:8151/actuator/health
+- PostgreSQL: `localhost:8152`
 
 Values can be changed in the root `.env`. `NEXT_PUBLIC_API_URL` is compiled into the browser bundle, so rebuild the web image after changing it.
 
@@ -92,7 +92,7 @@ docker compose config
 docker compose build --no-cache
 ```
 
-If port 3000, 8080, or 5432 is already occupied, change the matching host port in `.env`. If a migration failed only in disposable local data, inspect API logs first, then recreate the database with `docker compose down -v && docker compose up --build`. Ensure Docker is running when the integration test is expected to execute.
+If port 8150, 8151, or 8152 is already occupied, change the matching host port in `.env`. If a migration failed only in disposable local data, inspect API logs first, then recreate the database with `docker compose down -v && docker compose up --build`. Ensure Docker is running when the integration test is expected to execute.
 
 ## GPX route upload
 
@@ -106,13 +106,13 @@ The first end-to-end feature accepts a GPX 1.0/1.1 track, calculates distance an
 Example:
 
 ```bash
-curl -X POST http://localhost:8080/api/routes \
+curl -X POST http://localhost:8151/api/routes \
   -F 'file=@route.gpx;type=application/gpx+xml' \
   -F 'name=Weekend ride' \
   -F 'description=A route worth checking locally'
 +```
 
-Open the result at `http://localhost:3000/route/{publicId}`.
+Open the result at `http://localhost:8150/route/{publicId}`.
 
 Uploaded source files are stored under `GPX_STORAGE_PATH` (`/data/gpx` in Docker) using generated internal names. Compose mounts the persistent `gpx_data` volume. Upload limits are controlled by `GPX_MAX_FILE_SIZE`, `GPX_MAX_REQUEST_SIZE`, and `GPX_MAX_FILE_SIZE_BYTES`.
 

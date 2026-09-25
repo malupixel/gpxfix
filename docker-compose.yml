@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-routecommunity}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-routecommunity}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-8152}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -31,13 +31,13 @@ services:
       DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-routecommunity}
       POSTGRES_USER: ${POSTGRES_USER:-routecommunity}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-routecommunity}
-      CORS_ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-3000}
+      CORS_ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-8150}
       GPX_MAX_FILE_SIZE: ${GPX_MAX_FILE_SIZE:-10MB}
       GPX_MAX_REQUEST_SIZE: ${GPX_MAX_REQUEST_SIZE:-11MB}
       GPX_MAX_FILE_SIZE_BYTES: ${GPX_MAX_FILE_SIZE_BYTES:-10485760}
       GPX_STORAGE_PATH: ${GPX_STORAGE_PATH:-/data/gpx}
     ports:
-      - "${API_PORT:-8080}:8080"
+      - "${API_PORT:-8151}:8080"
     volumes:
       - gpx_data:/data/gpx
     depends_on:
@@ -57,14 +57,14 @@ services:
     build:
       context: ./web
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8151}
         NEXT_PUBLIC_MAP_STYLE_URL: ${NEXT_PUBLIC_MAP_STYLE_URL:-https://tiles.openfreemap.org/styles/liberty}
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8151}
       API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8080}
       NEXT_PUBLIC_MAP_STYLE_URL: ${NEXT_PUBLIC_MAP_STYLE_URL:-https://tiles.openfreemap.org/styles/liberty}
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_PORT:-8150}:3000"
     depends_on:
       api:
         condition: service_healthy
