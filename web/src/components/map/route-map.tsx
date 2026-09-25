@@ -9,7 +9,7 @@ import {
   type LngLatBoundsLike,
   type MapMouseEvent,
 } from "maplibre-gl";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -23,7 +23,7 @@ import {
 } from "@/features/routes/route-geometry";
 import { ElevationChart } from "@/features/routes/elevation-profile";
 import { elevationProfileModel } from "@/features/routes/elevation-profile-data";
-import type { RoutePageMode, SuggestionDraft } from "@/features/routes/route-page-state";
+import type { RoutePageMode, SuggestionGeometry } from "@/features/routes/route-page-state";
 import type { RouteData, RouteSuggestion } from "@/types/route";
 
 const DEFAULT_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
@@ -47,7 +47,8 @@ type RouteMapProps = {
   geometry: RouteData["geometry"];
   elevationProfile: RouteData["elevationProfile"];
   mode: RoutePageMode;
-  draft: SuggestionDraft;
+  draft: SuggestionGeometry;
+  drawingActive: boolean;
   suggestions: RouteSuggestion[];
   selectedSuggestionId: string | null;
   onSuggestionSelect: (publicId: string) => void;
@@ -55,10 +56,10 @@ type RouteMapProps = {
   onElevationHighlight: (coordinate: RouteCoordinate | null) => void;
   onRouteClick: (position: RoutePosition) => void;
   onMapClick: (coordinate: RouteCoordinate) => void;
-  onCancelSelection: () => void;
+  workflowOverlay?: ReactNode;
 };
 
-export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions, selectedSuggestionId, onSuggestionSelect, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, onCancelSelection }: RouteMapProps) {
+export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActive, suggestions, selectedSuggestionId, onSuggestionSelect, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, workflowOverlay }: RouteMapProps) {
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
@@ -230,6 +231,15 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions,
     setSourceData(loadedMap,PERSISTED_SOURCE_ID,featureCollection(features));
   },[loadedMap,routeMeasure,selectedSuggestionId,suggestions]);
 
+  useEffect(() => {
+    if (!loadedMap) return;
+    const muted = mode === "suggest";
+    loadedMap.setPaintProperty(PERSISTED_LINES_LAYER_ID, "line-opacity", muted ? 0.16 : ["case", ["get", "selected"], 1, 0.72]);
+    loadedMap.setPaintProperty(PERSISTED_LINES_LAYER_ID, "line-width", muted ? 3 : ["case", ["get", "selected"], 8, 5]);
+    loadedMap.setPaintProperty(PERSISTED_POINTS_LAYER_ID, "circle-opacity", muted ? 0.2 : 1);
+    loadedMap.setPaintProperty(PERSISTED_POINTS_LAYER_ID, "circle-stroke-opacity", muted ? 0.25 : 1);
+  }, [loadedMap, mode]);
+
   useEffect(()=>{
     if(!loadedMap||!selectedSuggestionId)return;
     const suggestion=suggestions.find(item=>item.publicId===selectedSuggestionId);if(!suggestion)return;
@@ -240,16 +250,16 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions,
 
   useEffect(()=>{
     if(!loadedMap)return;
-    const select=(event:MapMouseEvent)=>{const feature=loadedMap.queryRenderedFeatures(event.point,{layers:[PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]})[0];const publicId=feature?.properties?.publicId;if(typeof publicId==="string")onSuggestionSelect(publicId)};
-    const enter=()=>{loadedMap.getCanvas().style.cursor="pointer"}; const leave=()=>{loadedMap.getCanvas().style.cursor=""};
+    const select=(event:MapMouseEvent)=>{if(mode!=="view")return;const feature=loadedMap.queryRenderedFeatures(event.point,{layers:[PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]})[0];const publicId=feature?.properties?.publicId;if(typeof publicId==="string")onSuggestionSelect(publicId)};
+    const enter=()=>{if(mode==="view")loadedMap.getCanvas().style.cursor="pointer"}; const leave=()=>{loadedMap.getCanvas().style.cursor=""};
     for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.on("click",layer,select);loadedMap.on("mouseenter",layer,enter);loadedMap.on("mouseleave",layer,leave)}
     return()=>{for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.off("click",layer,select);loadedMap.off("mouseenter",layer,enter);loadedMap.off("mouseleave",layer,leave)}};
-  },[loadedMap,onSuggestionSelect]);
+  },[loadedMap,mode,onSuggestionSelect]);
 
   useEffect(() => {
     if (!loadedMap) return;
     const canvas = loadedMap.getCanvas();
-    const suggestionActive = mode === "suggest" && draft.type !== null && draft.step === "edit";
+    const suggestionActive = mode === "suggest" && draft.type !== null && drawingActive;
     const onClick = (event: MapMouseEvent) => {
       if (!suggestionActive) return;
       const coordinate: RouteCoordinate = [event.lngLat.lng, event.lngLat.lat];
@@ -260,28 +270,25 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions,
       } else if (draft.type === "detour" && draft.start && !draft.end) onMapClick(coordinate);
     };
     const onMouseMove = (event: MapMouseEvent) => {
-      if (draft.type !== "detour" || !draft.start || draft.end || draft.step !== "edit") return;
+      if (draft.type !== "detour" || !draft.start || draft.end || !drawingActive) return;
       const preview = [...detourCoordinates(draft), [event.lngLat.lng, event.lngLat.lat] as RouteCoordinate];
       setSourceData(loadedMap, DETOUR_PREVIEW_SOURCE_ID, preview.length >= 2 ? featureCollection([lineFeature(preview)]) : emptyFeatureCollection());
     };
     const onRouteEnter = () => { if (suggestionActive) canvas.style.cursor = draft.type === "detour" && draft.start ? "crosshair" : "pointer"; };
     const onRouteLeave = () => { canvas.style.cursor = draft.type === "detour" && draft.start && !draft.end ? "crosshair" : ""; };
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape" && suggestionActive) onCancelSelection(); };
     if (draft.type === "detour" && draft.start && !draft.end) canvas.style.cursor = "crosshair";
     loadedMap.on("click", onClick);
     loadedMap.on("mousemove", onMouseMove);
     loadedMap.on("mouseenter", ROUTE_INTERACTION_LAYER_ID, onRouteEnter);
     loadedMap.on("mouseleave", ROUTE_INTERACTION_LAYER_ID, onRouteLeave);
-    document.addEventListener("keydown", onKeyDown);
     return () => {
       loadedMap.off("click", onClick);
       loadedMap.off("mousemove", onMouseMove);
       loadedMap.off("mouseenter", ROUTE_INTERACTION_LAYER_ID, onRouteEnter);
       loadedMap.off("mouseleave", ROUTE_INTERACTION_LAYER_ID, onRouteLeave);
-      document.removeEventListener("keydown", onKeyDown);
       canvas.style.cursor = "";
     };
-  }, [draft, loadedMap, mode, onCancelSelection, onMapClick, onRouteClick, routeMeasure]);
+  }, [draft, drawingActive, loadedMap, mode, onMapClick, onRouteClick, routeMeasure]);
 
   useEffect(() => {
     if (!loadedMap || distanceInterval === 0) return;
@@ -428,7 +435,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions,
           <FullscreenIcon isFullscreen={isFullscreen} />
         </button>
       </div>
-      {isFullscreen && elevationModel && (
+      {isFullscreen && elevationModel && mode === "view" && (
         <FullscreenElevationDrawer
           model={elevationModel}
           expanded={isElevationExpanded}
@@ -439,6 +446,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, suggestions,
           onHighlight={onElevationHighlight}
         />
       )}
+      {workflowOverlay}
     </div>
   );
 }
@@ -591,7 +599,7 @@ function pointFeature(coordinate: RouteCoordinate, kind: string): GeoJSON.Featur
   return { type: "Feature", properties: { kind }, geometry: { type: "Point", coordinates: coordinate } };
 }
 
-function detourCoordinates(draft: Extract<SuggestionDraft, { type: "detour" }>): RouteCoordinate[] {
+function detourCoordinates(draft: Extract<SuggestionGeometry, { type: "detour" }>): RouteCoordinate[] {
   if (!draft.start) return [];
   return [[draft.start.lng, draft.start.lat], ...draft.waypoints, ...(draft.end ? [[draft.end.lng, draft.end.lat] as RouteCoordinate] : [])];
 }

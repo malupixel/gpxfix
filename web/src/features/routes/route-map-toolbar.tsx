@@ -6,10 +6,9 @@ type Props = {
   selectedTool: SuggestionTool;
   onView: () => void;
   onSuggest: (tool?: SuggestionTool) => void;
-  onSelectTool: (tool: Exclude<SuggestionTool, null>) => void;
 };
 
-export function RouteMapToolbar({ mode, selectedTool, onView, onSuggest, onSelectTool }: Props) {
+export function RouteMapToolbar({ mode, selectedTool, onView, onSuggest }: Props) {
   const { t } = useTranslation();
   return <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 p-1 sm:flex-row sm:items-center sm:justify-between">
     <div className="grid grid-cols-2 rounded-lg bg-slate-100 p-1 text-sm font-semibold sm:flex" role="tablist" aria-label={t("toolbar.mode")}>
@@ -20,7 +19,7 @@ export function RouteMapToolbar({ mode, selectedTool, onView, onSuggest, onSelec
       <ToolbarAction icon="●" label={t("toolbar.addNote")} tone="blue" onClick={() => onSuggest("note")} />
       <ToolbarAction icon="△" label={t("toolbar.flagSection")} tone="red" onClick={() => onSuggest("issue")} />
       <ToolbarAction icon="✎" label={t("toolbar.editRoute")} tone="green" onClick={() => onSuggest("detour")} />
-    </div> : <SuggestionToolStatus selectedTool={selectedTool} onSelectTool={onSelectTool} />}
+    </div> : <SuggestionToolStatus selectedTool={selectedTool} />}
   </div>;
 }
 
@@ -29,9 +28,9 @@ function ToolbarAction({ icon, label, tone, onClick }: { icon: string; label: st
   return <button type="button" onClick={onClick} className="route-button min-h-10 bg-white hover:bg-slate-50"><span className={tones[tone]}>{icon}</span> {label}</button>;
 }
 
-function SuggestionToolStatus({ selectedTool, onSelectTool }: Pick<Props, "selectedTool" | "onSelectTool">) {
-  const { t } = useTranslation(); const tools = [{ type: "issue", key: "toolbar.issue" }, { type: "detour", key: "toolbar.detour" }, { type: "note", key: "toolbar.note" }] as const;
-  return <div className="flex flex-wrap items-center gap-1 px-1 text-xs font-semibold sm:text-sm"><span className="mr-1 text-slate-500">{t("toolbar.suggesting")}</span>{tools.map((tool) => <button key={tool.type} type="button" aria-pressed={selectedTool === tool.type} onClick={() => onSelectTool(tool.type)} className={`rounded-md border px-3 py-2 ${selectedTool === tool.type ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{t(tool.key)}</button>)}</div>;
+function SuggestionToolStatus({ selectedTool }: Pick<Props, "selectedTool">) {
+  const { t } = useTranslation();
+  return <div className="px-3 py-2 text-xs font-semibold text-slate-600 sm:text-sm"><span>{t("toolbar.suggesting")}</span>{selectedTool && <span className="ml-1 text-blue-700">{t(`suggestion.type${selectedTool[0].toUpperCase()}${selectedTool.slice(1)}`)}</span>}</div>;
 }
 
 export function CommunityMarkerLegend() {
