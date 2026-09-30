@@ -13,6 +13,9 @@ public class RouteController {
         CreatedRoute created=service.create(file,name,description);
         return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE,ownership.cookieHeader(created.publicId(),created.sessionToken())).body(created.response());
     }
+    @PostMapping(value="/drawn",consumes=MediaType.APPLICATION_JSON_VALUE) @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<CreateRouteResponse> createDrawn(@RequestBody CreateDrawnRouteRequest request){CreatedRoute created=service.createDrawn(request);return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE,ownership.cookieHeader(created.publicId(),created.sessionToken())).body(created.response());}
+    @GetMapping(value="/{publicId}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> download(@PathVariable String publicId){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+".gpx").body(service.download(publicId));}
     @GetMapping("/{publicId}") public RouteDto get(@PathVariable String publicId){return service.get(publicId);}
     @PostMapping("/{publicId}/ownership")
     public ResponseEntity<Void> establishOwnership(@PathVariable String publicId,@RequestBody ManagementTokenRequest request){

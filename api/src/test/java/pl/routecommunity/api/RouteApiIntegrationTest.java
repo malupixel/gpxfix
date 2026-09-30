@@ -81,6 +81,20 @@ class RouteApiIntegrationTest {
     }
     @Test void unknownRouteIs404() throws Exception {mvc.perform(get("/api/routes/doesNotExist")).andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Route not found"));}
     @Test void malformedUploadIsRejected() throws Exception {MockMultipartFile file=new MockMultipartFile("file","bad.gpx",MediaType.APPLICATION_XML_VALUE,"<not-gpx".getBytes());mvc.perform(multipart("/api/routes").file(file)).andExpect(status().isUnprocessableEntity());}
+    @Test void drawnMixedRouteIsPersistedAndExportedAsContinuousGpx() throws Exception {
+        String body="""
+            {"name":"Mixed route","description":"drawn","editorDocument":{"version":1,
+             "points":[{"id":"a","coordinate":[21.0,52.0]},{"id":"b","coordinate":[21.01,52.01]},{"id":"c","coordinate":[21.02,52.01]}],
+             "segments":[{"id":"ab","fromId":"a","toId":"b","mode":"ROUTED","geometry":[[21.0,52.0],[21.005,52.006],[21.01,52.01]],"intendedGeometry":[[21.0,52.0],[21.01,52.01]]},
+             {"id":"bc","fromId":"b","toId":"c","mode":"DIRECT","geometry":[[21.01,52.01],[21.02,52.01]],"intendedGeometry":[[21.01,52.01],[21.02,52.01]]}]}}
+            """;
+        var result=mvc.perform(post("/api/routes/drawn").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andExpect(jsonPath("$.managementToken").isString()).andReturn();
+        String routeId=json.readTree(result.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02));
+        mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/gpx+xml")).andExpect(content().string(org.hamcrest.Matchers.containsString("lat=\"52.01\" lon=\"21.02\"")));
+        assertThat(jdbc.queryForObject("select source_type from routes where public_id=?",String.class,routeId)).isEqualTo("DRAWN");
+        assertThat(jdbc.queryForObject("select editor_definition is not null from routes where public_id=?",Boolean.class,routeId)).isTrue();
+    }
     @Test void createsAndRetrievesEverySuggestionTypeAsPending() throws Exception {
         String routeId=upload("suggestions.gpx").get("publicId").asText();
         mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Spring","REJECTED")))

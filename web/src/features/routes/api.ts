@@ -1,7 +1,9 @@
 import { apiClient } from "@/lib/api-client";
 import type { CreateRouteResponse, RouteData } from "@/types/route";
+import type { RouteEditorDocument } from "@/features/route-editor/model";
 import type { CreateSuggestionRequest, ModerationStatus, RouteSuggestion, SuggestionComment } from "@/types/route";
 export function uploadRoute(form: FormData): Promise<CreateRouteResponse> { return apiClient("/api/routes", { method: "POST", body: form }); }
+export function createDrawnRoute(request:{name:string;description:string|null;editorDocument:RouteEditorDocument}):Promise<CreateRouteResponse>{return apiClient("/api/routes/drawn",{method:"POST",body:JSON.stringify(request)});}
 export function getRoute(publicId: string): Promise<RouteData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}`, { cache: "no-store" }); }
 export function establishRouteOwnership(publicId: string, token: string): Promise<void> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/ownership`, { method: "POST", body: JSON.stringify({ token }) });

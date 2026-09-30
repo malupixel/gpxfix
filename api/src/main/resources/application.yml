@@ -41,3 +41,5 @@ app:
   ownership:
     cookie-secure: ${OWNER_COOKIE_SECURE:true}
     session-days: ${OWNER_SESSION_DAYS:30}
+  routing:
+    base-url: ${ROUTING_BASE_URL:https://router.project-osrm.org}

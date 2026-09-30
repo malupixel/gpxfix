@@ -4,7 +4,7 @@ import { formatRouteDate } from "./route-format";
 import { useTranslation } from "react-i18next";
 
 export function RouteInformation({ route }: { route: RouteData }) {
-  return <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]"><RouteDetails route={route} /><RecentActivity /><RouteDownload /></div>;
+  return <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]"><RouteDetails route={route} /><RecentActivity /><RouteDownload publicId={route.publicId} /></div>;
 }
 
 function RouteDetails({ route }: { route: RouteData }) {
@@ -24,6 +24,6 @@ function RecentActivity() {
   const { t } = useTranslation(); return <section className="route-card p-4"><div className="flex justify-between gap-3"><h2 className="text-lg font-bold">{t("info.recentActivity")}</h2><button disabled title={t("info.historySoon")} className="text-xs font-semibold text-blue-600 disabled:cursor-not-allowed">{t("info.viewAll")}</button></div><div className="mt-4 space-y-3">{recentActivityMock.map((item) => <div key={item.id} className="flex gap-2.5"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-slate-100 text-xs">{item.kind === "issue" ? "!" : item.kind === "detour" ? "↗" : item.kind === "positive" ? "♥" : "◆"}</span><p className="text-xs leading-4"><strong className="text-slate-800">{t(`activity.${item.kind}`, { name: item.name })}</strong><br /><span className="text-slate-500">{item.distance} · {t(item.ageKey)}</span></p></div>)}</div></section>;
 }
 
-function RouteDownload() {
-  const { t } = useTranslation(); return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><button disabled title={t("info.downloadSoon")} className="mt-4 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm disabled:cursor-not-allowed disabled:opacity-60">{t("info.downloadGpx")}</button><button disabled title={t("info.originalSoon")} className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-2.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60">{t("info.viewOriginal")}</button><p className="mt-4 text-xs leading-5 text-slate-500">{t("info.unchanged")}</p></section>;
+function RouteDownload({ publicId }: { publicId: string }) {
+  const { t } = useTranslation(); const base=process.env.NEXT_PUBLIC_API_URL??"http://localhost:8080";return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><a href={`${base}/api/routes/${encodeURIComponent(publicId)}/gpx`} className="mt-4 block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">{t("info.downloadGpx")}</a><p className="mt-4 text-xs leading-5 text-slate-500">{t("info.unchanged")}</p></section>;
 }
