@@ -36,6 +36,20 @@ button, select { font: inherit; }
   transition: background-color 150ms ease;
 }
 
+.route-control-point {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, #2563eb 0 28%, white 31% 43%, rgb(37 99 235 / 35%) 46% 100%);
+  cursor: grab;
+  touch-action: none;
+}
+.route-control-point[data-kind="start"] { background: radial-gradient(circle, #059669 0 28%, white 31% 43%, rgb(5 150 105 / 35%) 46% 100%); }
+.route-control-point[data-kind="end"] { background: radial-gradient(circle, #dc2626 0 28%, white 31% 43%, rgb(220 38 38 / 35%) 46% 100%); }
+.route-control-point:hover, .route-control-point-selected { filter: drop-shadow(0 0 4px rgb(15 23 42 / 70%)); transform: scale(1.12); }
+.route-control-point-dragging { cursor: grabbing; transform: scale(1.18); }
+
 .community-marker { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; border: 2px solid white; box-shadow: 0 2px 5px rgb(15 23 42 / 0.25); }
 .community-marker-issue { background: #dc2626; color: white; }
 .community-marker-detour { background: #f59e0b; color: white; }

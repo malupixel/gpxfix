@@ -1,17 +1,8 @@
-import type { RouteCoordinate } from "@/features/routes/route-geometry";
+import { createRouteMeasure, findNearestPositionOnRoute, type RouteCoordinate } from "@/features/routes/route-geometry";
 
 export type SegmentMode = "ROUTED" | "DIRECT";
 export type ControlPoint = { id: string; coordinate: RouteCoordinate };
-export type RouteSegment = {
-  id: string;
-  fromId: string;
-  toId: string;
-  mode: SegmentMode;
-  geometry: RouteCoordinate[];
-  intendedGeometry: RouteCoordinate[];
-  routingStatus: "idle" | "routing" | "failed";
-  requestVersion: number;
-};
+export type RouteSegment = { id: string; fromId: string; toId: string; mode: SegmentMode; geometry: RouteCoordinate[]; intendedGeometry: RouteCoordinate[]; routingStatus: "idle" | "routing" | "failed"; requestVersion: number };
 export type RouteEditorDocument = { version: 1; points: ControlPoint[]; segments: RouteSegment[] };
 export type EditorState = { present: RouteEditorDocument; past: RouteEditorDocument[]; future: RouteEditorDocument[] };
 
@@ -19,7 +10,7 @@ export const emptyDocument = (): RouteEditorDocument => ({ version: 1, points: [
 export const createEditorState = (document = emptyDocument()): EditorState => ({ present: document, past: [], future: [] });
 const copy = (value: RouteEditorDocument): RouteEditorDocument => structuredClone(value);
 const commit = (state: EditorState, next: RouteEditorDocument): EditorState => ({ present: next, past: [...state.past, copy(state.present)].slice(-100), future: [] });
-const point = (document: RouteEditorDocument, id: string) => document.points.find((item) => item.id === id)!;
+const point = (document: RouteEditorDocument, pointId: string) => document.points.find((item) => item.id === pointId)!;
 const directGeometry = (document: RouteEditorDocument, segment: RouteSegment): RouteCoordinate[] => [point(document, segment.fromId).coordinate, point(document, segment.toId).coordinate];
 
 export type EditorAction =
@@ -33,6 +24,31 @@ export type EditorAction =
   | { type: "routing-failure"; segmentId: string; version: number }
   | { type: "undo" } | { type: "redo" };
 
+/** Returns a snapped point and two polylines whose concatenation is the original shape. */
+export function splitSegmentGeometry(geometry: RouteCoordinate[], click: RouteCoordinate) {
+  const nearest = findNearestPositionOnRoute(click, createRouteMeasure(geometry));
+  if (!nearest) throw new Error("A route segment needs at least two coordinates");
+  const coordinate: RouteCoordinate = [nearest.lng, nearest.lat];
+  const left = [...geometry.slice(0, nearest.segmentIndex + 1), coordinate];
+  const right = [coordinate, ...geometry.slice(nearest.segmentIndex + 1)];
+  return { coordinate, left, right };
+}
+
+/** Local drag preview. The reducer commits this result only once, at drag end. */
+export function previewPointMove(source: RouteEditorDocument, pointId: string, coordinate: RouteCoordinate): RouteEditorDocument {
+  const document = copy(source);
+  const moved = point(document, pointId);
+  moved.coordinate = coordinate;
+  for (const segment of adjacentSegments(document, pointId)) {
+    segment.intendedGeometry = directGeometry(document, segment);
+    if (segment.mode === "DIRECT") segment.geometry = directGeometry(document, segment);
+    else if (segment.fromId === pointId) segment.geometry[0] = coordinate;
+    else segment.geometry[segment.geometry.length - 1] = coordinate;
+    segment.routingStatus = "idle";
+  }
+  return document;
+}
+
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
   if (action.type === "undo") return state.past.length ? { present: state.past.at(-1)!, past: state.past.slice(0, -1), future: [copy(state.present), ...state.future] } : state;
   if (action.type === "redo") return state.future.length ? { present: state.future[0], past: [...state.past, copy(state.present)], future: state.future.slice(1) } : state;
@@ -42,44 +58,47 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     if (!segment || (action.type !== "routing-start" && segment.requestVersion !== action.version)) return state;
     if (action.type === "routing-start") { segment.requestVersion = action.version; segment.routingStatus = "routing"; }
     if (action.type === "routing-success") {
-      const from = point(document, segment.fromId).coordinate;
-      const to = point(document, segment.toId).coordinate;
-      segment.geometry = action.geometry.length >= 2
-        ? [from, ...action.geometry.slice(1, -1), to]
-        : [from, to];
-      segment.routingStatus = "idle";
+      const from = point(document, segment.fromId).coordinate, to = point(document, segment.toId).coordinate;
+      segment.geometry = action.geometry.length >= 2 ? [from, ...action.geometry.slice(1, -1), to] : [from, to];
+      segment.intendedGeometry = [from, to]; segment.routingStatus = "idle";
     }
     if (action.type === "routing-failure") segment.routingStatus = "failed";
     return { ...state, present: document };
   }
   if (action.type === "add") {
     const previous = document.points.at(-1); document.points.push({ id: action.id, coordinate: action.coordinate });
-    if (previous) document.segments.push({ id: action.segmentId!, fromId: previous.id, toId: action.id, mode: action.mode, geometry: [previous.coordinate, action.coordinate], intendedGeometry: [previous.coordinate, action.coordinate], routingStatus: "idle", requestVersion: 0 });
+    if (previous) document.segments.push(newSegment(action.segmentId!, previous.id, action.id, action.mode, [previous.coordinate, action.coordinate]));
   }
-  if (action.type === "move") {
-    const moved = point(document, action.pointId); moved.coordinate = action.coordinate;
-    for (const segment of document.segments.filter((item) => item.fromId === action.pointId || item.toId === action.pointId)) { segment.intendedGeometry = directGeometry(document, segment); segment.geometry = directGeometry(document, segment); segment.routingStatus = "idle"; }
-  }
+  if (action.type === "move") return commit(state, previewPointMove(document, action.pointId, action.coordinate));
   if (action.type === "mode") {
-    const segment = document.segments.find((item) => item.id === action.segmentId)!; segment.mode = action.mode;
-    if (action.mode === "DIRECT") { segment.geometry = directGeometry(document, segment); segment.routingStatus = "idle"; }
+    const segment = document.segments.find((item) => item.id === action.segmentId); if (!segment) return state;
+    segment.mode = action.mode;
+    if (action.mode === "DIRECT") { segment.geometry = directGeometry(document, segment); segment.intendedGeometry = segment.geometry; segment.routingStatus = "idle"; }
   }
   if (action.type === "insert") {
-    const index = document.segments.findIndex((item) => item.id === action.segmentId); const original = document.segments[index];
-    const pointIndex = document.points.findIndex((item) => item.id === original.toId); document.points.splice(pointIndex, 0, { id: action.id, coordinate: action.coordinate });
-    const make = (id:string,fromId:string,toId:string):RouteSegment => ({ id, fromId, toId, mode: original.mode, geometry: [point(document,fromId).coordinate,point(document,toId).coordinate], intendedGeometry: [point(document,fromId).coordinate,point(document,toId).coordinate], routingStatus:"idle",requestVersion:0 });
-    document.segments.splice(index,1,make(action.leftId,original.fromId,action.id),make(action.rightId,action.id,original.toId));
+    const index = document.segments.findIndex((item) => item.id === action.segmentId); if (index < 0) return state;
+    const original = document.segments[index], split = splitSegmentGeometry(original.geometry, action.coordinate);
+    const pointIndex = document.points.findIndex((item) => item.id === original.toId);
+    document.points.splice(pointIndex, 0, { id: action.id, coordinate: split.coordinate });
+    document.segments.splice(index, 1, newSegment(action.leftId, original.fromId, action.id, original.mode, split.left), newSegment(action.rightId, action.id, original.toId, original.mode, split.right));
   }
   if (action.type === "remove") {
     const index = document.points.findIndex((item) => item.id === action.pointId); if (index < 0) return state;
     const before = document.segments.find((item) => item.toId === action.pointId), after = document.segments.find((item) => item.fromId === action.pointId);
-    document.points.splice(index,1); document.segments = document.segments.filter((item) => item !== before && item !== after);
-    if (before && after) document.segments.splice(index-1,0,{ id:action.replacementId!,fromId:before.fromId,toId:after.toId,mode:after.mode,geometry:[point(document,before.fromId).coordinate,point(document,after.toId).coordinate],intendedGeometry:[point(document,before.fromId).coordinate,point(document,after.toId).coordinate],routingStatus:"idle",requestVersion:0 });
+    document.points.splice(index, 1); document.segments = document.segments.filter((item) => item !== before && item !== after);
+    if (before && after) {
+      // A routed neighbour wins: joining it as DIRECT would silently change user intent.
+      const mode: SegmentMode = before.mode === "ROUTED" || after.mode === "ROUTED" ? "ROUTED" : "DIRECT";
+      const geometry = [point(document, before.fromId).coordinate, point(document, after.toId).coordinate];
+      document.segments.splice(index - 1, 0, newSegment(action.replacementId!, before.fromId, after.toId, mode, geometry));
+    }
   }
   return commit(state, document);
 }
 
-export function finalGeometry(document: RouteEditorDocument): RouteCoordinate[] {
-  return document.segments.flatMap((segment, index) => index ? segment.geometry.slice(1) : segment.geometry);
+function newSegment(id: string, fromId: string, toId: string, mode: SegmentMode, geometry: RouteCoordinate[]): RouteSegment {
+  return { id, fromId, toId, mode, geometry, intendedGeometry: [geometry[0], geometry.at(-1)!], routingStatus: "idle", requestVersion: 0 };
 }
-export function affectedRoutedSegments(document: RouteEditorDocument, pointId: string) { return document.segments.filter((segment) => segment.mode === "ROUTED" && (segment.fromId === pointId || segment.toId === pointId)); }
+export function finalGeometry(document: RouteEditorDocument): RouteCoordinate[] { return document.segments.flatMap((segment, index) => index ? segment.geometry.slice(1) : segment.geometry); }
+export function adjacentSegments(document: RouteEditorDocument, pointId: string) { return document.segments.filter((segment) => segment.fromId === pointId || segment.toId === pointId); }
+export function affectedRoutedSegments(document: RouteEditorDocument, pointId: string) { return adjacentSegments(document, pointId).filter((segment) => segment.mode === "ROUTED"); }
