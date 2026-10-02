@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -25,13 +27,17 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import java.util.concurrent.*;
 import java.util.List;
+import pl.routecommunity.api.elevation.ElevationProvider;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.*;
 @Testcontainers(disabledWithoutDocker=true) @SpringBootTest @AutoConfigureMockMvc @ActiveProfiles("test")
 class RouteApiIntegrationTest {
     private static final Path STORAGE;
     static {try{STORAGE=Files.createTempDirectory("route-community-test-");}catch(Exception e){throw new ExceptionInInitializerError(e);}}
     @Container static final PostgreSQLContainer<?> POSTGRES=new PostgreSQLContainer<>(DockerImageName.parse("postgis/postgis:17-3.5").asCompatibleSubstituteFor("postgres"));
     @DynamicPropertySource static void properties(DynamicPropertyRegistry r){r.add("spring.datasource.url",POSTGRES::getJdbcUrl);r.add("spring.datasource.username",POSTGRES::getUsername);r.add("spring.datasource.password",POSTGRES::getPassword);r.add("app.storage.gpx-path",STORAGE::toString);}
-    @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json;
+    @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json; @MockitoBean ElevationProvider elevationProvider;
+    @BeforeEach void elevation(){when(elevationProvider.elevations(anyList())).thenAnswer(invocation->{List<ElevationProvider.Coordinate> points=invocation.getArgument(0);return points.stream().map(point->100.0+(point.latitude()-52.0)*100).toList();});}
     @Test void uploadThenGetRoute() throws Exception {
         byte[] bytes=new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes();
         MockMultipartFile file=new MockMultipartFile("file","sample.gpx","application/gpx+xml",bytes);
@@ -56,6 +62,7 @@ class RouteApiIntegrationTest {
         assertThat(storedHash).hasSize(32).isNotEqualTo(token.getBytes());
         assertThat(jdbc.queryForObject("select count(*) from routes where encode(owner_token_hash,'escape')=?",Integer.class,token)).isZero();
         assertThat(Files.list(STORAGE).count()).isPositive();
+        verifyNoInteractions(elevationProvider);
     }
     @Test void managementTokenCreatesRouteScopedOwnerSession() throws Exception {
         JsonNode first=upload("first.gpx"); JsonNode second=upload("second.gpx");
@@ -93,8 +100,9 @@ class RouteApiIntegrationTest {
             """;
         var result=mvc.perform(post("/api/routes/drawn").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andExpect(jsonPath("$.managementToken").isString()).andReturn();
         String routeId=json.readTree(result.getResponse().getContentAsString()).get("publicId").asText();
-        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02));
-        mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/gpx+xml")).andExpect(content().string(org.hamcrest.Matchers.containsString("lat=\"52.01\" lon=\"21.02\"")));
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02)).andExpect(jsonPath("$.elevationGainMeters").isNumber()).andExpect(jsonPath("$.elevationProfile.length()").value(4)).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").isNumber());
+        mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/gpx+xml")).andExpect(content().string(org.hamcrest.Matchers.containsString("lat=\"52.01\" lon=\"21.02\""))).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
+        verify(elevationProvider,atLeastOnce()).elevations(anyList());
         assertThat(jdbc.queryForObject("select v.source_type from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",String.class,routeId)).isEqualTo("DRAWN");
         assertThat(jdbc.queryForObject("select v.editor_definition is not null from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Boolean.class,routeId)).isTrue();
     }

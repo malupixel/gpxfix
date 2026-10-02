@@ -75,7 +75,7 @@ public class GpxParser {
         return elevation;
     }
 
-    private GpxTrack calculateMetrics(List<List<GpxPoint>> segments) {
+    public static GpxTrack calculateMetrics(List<List<GpxPoint>> segments) {
         double distance = 0, gain = 0;
         boolean elevationFound = false;
         for (List<GpxPoint> segment : segments) {
