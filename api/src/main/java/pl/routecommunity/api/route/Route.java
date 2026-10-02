@@ -1,36 +1,18 @@
 package pl.routecommunity.api.route;
 import jakarta.persistence.*;
 import java.time.Instant;
-import org.locationtech.jts.geom.LineString;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+
 @Entity
-@Table(name = "routes")
+@Table(name="routes")
 class Route {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
-    @Column(name="public_id", nullable=false, unique=true, length=12) private String publicId;
-    @Column(nullable=false, length=200) private String name;
-    @Column(columnDefinition="text") private String description;
-    @Column(name="original_filename", nullable=false, length=255) private String originalFilename;
-    @Column(name="storage_key", nullable=false, unique=true, length=255) private String storageKey;
-    @Column(name="distance_meters", nullable=false) private double distanceMeters;
-    @Column(name="elevation_gain_meters") private Double elevationGainMeters;
-    @Column(name="track_geometry", nullable=false, columnDefinition="geometry(LineString,4326)") private LineString trackGeometry;
-    @Column(name="created_at", nullable=false) private Instant createdAt;
-    @Column(name="updated_at", nullable=false) private Instant updatedAt;
-    @Column(name="owner_token_hash", length=32) private byte[] ownerTokenHash;
-    @Column(name="source_type", nullable=false, length=20) private String sourceType="GPX";
-    @JdbcTypeCode(SqlTypes.JSON) @Column(name="editor_definition", columnDefinition="jsonb") private String editorDefinition;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
+    @Column(name="public_id",nullable=false,unique=true,length=12) private String publicId;
+    @Column(name="created_at",nullable=false) private Instant createdAt;
+    @Column(name="owner_token_hash",length=32) private byte[] ownerTokenHash;
+    @OneToOne(fetch=FetchType.LAZY) @JoinColumn(name="current_version_id",unique=true) private RouteVersion currentVersion;
     protected Route() { }
-    Route(String publicId, String name, String description, String originalFilename, String storageKey, double distanceMeters, Double elevationGainMeters, LineString trackGeometry, byte[] ownerTokenHash, Instant now) {
-        this.publicId=publicId; this.name=name; this.description=description; this.originalFilename=originalFilename; this.storageKey=storageKey;
-        this.distanceMeters=distanceMeters; this.elevationGainMeters=elevationGainMeters; this.trackGeometry=trackGeometry; this.ownerTokenHash=ownerTokenHash; this.createdAt=now; this.updatedAt=now;
-    }
-    void markDrawn(String definition){this.sourceType="DRAWN";this.editorDefinition=definition;}
-    String getPublicId(){return publicId;} String getName(){return name;} String getDescription(){return description;} String getOriginalFilename(){return originalFilename;}
-    String getStorageKey(){return storageKey;}
-    double getDistanceMeters(){return distanceMeters;} Double getElevationGainMeters(){return elevationGainMeters;}
-    LineString getTrackGeometry(){return trackGeometry;} Instant getCreatedAt(){return createdAt;} Instant getUpdatedAt(){return updatedAt;}
-    byte[] getOwnerTokenHash(){return ownerTokenHash;}
-    String getEditorDefinition(){return editorDefinition;}
+    Route(String publicId,byte[] ownerTokenHash,Instant now){this.publicId=publicId;this.ownerTokenHash=ownerTokenHash;this.createdAt=now;}
+    void publish(RouteVersion version){if(version.getRoute()!=this)throw new IllegalArgumentException("Version belongs to another route");this.currentVersion=version;}
+    Long getId(){return id;} String getPublicId(){return publicId;} Instant getCreatedAt(){return createdAt;} byte[] getOwnerTokenHash(){return ownerTokenHash;}
+    RouteVersion getCurrentVersion(){if(currentVersion==null)throw new IllegalStateException("Route has no current version");return currentVersion;}
 }

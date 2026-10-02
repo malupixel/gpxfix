@@ -13,7 +13,7 @@ export function UploadForm({compact=false}:{compact?:boolean}) {
   const router=useRouter(); const [error,setError]=useState<string|null>(null);
   const { t }=useTranslation();
   const [created,setCreated]=useState<CreatedRoute|null>(null); const [copyFailed,setCopyFailed]=useState(false); const [copied,setCopied]=useState(false); const [manualConfirmed,setManualConfirmed]=useState(false);
-  const mutation=useMutation({mutationFn:uploadRoute,onSuccess:({publicId,managementToken})=>setCreated({publicId,managementUrl:managementRouteUrl(publicId,managementToken,window.location.origin)}),onError:()=>setError(t("upload.failed"))});
+  const mutation=useMutation({mutationFn:uploadRoute,onSuccess:({publicId,managementToken})=>setCreated({publicId,managementUrl:managementRouteUrl(publicId,managementToken,window.location.origin)}),onError:(uploadError)=>setError(uploadError instanceof Error?`${t("upload.failed")} ${uploadError.message}`:t("upload.failed"))});
   function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setError(null);const form=new FormData(event.currentTarget);const file=form.get("file");if(!(file instanceof File)||file.size===0){setError(t("upload.emptyFile"));return;}mutation.mutate(form);}
   async function copyAndContinue(){if(!created)return;try{await navigator.clipboard.writeText(created.managementUrl);setCopied(true);window.setTimeout(()=>router.push(publicRoutePath(created.publicId)),600);}catch{setCopyFailed(true);}}
   function continueAfterManualCopy(){if(created&&managementModalCanContinue(copied,copyFailed,manualConfirmed))router.push(publicRoutePath(created.publicId));}

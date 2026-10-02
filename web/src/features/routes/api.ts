@@ -1,10 +1,12 @@
 import { apiClient } from "@/lib/api-client";
-import type { CreateRouteResponse, RouteData } from "@/types/route";
+import type { CreateRouteResponse, RouteData, RouteVersionSummary } from "@/types/route";
 import type { RouteEditorDocument } from "@/features/route-editor/model";
 import type { CreateSuggestionRequest, ModerationStatus, RouteSuggestion, SuggestionComment } from "@/types/route";
 export function uploadRoute(form: FormData): Promise<CreateRouteResponse> { return apiClient("/api/routes", { method: "POST", body: form }); }
 export function createDrawnRoute(request:{name:string;description:string|null;editorDocument:RouteEditorDocument}):Promise<CreateRouteResponse>{return apiClient("/api/routes/drawn",{method:"POST",body:JSON.stringify(request)});}
 export function getRoute(publicId: string): Promise<RouteData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}`, { cache: "no-store" }); }
+export function getRouteVersion(publicId:string,version:number):Promise<RouteData>{return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions/${version}`,{cache:"no-store"});}
+export function getRouteVersions(publicId:string):Promise<RouteVersionSummary[]>{return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions`,{cache:"no-store"});}
 export function establishRouteOwnership(publicId: string, token: string): Promise<void> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/ownership`, { method: "POST", body: JSON.stringify({ token }) });
 }
@@ -25,3 +27,4 @@ export function getOwnerRouteSuggestions(publicId:string):Promise<RouteSuggestio
 export function moderateSuggestion(routeId:string,suggestionId:string,moderationStatus:ModerationStatus):Promise<RouteSuggestion>{return apiClient(`/api/routes/${encodeURIComponent(routeId)}/suggestions/owner/${encodeURIComponent(suggestionId)}/moderation`,{method:"PATCH",body:JSON.stringify({moderationStatus})});}
 export function addSuggestionComment(routeId:string,suggestionId:string,request:{authorName:string;content:string}):Promise<SuggestionComment>{return apiClient(`/api/routes/${encodeURIComponent(routeId)}/suggestions/${encodeURIComponent(suggestionId)}/comments`,{method:"POST",body:JSON.stringify(request)});}
 export function moderateSuggestionComment(routeId:string,commentId:string,moderationStatus:ModerationStatus):Promise<SuggestionComment>{return apiClient(`/api/routes/${encodeURIComponent(routeId)}/suggestions/owner/comments/${encodeURIComponent(commentId)}/moderation`,{method:"PATCH",body:JSON.stringify({moderationStatus})});}
+export function mergeSuggestion(routeId:string,suggestionId:string):Promise<RouteData>{return apiClient(`/api/routes/${encodeURIComponent(routeId)}/suggestions/owner/${encodeURIComponent(suggestionId)}/merge`,{method:"POST"});}

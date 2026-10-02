@@ -23,6 +23,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import java.util.concurrent.*;
+import java.util.List;
 @Testcontainers(disabledWithoutDocker=true) @SpringBootTest @AutoConfigureMockMvc @ActiveProfiles("test")
 class RouteApiIntegrationTest {
     private static final Path STORAGE;
@@ -48,7 +50,8 @@ class RouteApiIntegrationTest {
                 .andExpect(jsonPath("$.elevationProfile[1].distanceMeters").isNumber())
                 .andExpect(jsonPath("$.originalFilename").value("sample.gpx"))
                 .andExpect(jsonPath("$.managementToken").doesNotExist()).andExpect(jsonPath("$.ownerTokenHash").doesNotExist());
-        assertThat(jdbc.queryForObject("select ST_SRID(track_geometry) from routes where public_id=?",Integer.class,publicId)).isEqualTo(4326);
+        assertThat(jdbc.queryForObject("select ST_SRID(v.track_geometry) from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Integer.class,publicId)).isEqualTo(4326);
+        assertThat(jdbc.queryForObject("select count(*) from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=1",Integer.class,publicId)).isEqualTo(1);
         byte[] storedHash=jdbc.queryForObject("select owner_token_hash from routes where public_id=?",byte[].class,publicId);
         assertThat(storedHash).hasSize(32).isNotEqualTo(token.getBytes());
         assertThat(jdbc.queryForObject("select count(*) from routes where encode(owner_token_hash,'escape')=?",Integer.class,token)).isZero();
@@ -92,8 +95,8 @@ class RouteApiIntegrationTest {
         String routeId=json.readTree(result.getResponse().getContentAsString()).get("publicId").asText();
         mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02));
         mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/gpx+xml")).andExpect(content().string(org.hamcrest.Matchers.containsString("lat=\"52.01\" lon=\"21.02\"")));
-        assertThat(jdbc.queryForObject("select source_type from routes where public_id=?",String.class,routeId)).isEqualTo("DRAWN");
-        assertThat(jdbc.queryForObject("select editor_definition is not null from routes where public_id=?",Boolean.class,routeId)).isTrue();
+        assertThat(jdbc.queryForObject("select v.source_type from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",String.class,routeId)).isEqualTo("DRAWN");
+        assertThat(jdbc.queryForObject("select v.editor_definition is not null from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Boolean.class,routeId)).isTrue();
     }
     @Test void createsAndRetrievesEverySuggestionTypeAsPending() throws Exception {
         String routeId=upload("suggestions.gpx").get("publicId").asText();
@@ -131,8 +134,8 @@ class RouteApiIntegrationTest {
         var created=mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(noteJson("Spring","PUBLISHED")))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.moderationStatus").value("PENDING")).andReturn();
         String suggestionId=json.readTree(created.getResponse().getContentAsString()).get("publicId").asText();
-        Double distance=jdbc.queryForObject("select distance_meters from routes where public_id=?",Double.class,routeId);
-        byte[] geometry=jdbc.queryForObject("select ST_AsBinary(track_geometry) from routes where public_id=?",byte[].class,routeId);
+        Double distance=jdbc.queryForObject("select v.distance_meters from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Double.class,routeId);
+        byte[] geometry=jdbc.queryForObject("select ST_AsBinary(v.track_geometry) from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",byte[].class,routeId);
         mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,suggestionId).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\" Ola \",\"content\":\" hello \"}"))
                 .andExpect(status().isConflict());
         Cookie firstOwner=ownerCookie(routeId,first.get("managementToken").asText());Cookie secondOwner=ownerCookie(second.get("publicId").asText(),second.get("managementToken").asText());
@@ -164,9 +167,56 @@ class RouteApiIntegrationTest {
         mvc.perform(patch("/api/routes/{id}/suggestions/owner/comments/{cid}/moderation",routeId,commentId).cookie(firstOwner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}"))
                 .andExpect(status().isOk());
         mvc.perform(get("/api/routes/{id}/suggestions/{sid}",routeId,suggestionId)).andExpect(jsonPath("$.comments[0].content").value("hello")).andExpect(jsonPath("$.commentCount").value(1));
-        assertThat(jdbc.queryForObject("select distance_meters from routes where public_id=?",Double.class,routeId)).isEqualTo(distance);
-        assertThat(jdbc.queryForObject("select ST_AsBinary(track_geometry) from routes where public_id=?",byte[].class,routeId)).isEqualTo(geometry);
+        assertThat(jdbc.queryForObject("select v.distance_meters from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Double.class,routeId)).isEqualTo(distance);
+        assertThat(jdbc.queryForObject("select ST_AsBinary(v.track_geometry) from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",byte[].class,routeId)).isEqualTo(geometry);
     }
+    @Test void mergeCreatesImmutableVersionAndKeepsSuggestionHistory() throws Exception {
+        JsonNode created=upload("versioned.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String suggestionId=createSuggestion(routeId,detourJson());publish(routeId,suggestionId,owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,suggestionId)).andExpect(status().isForbidden());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,suggestionId).cookie(owner)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentVersion").value(2)).andExpect(jsonPath("$.viewedVersion").value(2)).andExpect(jsonPath("$.isCurrentVersion").value(true));
+        mvc.perform(get("/api/routes/{id}/versions/1",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.viewedVersion").value(1))
+                .andExpect(jsonPath("$.isCurrentVersion").value(false)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.02));
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.016));
+        mvc.perform(get("/api/routes/{id}/versions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].versionNumber").value(2))
+                .andExpect(jsonPath("$[0].source").value("SUGGESTION_MERGE")).andExpect(jsonPath("$[0].mergedSuggestionPublicId").value(suggestionId));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$[0].integrationStatus").value("MERGED"))
+                .andExpect(jsonPath("$[0].baseVersionNumber").value(1)).andExpect(jsonPath("$[0].mergedIntoVersionNumber").value(2));
+        assertThat(jdbc.queryForObject("select count(*) from route_versions v join routes r on r.id=v.route_id where r.public_id=?",Integer.class,routeId)).isEqualTo(2);
+    }
+    @Test void staleOverlappingSuggestionConflictsWithoutChangingCurrentVersion() throws Exception {
+        JsonNode created=upload("conflict.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String first=createSuggestion(routeId,detourJson()),second=createSuggestion(routeId,detourJson().replace("21.016,52.231","21.017,52.232"));publish(routeId,first,owner);publish(routeId,second,owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andExpect(status().isOk());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andExpect(status().isConflict()).andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("created on v1")));
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.currentVersion").value(2));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$[?(@.publicId == '"+second+"')].integrationStatus").value(org.hamcrest.Matchers.contains("NOT_MERGED")))
+                .andExpect(jsonPath("$[?(@.publicId == '"+second+"')].baseVersionNumber").value(org.hamcrest.Matchers.contains(1)));
+    }
+    @Test void informationalSuggestionsDoNotCreateEmptyRouteVersions() throws Exception {
+        JsonNode created=upload("informational.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());String note=createSuggestion(routeId,noteJson("Water",null));publish(routeId,note,owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,note).cookie(owner)).andExpect(status().isConflict()).andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("does not create")));
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.currentVersion").value(1));
+    }
+    @Test void independentStaleSuggestionsMergeSeriallyIntoUniqueVersions() throws Exception {
+        JsonNode created=upload("independent.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String first=createSuggestion(routeId,detourJson());
+        String second=createSuggestion(routeId,detourJson(21.0200,52.2350,793.4030900609766,21.0300,52.2400,1672.4923119104333,21.025,52.238));
+        publish(routeId,first,owner);publish(routeId,second,owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andExpect(status().isOk()).andExpect(jsonPath("$.currentVersion").value(2));
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andExpect(status().isOk()).andExpect(jsonPath("$.currentVersion").value(3));
+        assertThat(jdbc.queryForList("select v.version_number from route_versions v join routes r on r.id=v.route_id where r.public_id=? order by v.version_number",Integer.class,routeId)).containsExactly(1,2,3);
+        mvc.perform(get("/api/routes/{id}/versions/1",routeId)).andExpect(jsonPath("$.geometry.coordinates.length()").value(3));
+    }
+    @Test void twoConcurrentIndependentMergesAreSerialized() throws Exception {
+        JsonNode created=upload("concurrent.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String first=createSuggestion(routeId,detourJson()),second=createSuggestion(routeId,detourJson(21.0200,52.2350,793.4030900609766,21.0300,52.2400,1672.4923119104333,21.025,52.238));publish(routeId,first,owner);publish(routeId,second,owner);
+        try(ExecutorService executor=Executors.newFixedThreadPool(2)){Callable<Integer> mergeFirst=()->mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andReturn().getResponse().getStatus();Callable<Integer> mergeSecond=()->mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andReturn().getResponse().getStatus();Future<Integer> a=executor.submit(mergeFirst),b=executor.submit(mergeSecond);assertThat(List.of(a.get(),b.get())).containsOnly(200);}
+        assertThat(jdbc.queryForList("select v.version_number from route_versions v join routes r on r.id=v.route_id where r.public_id=? order by v.version_number",Integer.class,routeId)).containsExactly(1,2,3);
+    }
+    private String createSuggestion(String routeId,String body)throws Exception{return json.readTree(mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("publicId").asText();}
+    private void publish(String routeId,String suggestionId,Cookie owner)throws Exception{mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,suggestionId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}")).andExpect(status().isOk());}
     private Cookie ownerCookie(String routeId,String token)throws Exception{return mvc.perform(post("/api/routes/{id}/ownership",routeId).contentType(MediaType.APPLICATION_JSON).content("{\"token\":\""+token+"\"}" )).andExpect(status().isNoContent()).andReturn().getResponse().getCookie("route_owner");}
     private JsonNode upload(String filename) throws Exception {
         byte[] bytes=new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes();
@@ -192,4 +242,10 @@ class RouteApiIntegrationTest {
              "end":{"longitude":21.0200,"latitude":52.2350,"distanceMeters":800},
              "proposedGeometry":{"type":"LineString","coordinates":[[21.0122,52.2297],[21.016,52.231],[21.0200,52.2350]]}}
             """;}
+    private String detourJson(double startLng,double startLat,double startDistance,double endLng,double endLat,double endDistance,double middleLng,double middleLat){return """
+            {"type":"DETOUR","authorName":"Marek","description":"Independent safer road","category":null,"tags":["safer"],
+             "start":{"longitude":%s,"latitude":%s,"distanceMeters":%s},
+             "end":{"longitude":%s,"latitude":%s,"distanceMeters":%s},
+             "proposedGeometry":{"type":"LineString","coordinates":[[%s,%s],[%s,%s],[%s,%s]]}}
+            """.formatted(startLng,startLat,startDistance,endLng,endLat,endDistance,startLng,startLat,middleLng,middleLat,endLng,endLat);}
 }

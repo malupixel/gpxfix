@@ -1,6 +1,8 @@
-const publicApiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const publicApiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
 function apiUrl(): string {
-  return typeof window === "undefined" ? (process.env.API_INTERNAL_URL ?? publicApiUrl) : publicApiUrl;
+  if (typeof window !== "undefined") return publicApiUrl;
+  return process.env.API_INTERNAL_URL
+    ?? (process.env.NODE_ENV === "production" ? "http://127.0.0.1:8151" : "http://localhost:8080");
 }
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string) { super(message); }

@@ -24,8 +24,9 @@ public class RouteSuggestionService {
         Route route=routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
         validateFinite(request.start());
         Point start=point(request.start());
-        requireOnRoute(route,start,"Start anchor");
-        if(request.start().distanceMeters()>route.getDistanceMeters()+1) throw bad("Start distance exceeds route length");
+        RouteVersion baseVersion=route.getCurrentVersion();
+        requireOnRoute(baseVersion,start,"Start anchor");
+        if(request.start().distanceMeters()>baseVersion.getDistanceMeters()+1) throw bad("Start distance exceeds route length");
         Point end=null; LineString proposed=null; Double endDistance=null;
         if(request.type()==SuggestionType.NOTE){
             if(request.end()!=null||request.proposedGeometry()!=null)throw bad("NOTE accepts only one route anchor");
@@ -33,8 +34,8 @@ public class RouteSuggestionService {
             if(request.tags()!=null&&!request.tags().isEmpty())throw bad("NOTE does not accept tags");
         } else {
             if(request.end()==null)throw bad(request.type()+" requires an end anchor");
-            validateFinite(request.end()); end=point(request.end()); requireOnRoute(route,end,"End anchor"); endDistance=request.end().distanceMeters();
-            if(endDistance>route.getDistanceMeters()+1||endDistance<=request.start().distanceMeters())throw bad("End distance must be after the start and within the route");
+            validateFinite(request.end()); end=point(request.end()); requireOnRoute(baseVersion,end,"End anchor"); endDistance=request.end().distanceMeters();
+            if(endDistance>baseVersion.getDistanceMeters()+1||endDistance<=request.start().distanceMeters())throw bad("End distance must be after the start and within the route");
             if(request.type()==SuggestionType.PROBLEM){
                 if(request.proposedGeometry()!=null)throw bad("PROBLEM does not accept proposed geometry");
                 validateRequired(request.category(),PROBLEM_CATEGORIES,"problem category");
@@ -48,7 +49,7 @@ public class RouteSuggestionService {
             }
         }
         String publicId=uniquePublicId(); Instant now=Instant.now();
-        RouteSuggestion entity=new RouteSuggestion(publicId,route,request.type(),request.authorName().trim(),request.description().trim(),optional(request.category()),
+        RouteSuggestion entity=new RouteSuggestion(publicId,route,baseVersion,request.type(),request.authorName().trim(),request.description().trim(),optional(request.category()),
                 request.tags()==null?null:String.join(",",request.tags()),start,end,proposed,request.start().distanceMeters(),endDistance,now);
         suggestions.saveAndFlush(entity); return dto(entity,false);
     }
@@ -70,7 +71,7 @@ public class RouteSuggestionService {
         try{value.moderate(target,Instant.now());}catch(IllegalArgumentException|IllegalStateException e){throw bad(e.getMessage());}
         return dto(value,true);
     }
-    private void requireOnRoute(Route route,Point point,String label){if(route.getTrackGeometry().distance(point)>ANCHOR_TOLERANCE_DEGREES)throw bad(label+" must lie on the route");}
+    private void requireOnRoute(RouteVersion version,Point point,String label){if(version.getTrackGeometry().distance(point)>ANCHOR_TOLERANCE_DEGREES)throw bad(label+" must lie on the route");}
     private void validateFinite(CreateSuggestionRequest.Anchor anchor){if(!Double.isFinite(anchor.longitude())||!Double.isFinite(anchor.latitude())||!Double.isFinite(anchor.distanceMeters()))throw bad("Coordinates and route distance must be finite");}
     private Point point(CreateSuggestionRequest.Anchor anchor){return geometries.createPoint(new Coordinate(anchor.longitude(),anchor.latitude()));}
     private LineString line(CreateSuggestionRequest.LineStringGeometry value){
@@ -94,7 +95,7 @@ public class RouteSuggestionService {
                 ? comments.findBySuggestion_IdOrderByCreatedAtAsc(value.getId()).stream()
                 : comments.findBySuggestion_IdAndModerationStatusOrderByCreatedAtAsc(value.getId(),ModerationStatus.PUBLISHED).stream()).map(this::commentDto).toList();
         long count=comments.countBySuggestion_IdAndModerationStatus(value.getId(),ModerationStatus.PUBLISHED);
-        return new SuggestionDto(value.getPublicId(),value.getType(),value.getModerationStatus(),value.getIntegrationStatus(),value.getApplicability(),value.getAuthorName(),value.getDescription(),value.getCategory(),tags,start,end,geometry,value.getBaseRouteUpdatedAt(),value.getCreatedAt(),value.getUpdatedAt(),count,discussion);
+        return new SuggestionDto(value.getPublicId(),value.getType(),value.getModerationStatus(),value.getIntegrationStatus(),value.getApplicability(),value.getAuthorName(),value.getDescription(),value.getCategory(),tags,start,end,geometry,value.getBaseVersion().getVersionNumber(),value.getMergedIntoVersion()==null?null:value.getMergedIntoVersion().getVersionNumber(),value.getMergedAt(),value.getCreatedAt(),value.getUpdatedAt(),count,discussion);
     }
     SuggestionCommentDto commentDto(SuggestionComment value){return new SuggestionCommentDto(value.getPublicId(),value.getAuthorName(),value.getContent(),value.getModerationStatus(),value.getCreatedAt(),value.getUpdatedAt());}
 }

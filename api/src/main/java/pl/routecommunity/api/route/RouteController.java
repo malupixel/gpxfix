@@ -15,8 +15,11 @@ public class RouteController {
     }
     @PostMapping(value="/drawn",consumes=MediaType.APPLICATION_JSON_VALUE) @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CreateRouteResponse> createDrawn(@RequestBody CreateDrawnRouteRequest request){CreatedRoute created=service.createDrawn(request);return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE,ownership.cookieHeader(created.publicId(),created.sessionToken())).body(created.response());}
-    @GetMapping(value="/{publicId}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> download(@PathVariable String publicId){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+".gpx").body(service.download(publicId));}
-    @GetMapping("/{publicId}") public RouteDto get(@PathVariable String publicId){return service.get(publicId);}
+    @GetMapping(value="/{publicId}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> download(@PathVariable String publicId){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+".gpx").body(service.download(publicId,null));}
+    @GetMapping("/{publicId}") public RouteDto get(@PathVariable String publicId){return service.get(publicId,null);}
+    @GetMapping("/{publicId}/versions/{versionNumber}") public RouteDto getVersion(@PathVariable String publicId,@PathVariable int versionNumber){return service.get(publicId,versionNumber);}
+    @GetMapping("/{publicId}/versions") public java.util.List<RouteVersionSummaryDto> history(@PathVariable String publicId){return service.history(publicId);}
+    @GetMapping(value="/{publicId}/versions/{versionNumber}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> downloadVersion(@PathVariable String publicId,@PathVariable int versionNumber){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+"-v"+versionNumber+".gpx").body(service.download(publicId,versionNumber));}
     @PostMapping("/{publicId}/ownership")
     public ResponseEntity<Void> establishOwnership(@PathVariable String publicId,@RequestBody ManagementTokenRequest request){
         String session=ownership.establish(publicId,request.token());

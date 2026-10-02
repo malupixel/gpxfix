@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/routes/{routePublicId}/suggestions")
 public class RouteSuggestionController {
-    private final RouteSuggestionService service; private final SuggestionCommentService commentService; private final RouteOwnershipService ownership;
-    RouteSuggestionController(RouteSuggestionService service,SuggestionCommentService commentService,RouteOwnershipService ownership){this.service=service;this.commentService=commentService;this.ownership=ownership;}
+    private final RouteSuggestionService service; private final SuggestionCommentService commentService; private final RouteOwnershipService ownership; private final SuggestionMergeService mergeService;
+    RouteSuggestionController(RouteSuggestionService service,SuggestionCommentService commentService,RouteOwnershipService ownership,SuggestionMergeService mergeService){this.service=service;this.commentService=commentService;this.ownership=ownership;this.mergeService=mergeService;}
     @GetMapping public List<SuggestionDto> list(@PathVariable String routePublicId){return service.listPublic(routePublicId);}
     @GetMapping("/{suggestionPublicId}") public SuggestionDto get(@PathVariable String routePublicId,@PathVariable String suggestionPublicId){return service.getPublic(routePublicId,suggestionPublicId);}
     @PostMapping public ResponseEntity<SuggestionDto> create(@PathVariable String routePublicId,@Valid @RequestBody CreateSuggestionRequest request){
@@ -25,6 +25,7 @@ public class RouteSuggestionController {
       return java.util.stream.Stream.concat(suggestionItems,commentItems).sorted(java.util.Comparator.comparing(ModerationQueueItemDto::createdAt)).toList();
     }
     @PatchMapping("/owner/{suggestionPublicId}/moderation") public SuggestionDto moderate(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,@Valid @RequestBody ModerationRequest body,HttpServletRequest request){ownership.requireOwner(routePublicId,request);return service.moderate(routePublicId,suggestionPublicId,body.moderationStatus());}
+    @PostMapping("/owner/{suggestionPublicId}/merge") public RouteDto merge(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,HttpServletRequest request){ownership.requireOwner(routePublicId,request);return mergeService.merge(routePublicId,suggestionPublicId);}
     @PatchMapping("/owner/comments/{commentPublicId}/moderation") public SuggestionCommentDto moderateComment(@PathVariable String routePublicId,@PathVariable String commentPublicId,@Valid @RequestBody ModerationRequest body,HttpServletRequest request){
       ownership.requireOwner(routePublicId,request);if(!commentService.owningRoutePublicId(commentPublicId).equals(routePublicId))throw new pl.routecommunity.api.common.error.ApiException(HttpStatus.NOT_FOUND,"Comment not found");return commentService.moderate(commentPublicId,body.moderationStatus());
     }

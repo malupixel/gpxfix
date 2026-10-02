@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { RouteMap } from "@/components/map/route-map";
@@ -23,9 +24,11 @@ import {
   type SuggestionTool,
 } from "./route-page-state";
 import { DrawingControls, SuggestionDetailsDialog, SuggestionTypePicker, suggestionRequest } from "./suggestion-workspace";
+import { publicRoutePath } from "./route-links";
 
 export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
   const { t } = useTranslation();
+  const router=useRouter();
   const [mode, setMode] = useState<RoutePageMode>("view");
   const [geometry, setGeometry] = useState<SuggestionGeometry>(EMPTY_SUGGESTION_GEOMETRY);
   const [form, setForm] = useState<SuggestionFormData>(EMPTY_SUGGESTION_FORM);
@@ -56,6 +59,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   }, [finishSuggestion, form, geometry, t]);
 
   function enterSuggestMode(tool: SuggestionTool = null) {
+    if(!route.isCurrentVersion){window.alert(`Suggestions are created against the current version (v${route.currentVersion}). You will be taken there now.`);router.push(publicRoutePath(route.publicId));return;}
     setMode("suggest");
     setSelectedSuggestionId(null);
     setSubmitError(false);
@@ -150,7 +154,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
       {mode === "view" && <><ElevationProfile samples={route.elevationProfile} onHighlight={setProfileHighlight} /><RouteInformation route={route} /></>}
     </div>
     <div className="space-y-4 xl:sticky xl:top-4">
-      {mode === "view" ? <><ShareRouteCard /><RouteFeedbackSidebar routeId={route.publicId} isOwner={isOwner} suggestions={suggestions} onSuggestionsChange={setSuggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item) => setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></> : <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="font-bold">{t("suggestion.create")}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{geometry.type ? t("suggestion.mapGuidance") : t("suggestion.chooseTypeHelp")}</p><button type="button" onClick={cancelSuggestion} className="mt-4 text-sm font-bold text-red-700">{t("suggestion.cancel")}</button></aside>}
+      {mode === "view" ? <><ShareRouteCard /><RouteFeedbackSidebar routeId={route.publicId} isOwner={isOwner && route.isCurrentVersion} readOnly={!route.isCurrentVersion} suggestions={suggestions} onSuggestionsChange={setSuggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item) => setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></> : <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="font-bold">{t("suggestion.create")}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{geometry.type ? t("suggestion.mapGuidance") : t("suggestion.chooseTypeHelp")}</p><button type="button" onClick={cancelSuggestion} className="mt-4 text-sm font-bold text-red-700">{t("suggestion.cancel")}</button></aside>}
     </div>
   </div>;
 }

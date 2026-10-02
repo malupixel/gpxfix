@@ -25,5 +25,5 @@ function RecentActivity() {
 }
 
 function RouteDownload({ publicId }: { publicId: string }) {
-  const { t } = useTranslation(); const base=process.env.NEXT_PUBLIC_API_URL??"http://localhost:8080";return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><a href={`${base}/api/routes/${encodeURIComponent(publicId)}/gpx`} className="mt-4 block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">{t("info.downloadGpx")}</a><p className="mt-4 text-xs leading-5 text-slate-500">{t("info.unchanged")}</p></section>;
+  const { t } = useTranslation(); const base=process.env.NEXT_PUBLIC_API_URL??"";return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><a href={`${base}/api/routes/${encodeURIComponent(publicId)}/gpx`} className="mt-4 block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">{t("info.downloadGpx")}</a><p className="mt-4 text-xs leading-5 text-slate-500">{t("info.unchanged")}</p></section>;
 }

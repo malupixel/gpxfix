@@ -8,7 +8,11 @@ export interface RouteData {
   geometry: { type: "LineString"; coordinates: [number, number][] };
   elevationProfile: ElevationSample[];
   createdAt: string;
+  currentVersion: number;
+  viewedVersion: number;
+  isCurrentVersion: boolean;
 }
+export interface RouteVersionSummary { versionNumber:number;createdAt:string;source:"INITIAL_UPLOAD"|"INITIAL_DRAWN"|"SUGGESTION_MERGE"|"OWNER_EDIT";basedOnVersionNumber:number|null;mergedSuggestionPublicId:string|null;current:boolean }
 export interface ElevationSample { distanceMeters: number; elevationMeters: number | null; longitude: number; latitude: number }
 export interface CreateRouteResponse { publicId: string; managementToken: string }
 
@@ -31,10 +35,12 @@ export interface RouteSuggestion {
   start: SuggestionAnchor;
   end: SuggestionAnchor | null;
   proposedGeometry: { type: "LineString"; coordinates: [number, number][] } | null;
-  baseRouteUpdatedAt: string;
+  baseVersionNumber: number;
+  mergedIntoVersionNumber: number | null;
+  mergedAt: string | null;
   createdAt: string;
   updatedAt: string;
   commentCount: number;
   comments: SuggestionComment[];
 }
-export type CreateSuggestionRequest = Omit<RouteSuggestion, "publicId" | "moderationStatus" | "integrationStatus" | "applicability" | "baseRouteUpdatedAt" | "createdAt" | "updatedAt" | "commentCount" | "comments">;
+export type CreateSuggestionRequest = Omit<RouteSuggestion, "publicId" | "moderationStatus" | "integrationStatus" | "applicability" | "baseVersionNumber" | "mergedIntoVersionNumber" | "mergedAt" | "createdAt" | "updatedAt" | "commentCount" | "comments">;
