@@ -8,5 +8,7 @@ logging:
   level:
     root: warn
 app:
+  elevation:
+    provider: remote
   ownership:
     cookie-secure: false

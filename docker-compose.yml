@@ -36,10 +36,21 @@ services:
       GPX_MAX_REQUEST_SIZE: ${GPX_MAX_REQUEST_SIZE:-11MB}
       GPX_MAX_FILE_SIZE_BYTES: ${GPX_MAX_FILE_SIZE_BYTES:-10485760}
       GPX_STORAGE_PATH: ${GPX_STORAGE_PATH:-/data/gpx}
+      ELEVATION_PROVIDER: ${ELEVATION_PROVIDER:-local-dem}
+      ELEVATION_DATA_PATH: /data/elevation
+      ELEVATION_SAMPLE_INTERVAL_METERS: ${ELEVATION_SAMPLE_INTERVAL_METERS:-100}
+      ELEVATION_CACHE_MEGABYTES: ${ELEVATION_CACHE_MEGABYTES:-128}
+      ELEVATION_BASE_URL: ${ELEVATION_BASE_URL:-https://api.open-meteo.com}
     ports:
       - "${API_PORT:-8151}:8080"
     volumes:
       - gpx_data:/data/gpx
+      - type: bind
+        source: ${ELEVATION_DATA_PATH:-/home/malupixel/data/elevation}
+        target: /data/elevation
+        read_only: true
+        bind:
+          create_host_path: false
     depends_on:
       db:
         condition: service_healthy

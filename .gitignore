@@ -10,3 +10,11 @@ web/out/
 web/.env*.local
 *.log
 *.tsbuildinfo
+# DEM data belongs outside the application/repository.
+*.hgt
+*.hgt.zip
+data/elevation/
+**/elevation-data/
+Copernicus_DSM_*/
+Copernicus_DSM_*.tif
+**/__pycache__/

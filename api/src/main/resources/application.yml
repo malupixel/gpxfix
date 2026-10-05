@@ -44,6 +44,8 @@ app:
   routing:
     base-url: ${ROUTING_BASE_URL:https://router.project-osrm.org}
   elevation:
+    provider: ${ELEVATION_PROVIDER:local-dem}
+    data-path: ${ELEVATION_DATA_PATH:/home/malupixel/data/elevation}
+    cache-megabytes: ${ELEVATION_CACHE_MEGABYTES:128}
     base-url: ${ELEVATION_BASE_URL:https://api.open-meteo.com}
     sample-interval-meters: ${ELEVATION_SAMPLE_INTERVAL_METERS:100}
-    maximum-samples: ${ELEVATION_MAXIMUM_SAMPLES:500}

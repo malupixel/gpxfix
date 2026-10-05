@@ -42,7 +42,7 @@ deploy_api() {
   trap 'rm -rf "${build_dir}"; trap - RETURN' RETURN
 
   echo "Preparing isolated API build..."
-  rsync -rlt --exclude target --exclude data "${ROOT_DIR}/api/" "${build_dir}/"
+  rsync -rlt --exclude target --exclude data --exclude '*.hgt' --exclude '*.tif' --exclude '*.tiff' "${ROOT_DIR}/api/" "${build_dir}/"
 
   echo "Building API..."
   local java_home="${JAVA_HOME:-}"

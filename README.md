@@ -38,6 +38,7 @@ For the recommended workflow: Docker Engine with Docker Compose v2. For running 
 
 ```bash
 cp .env.example .env
+# Install DEM data first (ELEVATION.md), or explicitly configure ELEVATION_PROVIDER=remote.
 docker compose up --build
 ```
 
@@ -120,4 +121,4 @@ The map style is provider-independent and configurable with `NEXT_PUBLIC_MAP_STY
 
 ### Current GPX limitations
 
-Only `trk/trkseg/trkpt` track data is read; routes and waypoints are ignored. Multiple segments are concatenated for the initial public `LineString`, but distance and elevation gain are calculated within each segment so gaps do not inflate metrics. Geometry is stored in 2D; elevation remains a separate metric. Elevation gain is returned as `null` when no consecutive points contain elevations, and there is no automatic elevation lookup. Uploaded GPX files are not currently downloadable through the API.
+Only `trk/trkseg/trkpt` track data is read; routes and waypoints are ignored. Multiple segments are concatenated for the initial public `LineString`, but metrics exclude gaps. Original map geometry stays 2D and unchanged. Complete GPX elevation is preserved; missing profiles use a shared version-processing pipeline, including drawn routes and merges. Profiles and exported `<ele>` belong to each version's GPX. The default elevation provider reads local Copernicus DEM tiles; remote is an explicit development option. See [installation, licensing and VPS configuration](ELEVATION.md) before starting/deploying the backend.

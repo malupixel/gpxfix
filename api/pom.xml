@@ -57,6 +57,12 @@
     </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes><exclude>**/*.hgt</exclude><exclude>**/*.tif</exclude><exclude>**/*.tiff</exclude></excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin>
     </plugins>

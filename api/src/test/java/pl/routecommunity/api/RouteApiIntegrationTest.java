@@ -100,11 +100,41 @@ class RouteApiIntegrationTest {
             """;
         var result=mvc.perform(post("/api/routes/drawn").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andExpect(jsonPath("$.managementToken").isString()).andReturn();
         String routeId=json.readTree(result.getResponse().getContentAsString()).get("publicId").asText();
-        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02)).andExpect(jsonPath("$.elevationGainMeters").isNumber()).andExpect(jsonPath("$.elevationProfile.length()").value(4)).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").isNumber());
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(4)).andExpect(jsonPath("$.geometry.coordinates[3][0]").value(21.02)).andExpect(jsonPath("$.elevationGainMeters").isNumber()).andExpect(jsonPath("$.elevationProfile.length()",org.hamcrest.Matchers.greaterThan(4))).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").isNumber());
         mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/gpx+xml")).andExpect(content().string(org.hamcrest.Matchers.containsString("lat=\"52.01\" lon=\"21.02\""))).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
         verify(elevationProvider,atLeastOnce()).elevations(anyList());
         assertThat(jdbc.queryForObject("select v.source_type from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",String.class,routeId)).isEqualTo("DRAWN");
         assertThat(jdbc.queryForObject("select v.editor_definition is not null from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Boolean.class,routeId)).isTrue();
+    }
+    @Test void incompleteUploadIsEnrichedWithoutChangingItsGeometry() throws Exception {
+        String input=new String(new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8).replaceAll("<ele>[^<]*</ele>","");
+        var uploaded=mvc.perform(multipart("/api/routes").file(new MockMultipartFile("file","missing-ele.gpx","application/gpx+xml",input.getBytes(java.nio.charset.StandardCharsets.UTF_8))))
+                .andExpect(status().isCreated()).andReturn();
+        String id=json.readTree(uploaded.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(get("/api/routes/{id}",id)).andExpect(status().isOk()).andExpect(jsonPath("$.geometry.coordinates.length()").value(3))
+                .andExpect(jsonPath("$.elevationProfile.length()",org.hamcrest.Matchers.greaterThan(3)));
+        mvc.perform(get("/api/routes/{id}/gpx",id)).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
+        verify(elevationProvider,times(1)).elevations(anyList());
+    }
+    @Test void longTwoPointDrawnRoutePersistsThousandsOfSamplesButOnlyTwoGeometryPoints() throws Exception {
+        String body="""
+                {"name":"Long direct route","editorDocument":{"version":1,
+                "points":[{"id":"a","coordinate":[21,52]},{"id":"b","coordinate":[21,54.7]}],
+                "segments":[{"id":"ab","fromId":"a","toId":"b","mode":"DIRECT","geometry":[[21,52],[21,54.7]]}]}}
+                """;
+        var created=mvc.perform(post("/api/routes/drawn").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn();
+        String id=json.readTree(created.getResponse().getContentAsString()).get("publicId").asText();
+        mvc.perform(get("/api/routes/{id}",id)).andExpect(jsonPath("$.geometry.coordinates.length()").value(2))
+                .andExpect(jsonPath("$.elevationProfile.length()",org.hamcrest.Matchers.greaterThan(3000)));
+        verify(elevationProvider,times(1)).elevations(anyList());
+    }
+    @Test void elevationFailureDoesNotSaveAPartialRoute() throws Exception {
+        int before=jdbc.queryForObject("select count(*) from routes",Integer.class);
+        when(elevationProvider.elevations(anyList())).thenThrow(new pl.routecommunity.api.common.error.ApiException(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,"Missing local DEM tile"));
+        String input="<gpx><trk><trkseg><trkpt lat=\"52\" lon=\"21\"/><trkpt lat=\"52.01\" lon=\"21.01\"/></trkseg></trk></gpx>";
+        mvc.perform(multipart("/api/routes").file(new MockMultipartFile("file","missing.gpx","application/gpx+xml",input.getBytes())))
+                .andExpect(status().isServiceUnavailable()).andExpect(jsonPath("$.error").value("Missing local DEM tile"));
+        assertThat(jdbc.queryForObject("select count(*) from routes",Integer.class)).isEqualTo(before);
     }
     @Test void createsAndRetrievesEverySuggestionTypeAsPending() throws Exception {
         String routeId=upload("suggestions.gpx").get("publicId").asText();
@@ -180,12 +210,16 @@ class RouteApiIntegrationTest {
     }
     @Test void mergeCreatesImmutableVersionAndKeepsSuggestionHistory() throws Exception {
         JsonNode created=upload("versioned.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String originalGpx=mvc.perform(get("/api/routes/{id}/gpx",routeId)).andReturn().getResponse().getContentAsString();
         String suggestionId=createSuggestion(routeId,detourJson());publish(routeId,suggestionId,owner);
         mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,suggestionId)).andExpect(status().isForbidden());
         mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,suggestionId).cookie(owner)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentVersion").value(2)).andExpect(jsonPath("$.viewedVersion").value(2)).andExpect(jsonPath("$.isCurrentVersion").value(true));
+                .andExpect(jsonPath("$.currentVersion").value(2)).andExpect(jsonPath("$.viewedVersion").value(2)).andExpect(jsonPath("$.isCurrentVersion").value(true))
+                .andExpect(jsonPath("$.elevationProfile.length()",org.hamcrest.Matchers.greaterThan(3)));
         mvc.perform(get("/api/routes/{id}/versions/1",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.viewedVersion").value(1))
-                .andExpect(jsonPath("$.isCurrentVersion").value(false)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.02));
+                .andExpect(jsonPath("$.isCurrentVersion").value(false)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.02))
+                .andExpect(jsonPath("$.elevationProfile.length()").value(3)).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").value(100.0));
+        mvc.perform(get("/api/routes/{id}/versions/1/gpx",routeId)).andExpect(status().isOk()).andExpect(content().string(originalGpx));
         mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.016));
         mvc.perform(get("/api/routes/{id}/versions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].versionNumber").value(2))
                 .andExpect(jsonPath("$[0].source").value("SUGGESTION_MERGE")).andExpect(jsonPath("$[0].mergedSuggestionPublicId").value(suggestionId));

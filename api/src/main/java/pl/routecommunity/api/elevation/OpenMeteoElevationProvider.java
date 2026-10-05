@@ -7,11 +7,13 @@ import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import pl.routecommunity.api.common.error.ApiException;
 
 @Service
+@ConditionalOnProperty(name="app.elevation.provider",havingValue="remote")
 class OpenMeteoElevationProvider implements ElevationProvider {
     private static final int BATCH_SIZE=100,MAX_PARALLEL_REQUESTS=2,MAX_ATTEMPTS=3;
     private final RestClient client;private final ExecutorService executor=Executors.newFixedThreadPool(MAX_PARALLEL_REQUESTS,Thread.ofVirtual().name("elevation-",0).factory());
