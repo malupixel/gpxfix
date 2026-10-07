@@ -4,6 +4,7 @@ import { Map as MapLibreMap, Marker, NavigationControl, type GeoJSONSource, type
 import { useEffect, useRef, useState } from "react";
 import type { RouteCoordinate } from "@/features/routes/route-geometry";
 import { finalGeometry, previewPointMove, type RouteEditorDocument } from "./model";
+import { SquadratsGrid } from "@/components/map/squadrats-grid";
 
 const STYLE = process.env.NEXT_PUBLIC_MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/liberty";
 type Props = {
@@ -23,6 +24,7 @@ export function EditorMap(props: Props) {
   const node = useRef<HTMLDivElement>(null), mapRef = useRef<MapLibreMap | null>(null), callbacks = useRef(props);
   const documentRef = useRef(routeDocument), selectedSegmentRef = useRef(selectedSegmentId), insertingRef = useRef(inserting);
   const [mapError, setMapError] = useState(false);
+  const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   useEffect(() => { callbacks.current = props; }, [props]);
   useEffect(() => { documentRef.current = routeDocument; selectedSegmentRef.current = selectedSegmentId; insertingRef.current = inserting; }, [routeDocument, selectedSegmentId, inserting]);
 
@@ -37,6 +39,7 @@ export function EditorMap(props: Props) {
       map.addLayer({ id: "editor-segments-hit", type: "line", source: "editor-segments", paint: { "line-width": 28, "line-opacity": 0 } });
       map.addLayer({ id: "editor-selected", type: "line", source: "editor-segments", filter: ["==", ["get", "selected"], true], layout: { "line-cap": "round" }, paint: { "line-color": "#f59e0b", "line-width": 9, "line-opacity": .75 } });
       map.resize();
+      setLoadedMap(map);
     });
     map.on("error", () => setMapError(true));
     map.on("mouseenter", "editor-segments-hit", () => { map.getCanvas().style.cursor = insertingRef.current ? "crosshair" : "pointer"; });
@@ -52,7 +55,7 @@ export function EditorMap(props: Props) {
       callbacks.current.onSelectSegment(null); callbacks.current.onMapClick([event.lngLat.lng, event.lngLat.lat]);
     };
     map.on("click", click);
-    return () => { mapRef.current = null; map.remove(); };
+    return () => { setLoadedMap(null); mapRef.current = null; map.remove(); };
   }, []);
 
   useEffect(() => { updateMap(mapRef.current, routeDocument, selectedSegmentId); }, [routeDocument, selectedSegmentId]);
@@ -75,7 +78,7 @@ export function EditorMap(props: Props) {
     return () => markers.forEach((marker) => marker.remove());
   }, [routeDocument.points, selectedPointId]);
 
-  return <><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label="Route editor map" />{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">Nie udało się załadować części mapy. Sprawdź połączenie i odśwież stronę.</div>}</>;
+  return <><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label="Route editor map" /><div className="absolute left-3 top-16 z-10"><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">Nie udało się załadować części mapy. Sprawdź połączenie i odśwież stronę.</div>}</>;
 }
 
 function updateMap(map: MapLibreMap | null, document: RouteEditorDocument, selectedId: string | null) {

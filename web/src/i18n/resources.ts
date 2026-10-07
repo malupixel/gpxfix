@@ -1,5 +1,6 @@
 export const resources = {
   pl: { translation: {
+    map: { showSquadratsGrid: "Pokaż siatkę Squadrats", squadratsZoomIn: "Przybliż mapę, aby zobaczyć siatkę Squadrats." },
     common: { optional: "(opcjonalnie)", copy: "Kopiuj", copied: "Skopiowano!", select: "Wybierz…", description: "Opis", name: "Imię", cancel: "Anuluj", back: "Wróć", language: "Język", noAccount: "Konto nie jest wymagane." },
     landing: { title: "Route Community", subtitle: "Wgraj trasę GPX i udostępnij ją osobom, które znają okolicę." },
     upload: { file: "Plik GPX", routeName: "Nazwa trasy", description: "Opis", submit: "Wgraj trasę", uploading: "Wgrywanie…", emptyFile: "Wybierz niepusty plik GPX.", failed: "Nie udało się wgrać trasy." },
@@ -20,6 +21,7 @@ export const resources = {
     errors: { generic: "Coś poszło nie tak. Spróbuj ponownie." }
   } },
   en: { translation: {
+    map: { showSquadratsGrid: "Show Squadrats grid", squadratsZoomIn: "Zoom in to see the Squadrats grid." },
     common: { optional: "(optional)", copy: "Copy", copied: "Copied!", select: "Select…", description: "Description", name: "Name", cancel: "Cancel", back: "Back", language: "Language", noAccount: "No account required." },
     landing: { title: "Route Community", subtitle: "Upload a GPX route and share it with people who know the area." },
     upload: { file: "GPX file", routeName: "Route name", description: "Description", submit: "Upload route", uploading: "Uploading…", emptyFile: "Choose a non-empty GPX file.", failed: "Upload failed." },
