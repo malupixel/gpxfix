@@ -8,6 +8,57 @@ BASE_DIR="/home/malupixel/www/tweakmyroute.com"
 API_SERVICE="tweakmyroute-api.service"
 WEB_SERVICE="tweakmyroute-web.service"
 
+SSH_DIR=""
+SSH_OPTIONS=()
+SSH_TRANSPORT=""
+
+cleanup() {
+  if [[ -n "${SSH_DIR}" ]]; then
+    ssh "${SSH_OPTIONS[@]}" -O exit "${REMOTE}" >/dev/null 2>&1 || true
+    rm -rf "${SSH_DIR}"
+  fi
+}
+
+deploy_ssh() {
+  ssh "${SSH_OPTIONS[@]}" "${REMOTE}" "$@"
+}
+
+# Retry transport failures only. Never repeat a remote build or service restart.
+retry_transport() {
+  local attempt status
+  for attempt in 1 2 3; do
+    if "$@"; then
+      return 0
+    else
+      status=$?
+    fi
+    if [[ "${status}" -ne 255 || "${attempt}" -eq 3 ]]; then
+      return "${status}"
+    fi
+    echo "SSH transport failed; retrying in $((attempt * 3)) seconds (${attempt}/3)..." >&2
+    sleep "$((attempt * 3))"
+  done
+}
+
+prepare_ssh() {
+  SSH_DIR="$(mktemp -d /tmp/tweakmyroute-deploy.XXXXXX)"
+  trap cleanup EXIT
+  SSH_OPTIONS=(
+    -o ConnectTimeout=15
+    -o ServerAliveInterval=15
+    -o ServerAliveCountMax=3
+    -o ControlMaster=auto
+    -o ControlPersist=60
+    -o "ControlPath=${SSH_DIR}/connection"
+  )
+  SSH_TRANSPORT="ssh -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o ControlMaster=auto -o ControlPersist=60 -o ControlPath=${SSH_DIR}/connection"
+  echo "Checking SSH connection to ${REMOTE}..."
+  if ! retry_transport deploy_ssh true; then
+    echo "Cannot establish SSH connection to ${REMOTE}. Deployment stopped before building or uploading files." >&2
+    return 1
+  fi
+}
+
 EXCLUDES=(
   --exclude node_modules
   --exclude .next
@@ -38,7 +89,7 @@ EOF
 
 deploy_api() {
   local build_dir
-  build_dir="$(mktemp -d)"
+  build_dir="$(mktemp -d "${SSH_DIR}/api-build.XXXXXX")"
   trap 'rm -rf "${build_dir}"; trap - RETURN' RETURN
 
   echo "Preparing isolated API build..."
@@ -74,20 +125,20 @@ deploy_api() {
   fi
 
   echo "Uploading API..."
-  rsync -avz "${jar}" "${REMOTE}:${BASE_DIR}/api/app.jar"
+  retry_transport rsync -avz -e "${SSH_TRANSPORT}" "${jar}" "${REMOTE}:${BASE_DIR}/api/app.jar"
 
   echo "Restarting ${API_SERVICE}..."
-  ssh "${REMOTE}" "sudo /usr/bin/systemctl restart ${API_SERVICE}"
+  deploy_ssh "sudo /usr/bin/systemctl restart ${API_SERVICE}"
 }
 
 deploy_web() {
   echo "Uploading web sources..."
-  rsync -avz --delete "${EXCLUDES[@]}" \
+  retry_transport rsync -avz --delete -e "${SSH_TRANSPORT}" "${EXCLUDES[@]}" \
     "${ROOT_DIR}/web/" \
     "${REMOTE}:${BASE_DIR}/web/"
 
   echo "Building web on the server..."
-  ssh "${REMOTE}" "
+  deploy_ssh "
     set -euo pipefail
     cd '${BASE_DIR}/web'
     if [ -f .env ]; then set -a; . ./.env; set +a; fi
@@ -130,6 +181,8 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+prepare_ssh
 
 if ${DO_API}; then
   deploy_api

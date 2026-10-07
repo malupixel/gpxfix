@@ -101,6 +101,39 @@ Do not deploy the new default before installing data or explicitly configuring r
 DEM is outside the application's deployment directory, excluded from Docker/JAR/Git;
 `deploy.sh` does not copy it. Back up/version the dataset separately.
 
+### Upload or extend server coverage
+
+Run the separate script from the repository root after preparing local tiles:
+
+```bash
+./sync-elevation.sh --dry-run
+./sync-elevation.sh
+# When replacing existing tiles, clear the API's tile cache:
+./sync-elevation.sh --restart
+```
+
+Defaults match production: SSH host `malupixel`, local and remote directory
+`/home/malupixel/data/elevation`. The local default can also come from the exported
+`ELEVATION_DATA_PATH` variable; the script does not load `.env`. Override with
+`--source DIR`, `--remote HOST`, or `--target DIR` as needed. The remote target must
+match the API's configured `ELEVATION_DATA_PATH`.
+
+Only top-level `*.hgt` files and `License-COPDEM-30.pdf` are uploaded. The local
+directory must contain both prepared tiles and the licence PDF; `source-cog`, TIFFs
+and temporary conversion files stay local. The script creates the remote directory
+and sets directory/file permissions to 0755/0644. Local and remote machines need
+`rsync`, with SSH access as for `deploy.sh`.
+
+Checksums skip unchanged contents. Interrupted transfers can be resumed by rerunning
+the command; each completed file replaces its destination atomically. Remote files
+are never deleted, so a source directory containing only a new country's tiles can
+extend existing coverage. New tiles are read without a restart; replacing cached
+tiles requires `--restart` (uses the same sudo/systemd command as deployment).
+The script does not configure systemd or run as part of `deploy.sh`.
+`--dry-run` only previews rsync changes and does not create the target directory or
+restart the API; if the remote parent directory does not exist yet, create it before
+previewing the first transfer.
+
 Docker Compose mounts this host directory read-only at `/data/elevation`; it refuses to
 auto-create a missing host directory. In `.env`, `ELEVATION_DATA_PATH` is the host path.
 Even when using remote in Compose, create/mount an empty external directory explicitly.

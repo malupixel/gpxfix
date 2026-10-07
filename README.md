@@ -84,6 +84,18 @@ or run `make db` (which honors exported `POSTGRES_USER` and `POSTGRES_DB` values
 
 ## Troubleshooting
 
+Production deployment uses `./deploy.sh [all|api|web]`. It checks SSH access to
+`malupixel` before building, reuses a private SSH connection during deployment,
+and retries SSH transport failures up to three attempts. Builds and service
+restarts are not automatically repeated. The connection and temporary build files
+are cleaned up on exit. Elevation data is uploaded separately with
+`./sync-elevation.sh`; see [ELEVATION.md](ELEVATION.md).
+
+`kex_exchange_identification: Connection reset by peer` during upload means the
+SSH connection was closed before authentication. If retries keep failing, check
+server SSH logs, connection limits and firewall rules; no files can be uploaded
+until SSH access works.
+
 ```bash
 docker compose ps
 docker compose logs -f
