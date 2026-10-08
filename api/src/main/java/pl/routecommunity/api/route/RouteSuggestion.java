@@ -41,7 +41,14 @@ class RouteSuggestion {
         this.proposedGeometry=proposedGeometry;this.startDistanceMeters=startDistanceMeters;this.endDistanceMeters=endDistanceMeters;
         this.createdAt=now;this.updatedAt=now;
     }
-    void moderate(ModerationStatus target,Instant now){moderationStatus.requirePending();if(target==ModerationStatus.PENDING)throw new IllegalArgumentException("Moderation must publish or reject");moderationStatus=target;updatedAt=now;}
+    void moderate(ModerationStatus target,Instant now){
+        if(integrationStatus==SuggestionIntegrationStatus.MERGED || moderationStatus==ModerationStatus.REJECTED)
+            throw new IllegalStateException("Merged or rejected suggestions cannot be moderated");
+        boolean valid=moderationStatus==ModerationStatus.PENDING && (target==ModerationStatus.PUBLISHED || target==ModerationStatus.REJECTED)
+                || moderationStatus==ModerationStatus.PUBLISHED && (target==ModerationStatus.PENDING || target==ModerationStatus.REJECTED);
+        if(!valid)throw new IllegalStateException("Invalid suggestion moderation transition");
+        moderationStatus=target;updatedAt=now;
+    }
     void mergeInto(RouteVersion version,Instant now){
         if(type!=SuggestionType.DETOUR||moderationStatus!=ModerationStatus.PUBLISHED||integrationStatus!=SuggestionIntegrationStatus.NOT_MERGED)throw new IllegalStateException("Only a published, unmerged detour can be merged");
         if(version.getRoute()!=route)throw new IllegalArgumentException("Merged version belongs to another route");

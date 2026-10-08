@@ -37,5 +37,4 @@ class RouteVersion {
     String getName(){return name;} String getDescription(){return description;} String getOriginalFilename(){return originalFilename;} String getStorageKey(){return storageKey;}
     double getDistanceMeters(){return distanceMeters;} Double getElevationGainMeters(){return elevationGainMeters;} LineString getTrackGeometry(){return trackGeometry;}
     String getSourceType(){return sourceType;} String getEditorDefinition(){return editorDefinition;}
-    void attachElevationData(String storageKey,Double elevationGainMeters){this.storageKey=storageKey;this.elevationGainMeters=elevationGainMeters;}
 }

@@ -3,22 +3,28 @@ import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePolylineDistance, type RouteCoordinate } from "@/features/routes/route-geometry";
 import { managementRouteUrl } from "@/features/routes/route-links";
-import { createDrawnRoute } from "@/features/routes/api";
+import { createDrawnRoute, saveOwnerRoute, type OwnerEditorData } from "@/features/routes/api";
+import { useTranslation } from "react-i18next";
+import { ApiError } from "@/lib/api-client";
+import { publicRoutePath } from "@/features/routes/route-links";
 import { EditorMap } from "./editor-map";
 import { clearDraft, loadDraft, saveDraft } from "./draft";
-import { affectedRoutedSegments, createEditorState, editorReducer, finalGeometry, type EditorAction, type RouteEditorDocument, type RouteSegment, type SegmentMode } from "./model";
+import { affectedRoutedSegments, createEditorState, initializeExistingDocument, editorReducer, finalGeometry, type EditorAction, type RouteEditorDocument, type RouteSegment, type SegmentMode } from "./model";
 import { apiRoutingService } from "./routing";
 
 const id = () => crypto.randomUUID();
-export function RouteEditor() {
+type Props = { existing?: OwnerEditorData; onClose?: () => void; onSaved?: () => void };
+export function RouteEditor({ existing, onClose, onSaved }: Props = {}) {
+  const { t } = useTranslation();
   const router = useRouter();
-  const [state, dispatch] = useReducer(editorReducer, undefined, () => createEditorState(typeof window === "undefined" ? undefined : loadDraft() ?? undefined));
+  const [state, dispatch] = useReducer(editorReducer, undefined, () => createEditorState(existing ? initializeExistingDocument(existing.route.geometry.coordinates, existing.editorDocument) : typeof window === "undefined" ? undefined : loadDraft() ?? undefined));
   const doc = state.present;
   const [mode, setMode] = useState<SegmentMode>("ROUTED"), [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null), [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [inserting, setInserting] = useState(false), [error, setError] = useState<string | null>(null), [saving, setSaving] = useState(false), [showSave, setShowSave] = useState(false);
+  const [extendStart, setExtendStart] = useState(false), [conflicted, setConflicted] = useState(false);
   const request = useRef(0), latestRequests = useRef(new Map<string, number>());
 
-  useEffect(() => { const timer = setTimeout(() => doc.points.length ? saveDraft(doc) : clearDraft(), 250); return () => clearTimeout(timer); }, [doc]);
+  useEffect(() => { if (existing) return; const timer = setTimeout(() => doc.points.length ? saveDraft(doc) : clearDraft(), 250); return () => clearTimeout(timer); }, [doc, existing]);
   useEffect(() => { const warn = (event: BeforeUnloadEvent) => { if (doc.points.length) { event.preventDefault(); event.returnValue = ""; } }; addEventListener("beforeunload", warn); return () => removeEventListener("beforeunload", warn); }, [doc.points.length]);
   useEffect(() => { const key = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); dispatch({ type: event.shiftKey ? "redo" : "undo" }); } }; addEventListener("keydown", key); return () => removeEventListener("keydown", key); }, []);
 
@@ -39,9 +45,9 @@ export function RouteEditor() {
   function add(coordinate: RouteCoordinate) {
     if (inserting) return;
     const segmentId = doc.points.length ? id() : undefined, pointId = id();
-    const action: EditorAction = { type: "add", coordinate, mode, id: pointId, segmentId };
+    const action: EditorAction = { type: "add", coordinate, mode, id: pointId, segmentId, atStart: extendStart };
     const next = nextDocument(action); dispatch(action);
-    if (segmentId && mode === "ROUTED") void routeSegment(next.segments.at(-1)!, next);
+    if (segmentId && mode === "ROUTED") void routeSegment(extendStart ? next.segments[0] : next.segments.at(-1)!, next);
   }
   function insert(segmentId: string, coordinate: RouteCoordinate) {
     const action: EditorAction = { type: "insert", segmentId, coordinate, id: id(), leftId: id(), rightId: id() };
@@ -69,26 +75,30 @@ export function RouteEditor() {
     if (replacement?.mode === "ROUTED") void routeSegment(replacement, next);
   }
   async function save(form: FormData) {
-    if (saving) return;
+    if (saving || conflicted || doc.segments.some(s => s.routingStatus === "routing")) return;
     setSaving(true); setError(null);
     try {
+      if (existing) {
+        await saveOwnerRoute(existing.route.publicId, { baseVersionNumber: existing.route.viewedVersion, name: String(form.get("name") || ""), description: String(form.get("description") || "") || null, editorDocument: doc });
+        onSaved?.(); router.refresh(); return;
+      }
       const created = await createDrawnRoute({ name: String(form.get("name") || "Untitled route"), description: String(form.get("description") || "") || null, editorDocument: doc });
       clearDraft(); const owner = managementRouteUrl(created.publicId, created.managementToken, location.origin);
       try { await navigator.clipboard.writeText(owner); } catch { /* Clipboard access is optional. */ }
       const target = new URL(owner); router.push(target.pathname + target.search);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : "Could not save route"); setSaving(false); }
+    } catch (caught) { if (caught instanceof ApiError && caught.status === 409) { setConflicted(true); setError(t("ownerEdit.conflict")); } else setError(caught instanceof Error ? caught.message : "Could not save route"); setSaving(false); }
   }
-  function cancel() { if (!doc.points.length || confirm("Discard this route draft?")) { clearDraft(); router.push("/"); } }
+  function cancel() { if ((existing ? !state.past.length : !doc.points.length) || confirm(t("ownerEdit.discard"))) { if (existing) onClose?.(); else { clearDraft(); router.push("/"); } } }
 
-  return <main className="fixed inset-0 bg-slate-100">
+  return <main className="fixed inset-0 z-40 bg-slate-100">
     <EditorMap document={doc} selectedSegmentId={selectedSegmentId} selectedPointId={selectedPointId} inserting={inserting} onMapClick={add} onInsert={insert} onMove={move} onSelectSegment={(value) => { setSelectedSegmentId(value); setSelectedPointId(null); setInserting(false); }} onSelectPoint={(value) => { setSelectedPointId(value); if (value) { setSelectedSegmentId(null); setInserting(false); } }} />
-    <header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-2 p-3"><button onClick={cancel} className="pointer-events-auto rounded-lg bg-white px-3 py-2 text-sm font-bold shadow">← Cancel</button><div className="pointer-events-auto rounded-xl bg-white/95 p-2 shadow-xl"><div className="flex gap-1" role="group" aria-label="Drawing mode"><Mode active={mode === "ROUTED"} onClick={() => setMode("ROUTED")}>🧲 Follow roads</Mode><Mode active={mode === "DIRECT"} onClick={() => setMode("DIRECT")}>✏ Direct</Mode></div></div><button disabled={doc.points.length < 2} onClick={() => setShowSave(true)} className="pointer-events-auto rounded-lg bg-emerald-700 px-4 py-2 text-sm font-bold text-white shadow disabled:opacity-50">Finish & save</button></header>
-    <section className="absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 rounded-xl bg-white/95 p-3 shadow-xl backdrop-blur"><p className="text-sm font-semibold">{inserting ? "Tap the highlighted segment where the new control point should go." : doc.points.length ? "Click the map to extend the route, or drag a control point to move it." : "Click anywhere on the map to place the start."}</p><div className="mt-2 flex flex-wrap items-center gap-2"><button disabled={!state.past.length} onClick={() => dispatch({ type: "undo" })} className="route-button">↶ Undo</button><button disabled={!state.future.length} onClick={() => dispatch({ type: "redo" })} className="route-button">↷ Redo</button><span className="ml-auto text-sm font-bold">{(distance / 1000).toFixed(1)} km · {doc.points.length} points</span></div>
+    <header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-2 p-3"><button onClick={cancel} className="pointer-events-auto rounded-lg bg-white px-3 py-2 text-sm font-bold shadow">← Cancel</button><div className="pointer-events-auto rounded-xl bg-white/95 p-2 shadow-xl"><div className="flex gap-1" role="group" aria-label="Drawing mode"><Mode active={mode === "ROUTED"} onClick={() => setMode("ROUTED")}>🧲 Follow roads</Mode><Mode active={mode === "DIRECT"} onClick={() => setMode("DIRECT")}>✏ Direct</Mode></div></div><button disabled={doc.points.length < 2 || doc.segments.some(s => s.routingStatus === "routing")} onClick={() => setShowSave(true)} className="pointer-events-auto rounded-lg bg-emerald-700 px-4 py-2 text-sm font-bold text-white shadow disabled:opacity-50">{existing ? t("ownerEdit.save") : "Finish & save"}</button></header>
+    <section className="absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 rounded-xl bg-white/95 p-3 shadow-xl backdrop-blur"><p className="text-sm font-semibold">{inserting ? "Tap the highlighted segment where the new control point should go." : doc.points.length ? "Click the map to extend the route, or drag a control point to move it." : "Click anywhere on the map to place the start."}</p><div className="mt-2 flex flex-wrap items-center gap-2"><button disabled={!state.past.length} onClick={() => dispatch({ type: "undo" })} className="route-button">↶ Undo</button><button disabled={!state.future.length} onClick={() => dispatch({ type: "redo" })} className="route-button">↷ Redo</button><button onClick={() => setExtendStart(value => !value)} aria-pressed={extendStart} className="route-button">{t(extendStart ? "ownerEdit.extendStart" : "ownerEdit.extendEnd")}</button><span className="ml-auto text-sm font-bold">{(distance / 1000).toFixed(1)} km · {doc.points.length} points</span></div>
       {segment && <div className="mt-3 flex flex-wrap gap-2 border-t pt-3"><span className="py-2 text-xs font-bold uppercase text-slate-500">Selected segment</span><button onClick={() => setInserting((value) => !value)} aria-pressed={inserting} className="route-button">{inserting ? "Cancel adding point" : "Add point"}</button><button onClick={() => changeMode(segment.mode === "ROUTED" ? "DIRECT" : "ROUTED")} className="route-button">Convert to {segment.mode === "ROUTED" ? "Direct" : "Follow roads"}</button>{segment.mode === "ROUTED" && <button onClick={() => routeSegment(segment)} className="route-button">Retry / reroute</button>}{segment.routingStatus === "routing" && <span className="py-2 text-sm">Routing…</span>}{segment.routingStatus === "failed" && <span className="py-2 text-sm font-semibold text-red-700">Routing failed</span>}</div>}
       {selectedPoint && <div className="mt-3 flex flex-wrap gap-2 border-t pt-3"><span className="py-2 text-xs font-bold uppercase text-slate-500">Selected control point</span><button onClick={removePoint} className="route-button text-red-700">Delete point</button></div>}
       {error && !showSave && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
     </section>
-    {showSave && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-950/50 p-4"><form aria-busy={saving} onSubmit={event=>{event.preventDefault();void save(new FormData(event.currentTarget));}} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"><h1 className="text-2xl font-bold">Save route</h1><label className="mt-4 block text-sm font-bold">Route name<input name="name" required maxLength={200} className="mt-1 block w-full rounded-lg border p-3" /></label><label className="mt-4 block text-sm font-bold">Description (optional)<textarea name="description" rows={3} className="mt-1 block w-full rounded-lg border p-3" /></label>{saving && <p role="status" className="mt-3 text-sm text-slate-600">Saving route and preparing elevation profile…</p>}{error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}<div className="mt-5 flex justify-end gap-2"><button type="button" disabled={saving} onClick={() => setShowSave(false)} className="route-button">Back</button><button disabled={saving} className="rounded-lg bg-emerald-700 px-5 py-2 font-bold text-white disabled:opacity-50">{saving ? "Saving…" : "Save route"}</button></div></form></div>}
+    {showSave && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-950/50 p-4"><form aria-busy={saving} onSubmit={event=>{event.preventDefault();void save(new FormData(event.currentTarget));}} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"><h1 className="text-2xl font-bold">{existing ? t("ownerEdit.save") : "Save route"}</h1>{existing && <p className="mt-2 text-sm text-slate-600">{t("ownerEdit.baseVersion", { version: existing.route.viewedVersion })}</p>}<label className="mt-4 block text-sm font-bold">Route name<input name="name" defaultValue={existing?.route.name} required maxLength={200} className="mt-1 block w-full rounded-lg border p-3" /></label><label className="mt-4 block text-sm font-bold">Description (optional)<textarea name="description" defaultValue={existing?.route.description ?? ""} rows={3} className="mt-1 block w-full rounded-lg border p-3" /></label>{saving && <p role="status" className="mt-3 text-sm text-slate-600">Saving route and preparing elevation profile…</p>}{error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}{conflicted && existing && <button type="button" onClick={() => { router.push(publicRoutePath(existing.route.publicId)); onClose?.(); router.refresh(); }} className="mt-3 text-sm font-bold text-blue-700">{t("ownerEdit.reload")}</button>}<div className="mt-5 flex justify-end gap-2"><button type="button" disabled={saving} onClick={() => setShowSave(false)} className="route-button">Back</button><button disabled={saving || conflicted} className="rounded-lg bg-emerald-700 px-5 py-2 font-bold text-white disabled:opacity-50">{saving ? "Saving…" : existing ? t("ownerEdit.save") : "Save route"}</button></div></form></div>}
   </main>;
 }
 function Mode({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) { return <button type="button" aria-pressed={active} onClick={onClick} className={`rounded-lg px-3 py-2 text-sm font-bold ${active ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-slate-100"}`}>{children}</button>; }

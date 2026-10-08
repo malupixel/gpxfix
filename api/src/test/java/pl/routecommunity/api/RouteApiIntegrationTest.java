@@ -223,7 +223,7 @@ class RouteApiIntegrationTest {
         mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.016));
         mvc.perform(get("/api/routes/{id}/versions",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].versionNumber").value(2))
                 .andExpect(jsonPath("$[0].source").value("SUGGESTION_MERGE")).andExpect(jsonPath("$[0].mergedSuggestionPublicId").value(suggestionId));
-        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$[0].integrationStatus").value("MERGED"))
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(owner)).andExpect(jsonPath("$[0].integrationStatus").value("MERGED"))
                 .andExpect(jsonPath("$[0].baseVersionNumber").value(1)).andExpect(jsonPath("$[0].mergedIntoVersionNumber").value(2));
         assertThat(jdbc.queryForObject("select count(*) from route_versions v join routes r on r.id=v.route_id where r.public_id=?",Integer.class,routeId)).isEqualTo(2);
     }
@@ -233,7 +233,7 @@ class RouteApiIntegrationTest {
         mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andExpect(status().isOk());
         mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andExpect(status().isConflict()).andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("created on v1")));
         mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.currentVersion").value(2));
-        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$[?(@.publicId == '"+second+"')].integrationStatus").value(org.hamcrest.Matchers.contains("NOT_MERGED")))
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId).param("versionNumber","1")).andExpect(jsonPath("$[?(@.publicId == '"+second+"')].integrationStatus").value(org.hamcrest.Matchers.contains("NOT_MERGED")))
                 .andExpect(jsonPath("$[?(@.publicId == '"+second+"')].baseVersionNumber").value(org.hamcrest.Matchers.contains(1)));
     }
     @Test void informationalSuggestionsDoNotCreateEmptyRouteVersions() throws Exception {
@@ -258,6 +258,110 @@ class RouteApiIntegrationTest {
         assertThat(jdbc.queryForList("select v.version_number from route_versions v join routes r on r.id=v.route_id where r.public_id=? order by v.version_number",Integer.class,routeId)).containsExactly(1,2,3);
     }
     private String createSuggestion(String routeId,String body)throws Exception{return json.readTree(mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("publicId").asText();}
+    @Test void publishedSuggestionsCanBeUnpublishedRepublishedOrRejectedWithoutLosingDiscussion() throws Exception {
+        JsonNode route=upload("lifecycle.gpx");String routeId=route.get("publicId").asText();Cookie owner=ownerCookie(routeId,route.get("managementToken").asText());
+        String sid=createSuggestion(routeId,detourJson());publish(routeId,sid,owner);
+        String commentId=json.readTree(mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",routeId,sid)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\"Rider\",\"content\":\"Keep this discussion\"}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsByteArray()).get("publicId").asText();
+        String path="/api/routes/{id}/suggestions/owner/{sid}/moderation";
+        mvc.perform(patch(path,routeId,sid).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PENDING\"}")).andExpect(status().isForbidden());
+        mvc.perform(patch(path,routeId,sid).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PENDING\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.comments[0].publicId").value(commentId)).andExpect(jsonPath("$.baseVersionNumber").value(1));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$.length()").value(0));
+        mvc.perform(get("/api/routes/{id}/suggestions/{sid}",routeId,sid)).andExpect(status().isNotFound());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,sid).cookie(owner)).andExpect(status().isConflict());
+        publish(routeId,sid,owner);
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(owner)).andExpect(jsonPath("$[0].comments[0].publicId").value(commentId));
+        mvc.perform(patch(path,routeId,sid).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"REJECTED\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.moderationStatus").value("REJECTED"));
+        mvc.perform(patch(path,routeId,sid).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}")).andExpect(status().isBadRequest());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,sid).cookie(owner)).andExpect(status().isConflict());
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$.length()").value(0));
+        assertThat(jdbc.queryForObject("select count(*) from suggestion_comments where public_id=?",Integer.class,commentId)).isEqualTo(1);
+    }
+
+    @Test void ownerEditCreatesVersionSevenAndRecalculatesGeometryProfileAndExportWithoutChangingHistory() throws Exception {
+        JsonNode created=upload("owner-edit.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        JsonNode other=upload("wrong-owner.gpx");Cookie wrongOwner=ownerCookie(other.get("publicId").asText(),other.get("managementToken").asText());
+        String path="/api/routes/{id}/owner/versions";
+        mvc.perform(get("/api/routes/{id}/owner/editor",routeId)).andExpect(status().isForbidden());
+        mvc.perform(get("/api/routes/{id}/owner/editor",routeId).cookie(wrongOwner)).andExpect(status().isForbidden());
+        mvc.perform(post(path,routeId).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.03))).andExpect(status().isForbidden());
+        mvc.perform(post(path,routeId).cookie(wrongOwner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.03))).andExpect(status().isForbidden());
+        for(int version=1;version<6;version++)mvc.perform(post(path,routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(version,21.03)))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.currentVersion").value(version+1));
+        String sid=createSuggestion(routeId,noteJsonWithCoordinates(21.0122,52.2299));publish(routeId,sid,owner);
+        byte[] originalGpx=mvc.perform(get("/api/routes/{id}/versions/6/gpx",routeId)).andReturn().getResponse().getContentAsByteArray();
+        var original=jdbc.queryForMap("select v.storage_key,v.distance_meters,v.elevation_gain_meters,ST_AsText(v.track_geometry) as geometry from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=6",routeId);
+        mvc.perform(get("/api/routes/{id}/owner/editor",routeId).cookie(owner)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.route.viewedVersion").value(6)).andExpect(jsonPath("$.editorDocument.points.length()").value(2));
+        var result=mvc.perform(post(path,routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(6,21.05)))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.currentVersion").value(7)).andExpect(jsonPath("$.geometry.coordinates[1][0]").value(21.05))
+                .andExpect(jsonPath("$.elevationProfile.length()",org.hamcrest.Matchers.greaterThan(2))).andReturn();
+        JsonNode next=json.readTree(result.getResponse().getContentAsByteArray());
+        assertThat(next.get("distanceMeters").asDouble()).isGreaterThan(((Number)original.get("distance_meters")).doubleValue());
+        assertThat(next.get("elevationProfile").get(0).get("elevationMeters").asDouble()).isCloseTo(122.99,org.assertj.core.data.Offset.offset(1e-8));
+        assertThat(jdbc.queryForMap("select v.storage_key,v.distance_meters,v.elevation_gain_meters,ST_AsText(v.track_geometry) as geometry from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=6",routeId)).isEqualTo(original);
+        mvc.perform(get("/api/routes/{id}/versions/6/gpx",routeId)).andExpect(content().bytes(originalGpx));
+        mvc.perform(get("/api/routes/{id}/gpx",routeId)).andExpect(content().string(org.hamcrest.Matchers.containsString("lon=\"21.05\"")));
+        mvc.perform(get("/api/routes/{id}/versions",routeId)).andExpect(jsonPath("$[0].source").value("OWNER_EDIT")).andExpect(jsonPath("$[0].basedOnVersionNumber").value(6));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId)).andExpect(jsonPath("$.length()").value(0));
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId).param("versionNumber","6")).andExpect(jsonPath("$[0].baseVersionNumber").value(6));
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(owner)).andExpect(jsonPath("$[0].baseVersionNumber").value(6)).andExpect(jsonPath("$[0].moderationStatus").value("PUBLISHED"));
+        mvc.perform(post(path,routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(6,21.09))).andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject("select count(*) from route_versions v join routes r on r.id=v.route_id where r.public_id=?",Integer.class,routeId)).isEqualTo(7);
+    }
+
+    @Test void simultaneousOwnerEditsWithTheSameBaseAllowOnlyOneNewVersion() throws Exception {
+        JsonNode created=upload("racing-edits.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        try(ExecutorService executor=Executors.newFixedThreadPool(2)){
+            Callable<Integer> save=()->mvc.perform(post("/api/routes/{id}/owner/versions",routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.05))).andReturn().getResponse().getStatus();
+            Future<Integer> a=executor.submit(save),b=executor.submit(save);assertThat(List.of(a.get(),b.get())).containsExactlyInAnyOrder(201,409);
+        }
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.currentVersion").value(2));
+    }
+
+    @Test void mergedSuggestionIsTerminalAndIsNotAnActiveOverlay() throws Exception {
+        JsonNode created=upload("terminal-merge.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String sid=createSuggestion(routeId,detourJson());publish(routeId,sid,owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,sid).cookie(owner)).andExpect(status().isOk());
+        for(String target:List.of("PENDING","PUBLISHED","REJECTED"))mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,sid).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\""+target+"\"}")).andExpect(status().isBadRequest());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,sid).cookie(owner)).andExpect(status().isConflict());
+        mvc.perform(get("/api/routes/{id}/suggestions",routeId).param("versionNumber","1")).andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test void mergeInvalidatesAnOpenOwnerEditorAndOwnerEditInvalidatesChangedSuggestionSections() throws Exception {
+        JsonNode created=upload("merge-edit-conflict.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String first=createSuggestion(routeId,detourJson());publish(routeId,first,owner);
+        mvc.perform(get("/api/routes/{id}/owner/editor",routeId).cookie(owner)).andExpect(jsonPath("$.route.viewedVersion").value(1));
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andExpect(status().isOk());
+        mvc.perform(post("/api/routes/{id}/owner/versions",routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.05))).andExpect(status().isConflict());
+        String second=createSuggestion(routeId,detourJson());publish(routeId,second,owner);
+        mvc.perform(post("/api/routes/{id}/owner/versions",routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(2,21.05))).andExpect(status().isCreated());
+        mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andExpect(status().isConflict());
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",routeId).cookie(owner)).andExpect(jsonPath("$[1].baseVersionNumber").value(2)).andExpect(jsonPath("$[1].moderationStatus").value("PUBLISHED"));
+        mvc.perform(get("/api/routes/{id}",routeId)).andExpect(jsonPath("$.currentVersion").value(3));
+    }
+
+    @Test void readingLegacyVersionElevationDoesNotMutateItsRowOrStoredGpx() throws Exception {
+        JsonNode created=upload("legacy-elevation.gpx");String routeId=created.get("publicId").asText();Cookie owner=ownerCookie(routeId,created.get("managementToken").asText());
+        String key=jdbc.queryForObject("select v.storage_key from route_versions v join routes r on r.id=v.route_id where r.public_id=?",String.class,routeId);
+        Path file=STORAGE.resolve(key);String raw=Files.readString(file).replaceAll("<ele>[^<]*</ele>","");Files.writeString(file,raw);
+        var row=jdbc.queryForMap("select v.* from route_versions v join routes r on r.id=v.route_id where r.public_id=?",routeId);
+        mvc.perform(post("/api/routes/{id}/owner/versions",routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.05))).andExpect(status().isCreated());
+        mvc.perform(get("/api/routes/{id}/versions/1",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").isNumber());
+        mvc.perform(get("/api/routes/{id}/versions/1/gpx",routeId)).andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
+        assertThat(jdbc.queryForMap("select v.* from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=1",routeId)).isEqualTo(row);
+        assertThat(Files.readString(file)).isEqualTo(raw);
+    }
+
+    private String editJson(int base,double endLongitude){return """
+        {"baseVersionNumber":%d,"name":"Owner edit","description":"New geometry","editorDocument":{"version":1,
+        "points":[{"id":"a","coordinate":[21.0122,52.2299]},{"id":"b","coordinate":[%s,52.245]}],
+        "segments":[{"id":"ab","fromId":"a","toId":"b","mode":"DIRECT","geometry":[[21.0122,52.2299],[%s,52.245]]}]}}
+        """.formatted(base,endLongitude,endLongitude);}
+
     private void publish(String routeId,String suggestionId,Cookie owner)throws Exception{mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",routeId,suggestionId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\"PUBLISHED\"}")).andExpect(status().isOk());}
     private Cookie ownerCookie(String routeId,String token)throws Exception{return mvc.perform(post("/api/routes/{id}/ownership",routeId).contentType(MediaType.APPLICATION_JSON).content("{\"token\":\""+token+"\"}" )).andExpect(status().isNoContent()).andReturn().getResponse().getCookie("route_owner");}
     private JsonNode upload(String filename) throws Exception {

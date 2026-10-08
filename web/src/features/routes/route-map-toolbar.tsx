@@ -6,19 +6,21 @@ type Props = {
   selectedTool: SuggestionTool;
   onView: () => void;
   onSuggest: (tool?: SuggestionTool) => void;
+  onEdit?: () => void;
 };
 
-export function RouteMapToolbar({ mode, selectedTool, onView, onSuggest }: Props) {
+export function RouteMapToolbar({ mode, selectedTool, onView, onSuggest, onEdit }: Props) {
   const { t } = useTranslation();
   return <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 p-1 sm:flex-row sm:items-center sm:justify-between">
     <div className="grid grid-cols-2 rounded-lg bg-slate-100 p-1 text-sm font-semibold sm:flex" role="tablist" aria-label={t("toolbar.mode")}>
       <button type="button" role="tab" aria-selected={mode === "view"} onClick={onView} className={`rounded-md px-5 py-2 ${mode === "view" ? "bg-white text-slate-950 shadow-sm" : "text-slate-600"}`}>{t("route.viewRoute")}</button>
+      {onEdit && <button type="button" onClick={onEdit} className="rounded-md px-5 py-2 text-emerald-700">{t("ownerEdit.edit")}</button>}
       <button type="button" role="tab" aria-selected={mode === "suggest"} onClick={() => onSuggest()} className={`rounded-md px-5 py-2 ${mode === "suggest" ? "bg-white text-slate-950 shadow-sm" : "text-slate-600"}`}>{t("route.suggestChanges")}</button>
     </div>
     {mode === "view" ? <div className="grid grid-cols-3 gap-2 text-xs font-semibold sm:flex sm:text-sm">
       <ToolbarAction icon="●" label={t("toolbar.addNote")} tone="blue" onClick={() => onSuggest("note")} />
       <ToolbarAction icon="△" label={t("toolbar.flagSection")} tone="red" onClick={() => onSuggest("issue")} />
-      <ToolbarAction icon="✎" label={t("toolbar.editRoute")} tone="green" onClick={() => onSuggest("detour")} />
+      <ToolbarAction icon="✎" label={t("suggestion.suggestDetour")} tone="green" onClick={() => onSuggest("detour")} />
     </div> : <SuggestionToolStatus selectedTool={selectedTool} />}
   </div>;
 }

@@ -7,7 +7,7 @@ import pl.routecommunity.api.gpx.*;
 class RouteMapper {
     RouteDto toDto(Route route,RouteVersion version,GpxTrack track) {
         List<List<Double>> coordinates=Arrays.stream(version.getTrackGeometry().getCoordinates()).map(this::coordinate).toList();
-        return new RouteDto(route.getPublicId(),version.getName(),version.getDescription(),version.getOriginalFilename(),version.getDistanceMeters(),version.getElevationGainMeters(),
+        return new RouteDto(route.getPublicId(),version.getName(),version.getDescription(),version.getOriginalFilename(),version.getDistanceMeters(),track.elevationGainMeters(),
                 new RouteDto.GeoJsonLineString("LineString",coordinates),elevationProfile(track),version.getCreatedAt(),route.getCurrentVersion().getVersionNumber(),version.getVersionNumber(),version.getId().equals(route.getCurrentVersion().getId()));
     }
     RouteVersionSummaryDto summary(Route route,RouteVersion version){return new RouteVersionSummaryDto(version.getVersionNumber(),version.getCreatedAt(),version.getSource(),

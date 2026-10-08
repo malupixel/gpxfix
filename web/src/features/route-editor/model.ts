@@ -8,13 +8,30 @@ export type EditorState = { present: RouteEditorDocument; past: RouteEditorDocum
 
 export const emptyDocument = (): RouteEditorDocument => ({ version: 1, points: [], segments: [] });
 export const createEditorState = (document = emptyDocument()): EditorState => ({ present: document, past: [], future: [] });
+
+/** Preserve every geometry vertex while using a bounded number of draggable controls. */
+export function documentFromGeometry(coordinates: RouteCoordinate[]): RouteEditorDocument {
+  if (coordinates.length < 2) return emptyDocument();
+  const stride = Math.max(1, Math.ceil((coordinates.length - 1) / 100));
+  const indices = [0];
+  for (let i = stride; i < coordinates.length - 1; i += stride) indices.push(i);
+  indices.push(coordinates.length - 1);
+  const points = indices.map((index) => ({ id: `import-point-${index}`, coordinate: [...coordinates[index]] as RouteCoordinate }));
+  const segments = points.slice(1).map((to, i) => newSegment(`import-segment-${i}`, points[i].id, to.id, "ROUTED", coordinates.slice(indices[i], indices[i + 1] + 1).map(c => [...c] as RouteCoordinate)));
+  return { version: 1, points, segments };
+}
+
+export function initializeExistingDocument(coordinates: RouteCoordinate[], saved: RouteEditorDocument | null): RouteEditorDocument {
+  const document = saved ? structuredClone(saved) : documentFromGeometry(coordinates);
+  return { ...document, segments: document.segments.map(segment => ({ ...segment, routingStatus: "idle", requestVersion: 0 })) };
+}
 const copy = (value: RouteEditorDocument): RouteEditorDocument => structuredClone(value);
 const commit = (state: EditorState, next: RouteEditorDocument): EditorState => ({ present: next, past: [...state.past, copy(state.present)].slice(-100), future: [] });
 const point = (document: RouteEditorDocument, pointId: string) => document.points.find((item) => item.id === pointId)!;
 const directGeometry = (document: RouteEditorDocument, segment: RouteSegment): RouteCoordinate[] => [point(document, segment.fromId).coordinate, point(document, segment.toId).coordinate];
 
 export type EditorAction =
-  | { type: "add"; coordinate: RouteCoordinate; mode: SegmentMode; id: string; segmentId?: string }
+  | { type: "add"; coordinate: RouteCoordinate; mode: SegmentMode; id: string; segmentId?: string; atStart?: boolean }
   | { type: "insert"; segmentId: string; coordinate: RouteCoordinate; id: string; leftId: string; rightId: string }
   | { type: "move"; pointId: string; coordinate: RouteCoordinate }
   | { type: "remove"; pointId: string; replacementId?: string }
@@ -66,8 +83,13 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     return { ...state, present: document };
   }
   if (action.type === "add") {
-    const previous = document.points.at(-1); document.points.push({ id: action.id, coordinate: action.coordinate });
-    if (previous) document.segments.push(newSegment(action.segmentId!, previous.id, action.id, action.mode, [previous.coordinate, action.coordinate]));
+    if (action.atStart) {
+      const previous = document.points[0]; document.points.unshift({ id: action.id, coordinate: action.coordinate });
+      if (previous) document.segments.unshift(newSegment(action.segmentId!, action.id, previous.id, action.mode, [action.coordinate, previous.coordinate]));
+    } else {
+      const previous = document.points.at(-1); document.points.push({ id: action.id, coordinate: action.coordinate });
+      if (previous) document.segments.push(newSegment(action.segmentId!, previous.id, action.id, action.mode, [previous.coordinate, action.coordinate]));
+    }
   }
   if (action.type === "move") return commit(state, previewPointMove(document, action.pointId, action.coordinate));
   if (action.type === "mode") {

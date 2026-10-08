@@ -1,5 +1,8 @@
 export const resources = {
   pl: { translation: {
+    ownerEdit: { edit: "Edytuj trasę", save: "Zapisz jako nową wersję", baseVersion: "Edycja na podstawie v{{version}}. Zapis utworzy nową wersję trasy.", conflict: "Trasa zmieniła się podczas edycji. Twoje zmiany nie zostały zapisane. Wróć do aktualnej trasy i rozpocznij edycję ponownie.", reload: "Wróć do aktualnej trasy", discard: "Odrzucić niezapisane zmiany?", extendStart: "Dodawanie na początku", extendEnd: "Dodawanie na końcu", loading: "Otwieranie aktualnej trasy…", loadFailed: "Nie udało się otworzyć edytora trasy." },
+    lifecycle: { unpublish: "Cofnij publikację", rejectConfirm: "Odrzucić tę sugestię? Pozostanie w historii, ale nie będzie można jej ponownie opublikować ani scalić.", merge: "Scal z oficjalną trasą", proposedOn: "Zgłoszono dla v{{version}}", mergedInto: "Scalono do v{{version}}", reviewEarlier: "Przejrzyj {{count}} opublikowanych sugestii z wcześniejszych wersji", showAll: "Pokaż wszystkie sugestie", earlierVersion: "Sugestia dotyczy v{{version}}, a aktualna trasa to v{{current}}. Przejrzyj ją na podstawie oryginalnej wersji." },
+    versionOrigin: { initialUpload: "Import GPX", initialDrawn: "Narysowana trasa", suggestionMerge: "Scalona sugestia", ownerEdit: "Edycja właściciela" },
     map: { showSquadratsGrid: "Pokaż siatkę Squadrats", squadratsZoomIn: "Przybliż mapę, aby zobaczyć siatkę Squadrats." },
     common: { optional: "(opcjonalnie)", copy: "Kopiuj", copied: "Skopiowano!", select: "Wybierz…", description: "Opis", name: "Imię", cancel: "Anuluj", back: "Wróć", language: "Język", noAccount: "Konto nie jest wymagane." },
     landing: { title: "Route Community", subtitle: "Wgraj trasę GPX i udostępnij ją osobom, które znają okolicę." },
@@ -21,6 +24,9 @@ export const resources = {
     errors: { generic: "Coś poszło nie tak. Spróbuj ponownie." }
   } },
   en: { translation: {
+    ownerEdit: { edit: "Edit route", save: "Save as new version", baseVersion: "Editing from v{{version}}. Saving creates a new route version.", conflict: "The route changed while you were editing. Your changes were not saved. Return to the latest route and start editing again.", reload: "Return to latest route", discard: "Discard unsaved changes?", extendStart: "Adding at start", extendEnd: "Adding at end", loading: "Opening the latest route…", loadFailed: "Could not open the route editor." },
+    lifecycle: { unpublish: "Unpublish", rejectConfirm: "Reject this suggestion? It will remain in history, but cannot be published or merged again.", merge: "Merge into official route", proposedOn: "Proposed on v{{version}}", mergedInto: "Merged into v{{version}}", reviewEarlier: "Review {{count}} published suggestions from earlier versions", showAll: "Show all suggestions", earlierVersion: "This suggestion belongs to v{{version}}; the current route is v{{current}}. Review it against its original version." },
+    versionOrigin: { initialUpload: "GPX import", initialDrawn: "Drawn route", suggestionMerge: "Merged suggestion", ownerEdit: "Owner edit" },
     map: { showSquadratsGrid: "Show Squadrats grid", squadratsZoomIn: "Zoom in to see the Squadrats grid." },
     common: { optional: "(optional)", copy: "Copy", copied: "Copied!", select: "Select…", description: "Description", name: "Name", cancel: "Cancel", back: "Back", language: "Language", noAccount: "No account required." },
     landing: { title: "Route Community", subtitle: "Upload a GPX route and share it with people who know the area." },

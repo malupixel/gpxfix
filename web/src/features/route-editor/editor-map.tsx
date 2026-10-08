@@ -39,6 +39,11 @@ export function EditorMap(props: Props) {
       map.addLayer({ id: "editor-segments-hit", type: "line", source: "editor-segments", paint: { "line-width": 28, "line-opacity": 0 } });
       map.addLayer({ id: "editor-selected", type: "line", source: "editor-segments", filter: ["==", ["get", "selected"], true], layout: { "line-cap": "round" }, paint: { "line-color": "#f59e0b", "line-width": 9, "line-opacity": .75 } });
       map.resize();
+      const coordinates = finalGeometry(documentRef.current);
+      if (coordinates.length > 1) {
+        const bounds = coordinates.reduce((b, c) => ({ west: Math.min(b.west, c[0]), south: Math.min(b.south, c[1]), east: Math.max(b.east, c[0]), north: Math.max(b.north, c[1]) }), { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity });
+        map.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], { padding: { top: 110, bottom: 170, left: 60, right: 60 }, maxZoom: 16, duration: 0 });
+      }
       setLoadedMap(map);
     });
     map.on("error", () => setMapError(true));

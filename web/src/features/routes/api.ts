@@ -17,9 +17,12 @@ export async function getRouteOwnerStatus(publicId: string): Promise<boolean> {
 export function getOwnerAccessToken(publicId: string): Promise<{ token: string }> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/access-token`, { cache: "no-store" });
 }
-export function getRouteSuggestions(publicId: string): Promise<RouteSuggestion[]> {
-  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions`, { cache: "no-store" });
+export function getRouteSuggestions(publicId: string, versionNumber?: number): Promise<RouteSuggestion[]> {
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions${versionNumber ? `?versionNumber=${versionNumber}` : ""}`, { cache: "no-store" });
 }
+export type OwnerEditorData = { route: RouteData; editorDocument: RouteEditorDocument | null };
+export function getOwnerEditor(publicId: string): Promise<OwnerEditorData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/editor`, { cache: "no-store" }); }
+export function saveOwnerRoute(publicId: string, request: { baseVersionNumber: number; name: string; description: string | null; editorDocument: RouteEditorDocument }): Promise<RouteData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/versions`, { method: "POST", body: JSON.stringify(request) }); }
 export function createRouteSuggestion(publicId: string, suggestion: CreateSuggestionRequest): Promise<RouteSuggestion> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions`, { method: "POST", body: JSON.stringify(suggestion) });
 }

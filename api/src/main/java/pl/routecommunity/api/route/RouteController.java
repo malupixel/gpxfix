@@ -28,6 +28,15 @@ public class RouteController {
     @GetMapping("/{publicId}/owner") public java.util.Map<String,Boolean> owner(@PathVariable String publicId,HttpServletRequest request){
         ownership.requireOwner(publicId,request); return java.util.Map.of("owner",true);
     }
+    @GetMapping("/{publicId}/owner/editor") public ResponseEntity<OwnerEditorDto> ownerEditor(@PathVariable String publicId,HttpServletRequest request){
+        ownership.requireOwner(publicId,request);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service.ownerEditor(publicId));
+    }
+    @PostMapping("/{publicId}/owner/versions") public ResponseEntity<RouteDto> ownerEdit(@PathVariable String publicId,
+            @jakarta.validation.Valid @RequestBody OwnerEditRouteRequest body,HttpServletRequest request){
+        ownership.requireOwner(publicId,request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.ownerEdit(publicId,body));
+    }
     @GetMapping("/{publicId}/owner/access-token") public ResponseEntity<java.util.Map<String,String>> ownerAccessToken(@PathVariable String publicId,HttpServletRequest request){
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
                 .body(java.util.Map.of("token",ownership.ownerSessionToken(publicId,request)));

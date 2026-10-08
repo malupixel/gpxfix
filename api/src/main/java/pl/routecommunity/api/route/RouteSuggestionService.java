@@ -55,9 +55,12 @@ public class RouteSuggestionService {
     }
 
     @Transactional(readOnly=true)
-    public List<SuggestionDto> listPublic(String routePublicId){
-        if(!routes.existsByPublicId(routePublicId))throw new ApiException(HttpStatus.NOT_FOUND,"Route not found");
-        return suggestions.findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId,ModerationStatus.PUBLISHED).stream().map(value->dto(value,false)).toList();
+    public List<SuggestionDto> listPublic(String routePublicId,Integer versionNumber){
+        Route route=routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
+        int viewed=versionNumber==null?route.getCurrentVersion().getVersionNumber():versionNumber;
+        return suggestions.findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId,ModerationStatus.PUBLISHED).stream()
+                .filter(value->value.getBaseVersion().getVersionNumber()==viewed && value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED)
+                .map(value->dto(value,false)).toList();
     }
     @Transactional(readOnly=true)
     public SuggestionDto getPublic(String routePublicId,String suggestionPublicId){return dto(suggestions.findByRoute_PublicIdAndPublicIdAndModerationStatus(routePublicId,suggestionPublicId,ModerationStatus.PUBLISHED).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found")),false);}
@@ -67,6 +70,7 @@ public class RouteSuggestionService {
     List<RouteSuggestion> pendingForRoute(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().filter(s->s.getModerationStatus()==ModerationStatus.PENDING).toList();}
     @Transactional
     public SuggestionDto moderate(String routePublicId,String suggestionPublicId,ModerationStatus target){
+        routes.findLockedByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
         RouteSuggestion value=suggestions.findByRoute_PublicIdAndPublicId(routePublicId,suggestionPublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found"));
         try{value.moderate(target,Instant.now());}catch(IllegalArgumentException|IllegalStateException e){throw bad(e.getMessage());}
         return dto(value,true);
