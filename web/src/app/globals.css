@@ -71,3 +71,6 @@ button, select { font: inherit; }
   .maplibregl-ctrl-top-right { top: 3.25rem; }
   .maplibregl-ctrl button { width: 36px; height: 36px; }
 }
+
+.route-menu-action { display: block; width: 100%; border-radius: .5rem; padding: .65rem .75rem; text-align: left; cursor: pointer; }
+.route-menu-action:hover, .route-menu-action:focus-visible { background-color: #f1f5f9; }

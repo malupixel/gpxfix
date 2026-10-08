@@ -3,25 +3,30 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { RouteMoreMenu } from "./route-more-menu";
+import { RouteVersionNavigation } from "./route-version-navigation";
 import type { RouteData } from "@/types/route";
+import { elevationSummary } from "./elevation-profile-data";
 import { formatRouteDate } from "./route-format";
-import { managementRouteUrl, publicRoutePath, publicRouteUrl, routeVersionPath } from "./route-links";
-import { getOwnerAccessToken, getRouteVersions } from "./api";
-import type { RouteVersionSummary } from "@/types/route";
+import { managementRouteUrl, routeVersionPath } from "./route-links";
+import { getOwnerAccessToken } from "./api";
 import { useTranslation } from "react-i18next";
 
 type Props = { route: RouteData; isOwner: boolean };
 
 export function RouteHeader({ route, isOwner }: Props) {
   const [copied, setCopied] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const { t, i18n } = useTranslation();
-  const routePath = publicRoutePath(route.publicId);
+  const elevation = elevationSummary(route.elevationProfile);
+  const routePath = routeVersionPath(route.publicId, route.viewedVersion);
 
   async function copyRouteUrl() {
-    const url = publicRouteUrl(route.publicId, window.location.origin);
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+    const url = new URL(routePath, window.location.origin).toString();
+    setCopyError(false);
+    try { await navigator.clipboard.writeText(url); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
+    catch { setCopyError(true); }
   }
 
   return (
@@ -34,22 +39,23 @@ export function RouteHeader({ route, isOwner }: Props) {
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="min-w-0 break-words text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{route.name}</h1>
             <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white">v{route.viewedVersion}</span>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">{t("route.openSuggestions")}</span>
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">{t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")}</span>
             {isOwner && <OwnerAccess publicId={route.publicId} />}
           </div>
           {route.description && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{route.description}</p>}
           <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
             <Metric icon="↔" label={t("route.distance")} value={`${(route.distanceMeters / 1000).toFixed(1)} km`} />
-            {route.elevationGainMeters !== null && <Metric icon="△" label={t("route.elevationGain")} value={`${Math.round(route.elevationGainMeters)} m`} />}
+            {elevation && <Metric icon="△" label={t("route.elevationGain")} value={`${Math.round(elevation.gainMeters)} m`} />}
             <Metric icon="□" label={t("route.shared")} value={formatRouteDate(route.createdAt, i18n.language)} />
           </dl>
-          <VersionNavigation route={route}/>
+          <RouteVersionNavigation route={route} open={historyOpen} onToggle={() => setHistoryOpen(value => !value)}/>
         </div>
         <div className="w-full shrink-0 sm:w-auto lg:w-80">
           <div className="flex gap-2 sm:justify-end">
-            <button disabled title={t("route.moreSoon")} className="route-button flex-1 disabled:cursor-not-allowed disabled:opacity-65">•••&nbsp;&nbsp; {t("route.more")}</button>
+            <RouteMoreMenu route={route} isOwner={isOwner} onHistory={() => setHistoryOpen(true)} onCopy={() => void copyRouteUrl()} />
             <button onClick={copyRouteUrl} className="route-button flex-1 border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800">⌯&nbsp;&nbsp; {t("route.share")}</button>
           </div>
+          {copyError && <p role="alert" className="mt-2 text-sm text-red-700">{t("management.copyFailed")}</p>}
           <div className="mt-2 flex items-center rounded-lg border border-slate-200 bg-white p-1 pl-3 shadow-sm">
             <span className="min-w-0 flex-1 truncate text-xs text-slate-600">{routePath}</span>
             <button onClick={copyRouteUrl} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold hover:bg-slate-50">{copied ? t("common.copied") : t("common.copy")}</button>
@@ -58,14 +64,6 @@ export function RouteHeader({ route, isOwner }: Props) {
       </div>
     </header>
   );
-}
-
-function VersionNavigation({route}:{route:RouteData}){
-  const { t } = useTranslation();
-  const originKeys = { INITIAL_UPLOAD: "versionOrigin.initialUpload", INITIAL_DRAWN: "versionOrigin.initialDrawn", SUGGESTION_MERGE: "versionOrigin.suggestionMerge", OWNER_EDIT: "versionOrigin.ownerEdit" } as const;
-  const[open,setOpen]=useState(false),[versions,setVersions]=useState<RouteVersionSummary[]>([]);
-  useEffect(()=>{if(open)getRouteVersions(route.publicId).then(setVersions).catch(()=>setVersions([]));},[open,route.publicId,route.currentVersion]);
-  return <div className="mt-4"><div className="flex flex-wrap items-center gap-3">{!route.isCurrentVersion&&<><span className="rounded-lg bg-amber-100 px-3 py-2 text-sm font-bold text-amber-900">{t("versions.historical")}</span><Link className="text-sm font-bold text-blue-700" href={publicRoutePath(route.publicId)}>{t("versions.goCurrent", { version: route.currentVersion })}</Link></>}<button type="button" onClick={()=>setOpen(value=>!value)} className="text-sm font-bold text-blue-700">{t(open ? "versions.hideHistory" : "versions.history")}</button></div>{open&&<ol className="mt-3 max-w-xl divide-y rounded-lg border bg-white">{versions.map(version=><li key={version.versionNumber} className="flex items-center justify-between gap-3 p-3 text-sm"><div><Link className="font-bold text-blue-700" href={version.current?publicRoutePath(route.publicId):routeVersionPath(route.publicId,version.versionNumber)}>v{version.versionNumber}</Link><span className="ml-2 text-slate-500">{t(originKeys[version.source])}</span>{version.mergedSuggestionPublicId&&<span className="ml-2 text-slate-500">{t("versions.suggestion", { id: version.mergedSuggestionPublicId })}</span>}</div>{version.current&&<span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-800">{t("versions.current")}</span>}</li>)}</ol>}</div>;
 }
 
 function OwnerAccess({ publicId }: { publicId: string }) {

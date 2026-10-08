@@ -1,29 +1,34 @@
 import type { RouteData } from "@/types/route";
-import { recentActivityMock } from "./community-mock";
 import { formatRouteDate } from "./route-format";
 import { useTranslation } from "react-i18next";
+import { areRouteEndpointsClose } from "./route-geometry";
+import { elevationSummary } from "./elevation-profile-data";
+import { RouteActivityCard } from "./route-activity";
+import { RouteDownload } from "./gpx-export";
 
-export function RouteInformation({ route }: { route: RouteData }) {
-  return <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]"><RouteDetails route={route} /><RecentActivity /><RouteDownload publicId={route.publicId} /></div>;
+export function RouteInformation({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
+  return <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]"><RouteDetails route={route} /><RouteActivityCard routeId={route.publicId} isOwner={isOwner} /><RouteDownload route={route} /></div>;
 }
-
 function RouteDetails({ route }: { route: RouteData }) {
-  const { t, i18n } = useTranslation(); return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("route.details")}</h2><dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-    <Detail label={t("route.distance")} value={`${(route.distanceMeters / 1000).toFixed(1)} km`} />
-    {route.elevationGainMeters !== null && <Detail label={t("route.elevationGain")} value={`${Math.round(route.elevationGainMeters)} m`} />}
-    <Detail label={t("route.uploadedFile")} value={route.originalFilename} accent />
+  const { t, i18n } = useTranslation(); const heights = elevationSummary(route.elevationProfile);
+  const meters = (value: number) => `${new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 0 }).format(value)} m`;
+  return <section id="route-details" tabIndex={-1} className="route-card p-4"><h2 className="text-lg font-bold">{t("route.details")}</h2><dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+    <Detail label={t("upload.routeName")} value={route.name} />
+    <Detail label={t("common.description")} value={route.description ?? t("routeMetadata.noDescription")} />
+    <Detail label={t("route.distance")} value={`${new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 1 }).format(route.distanceMeters / 1000)} km`} />
+    {!heights && <Detail label={t("elevation.title")} value={t("elevation.noData")} />}
+    {heights && <><Detail label={t("routeMetadata.gain")} value={meters(heights.gainMeters)} /><Detail label={t("routeMetadata.loss")} value={meters(heights.lossMeters)} /><Detail label={t("routeMetadata.minElevation")} value={meters(heights.minMeters)} /><Detail label={t("routeMetadata.maxElevation")} value={meters(heights.maxMeters)} /></>}
     <Detail label={t("route.created")} value={formatRouteDate(route.createdAt, i18n.language)} />
+    <Detail label={t("routeMetadata.modified")} value={formatRouteDate(route.updatedAt, i18n.language)} />
+    <Detail label={t("routeMetadata.viewedVersion")} value={`v${route.viewedVersion}`} />
+    <Detail label={t("versions.current")} value={`v${route.currentVersion}`} />
+    <Detail label={t("routeMetadata.versionCount")} value={String(route.versionCount)} />
+    <Detail label={t("routeMetadata.type")} value={t(areRouteEndpointsClose(route.geometry.coordinates) ? "routeMetadata.loop" : "routeMetadata.pointToPoint")} />
+    {route.creationSource === "INITIAL_UPLOAD" && route.originalFilename && <Detail label={t("route.uploadedFile")} value={route.originalFilename} />}
+    <Detail label={t("routeMetadata.source")} value={t(route.creationSource === "INITIAL_UPLOAD" ? "versionOrigin.initialUpload" : "versionOrigin.initialDrawn")} />
+    <Detail label={t("routeMetadata.suggestions")} value={t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")} />
   </dl></section>;
 }
-
-function Detail({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
-  return <div className="grid grid-cols-[24px_auto] gap-x-2"><span className="row-span-2 text-slate-500">◇</span><dt className="text-xs text-slate-500">{label}</dt><dd className={`min-w-0 break-words text-sm font-semibold ${accent ? "text-blue-600" : "text-slate-800"}`}>{value}</dd></div>;
-}
-
-function RecentActivity() {
-  const { t } = useTranslation(); return <section className="route-card p-4"><div className="flex justify-between gap-3"><h2 className="text-lg font-bold">{t("info.recentActivity")}</h2><button disabled title={t("info.historySoon")} className="text-xs font-semibold text-blue-600 disabled:cursor-not-allowed">{t("info.viewAll")}</button></div><div className="mt-4 space-y-3">{recentActivityMock.map((item) => <div key={item.id} className="flex gap-2.5"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-slate-100 text-xs">{item.kind === "issue" ? "!" : item.kind === "detour" ? "↗" : item.kind === "positive" ? "♥" : "◆"}</span><p className="text-xs leading-4"><strong className="text-slate-800">{t(`activity.${item.kind}`, { name: item.name })}</strong><br /><span className="text-slate-500">{item.distance} · {t(item.ageKey)}</span></p></div>)}</div></section>;
-}
-
-function RouteDownload({ publicId }: { publicId: string }) {
-  const { t } = useTranslation(); const base=process.env.NEXT_PUBLIC_API_URL??"";return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><a href={`${base}/api/routes/${encodeURIComponent(publicId)}/gpx`} className="mt-4 block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">{t("info.downloadGpx")}</a><p className="mt-4 text-xs leading-5 text-slate-500">{t("info.unchanged")}</p></section>;
+function Detail({ label, value }: { label: string; value: string }) {
+  return <div className="min-w-0"><dt className="text-xs text-slate-500">{label}</dt><dd className="break-words whitespace-pre-wrap text-sm font-semibold text-slate-800">{value}</dd></div>;
 }

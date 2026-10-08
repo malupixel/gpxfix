@@ -27,7 +27,7 @@ class SuggestionMergeService {
         RouteVersion current=route.getCurrentVersion();
         List<GpxPoint> points=Arrays.stream(geometry.getCoordinates()).map(c->new GpxPoint(c.y,c.x,null)).toList();
         GpxTrack source=GpxParser.calculateMetrics(List.of(points));
-        var created=creation.create(route,current,RouteVersionSource.SUGGESTION_MERGE,suggestion,current.getName(),current.getDescription(),current.getOriginalFilename(),source,null,"GPX",null);
+        var created=creation.create(route,current,RouteVersionSource.SUGGESTION_MERGE,suggestion,route.getName(),route.getDescription(),current.getOriginalFilename(),source,null,"GPX",null);
         suggestion.mergeInto(created.version(),Instant.now());
         suggestions.saveAndFlush(suggestion);
         return mapper.toDto(route,created.version(),created.track());

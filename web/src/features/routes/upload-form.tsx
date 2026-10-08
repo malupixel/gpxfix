@@ -21,7 +21,7 @@ export function UploadForm({compact=false}:{compact?:boolean}) {
   return <><form onSubmit={submit} className={compact?"space-y-4":"mt-8 space-y-5 rounded-xl border border-slate-200 bg-white p-6 text-left shadow-sm"}>
     <label className="block"><span className="mb-2 block font-medium">{t("upload.file")}</span><input required name="file" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" className="block w-full rounded border border-slate-300 p-2" /></label>
     <label className="block"><span className="mb-2 block font-medium">{t("upload.routeName")} <span className="font-normal text-slate-500">{t("common.optional")}</span></span><input name="name" maxLength={200} className="block w-full rounded border border-slate-300 p-2" /></label>
-    <label className="block"><span className="mb-2 block font-medium">{t("upload.description")} <span className="font-normal text-slate-500">{t("common.optional")}</span></span><textarea name="description" rows={4} className="block w-full rounded border border-slate-300 p-2" /></label>
+    <label className="block"><span className="mb-2 block font-medium">{t("upload.description")} <span className="font-normal text-slate-500">{t("common.optional")}</span></span><textarea name="description" maxLength={10000} rows={4} className="block w-full rounded border border-slate-300 p-2" /></label>
     {error&&<p role="alert" className="text-sm text-red-700">{t(error)}</p>}
     <button disabled={mutation.isPending} className="rounded bg-emerald-700 px-5 py-2.5 font-semibold text-white disabled:opacity-60">{mutation.isPending?t("upload.uploading"):t("upload.submit")}</button>
   </form>{created&&<div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/60 p-4" role="presentation">

@@ -11,6 +11,12 @@ export interface RouteData {
   currentVersion: number;
   viewedVersion: number;
   isCurrentVersion: boolean;
+  updatedAt: string;
+  versionCreatedAt: string;
+  versionCount: number;
+  creationSource: "INITIAL_UPLOAD" | "INITIAL_DRAWN";
+  suggestionsEnabled: boolean;
+  originalAvailable: boolean;
 }
 export interface RouteVersionSummary { versionNumber:number;createdAt:string;source:"INITIAL_UPLOAD"|"INITIAL_DRAWN"|"SUGGESTION_MERGE"|"OWNER_EDIT";basedOnVersionNumber:number|null;mergedSuggestionPublicId:string|null;current:boolean }
 export interface ElevationSample { distanceMeters: number; elevationMeters: number | null; longitude: number; latitude: number }

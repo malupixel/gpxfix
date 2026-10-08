@@ -23,6 +23,8 @@ class RouteVersionMigrationTest {
         try(Connection connection=DriverManager.getConnection(POSTGRES.getJdbcUrl(),POSTGRES.getUsername(),POSTGRES.getPassword());Statement sql=connection.createStatement()){
             try(ResultSet result=sql.executeQuery("select v.version_number,v.name,v.storage_key,r.current_version_id=v.id from routes r join route_versions v on v.route_id=r.id where r.public_id='legacy'")){assertThat(result.next()).isTrue();assertThat(result.getInt(1)).isEqualTo(1);assertThat(result.getString(2)).isEqualTo("Legacy");assertThat(result.getString(3)).isEqualTo("legacy-key");assertThat(result.getBoolean(4)).isTrue();}
             try(ResultSet result=sql.executeQuery("select s.base_version_id=r.current_version_id from route_suggestions s join routes r on r.id=s.route_id where s.public_id='legacy-s'")){assertThat(result.next()).isTrue();assertThat(result.getBoolean(1)).isTrue();}
+            try(ResultSet result=sql.executeQuery("select name,description,suggestions_enabled,deleted_at,original_upload_storage_key from routes where public_id='legacy'")){result.next();assertThat(result.getString(1)).isEqualTo("Legacy");assertThat(result.getString(2)).isEqualTo("old");assertThat(result.getBoolean(3)).isTrue();assertThat(result.getObject(4)).isNull();assertThat(result.getObject(5)).isNull();}
+            try(ResultSet result=sql.executeQuery("select count(*) from route_activity")){result.next();assertThat(result.getInt(1)).isEqualTo(2);}
             try(ResultSet result=sql.executeQuery("select count(*) from information_schema.columns where table_name='routes' and column_name='track_geometry'")){result.next();assertThat(result.getInt(1)).isZero();}
         }
     }

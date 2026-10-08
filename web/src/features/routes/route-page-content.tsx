@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { RouteMap } from "@/components/map/route-map";
 import type { RouteData, RouteSuggestion } from "@/types/route";
 import { ElevationProfile } from "./elevation-profile";
-import { createRouteSuggestion, getOwnerRouteSuggestions, getRouteSuggestions, getOwnerEditor, type OwnerEditorData } from "./api";
+import { createRouteSuggestion, getOwnerRouteSuggestions, getRouteSuggestions, getOwnerEditor, getPublicSuggestion, type OwnerEditorData } from "./api";
 import { RouteEditor } from "@/features/route-editor/route-editor";
 import { activeSuggestionsForVersion } from "./suggestion-lifecycle";
 import { normalizeRoutePositions, type RouteCoordinate, type RoutePosition } from "./route-geometry";
@@ -31,6 +31,15 @@ import { publicRoutePath } from "./route-links";
 export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
   const { t } = useTranslation();
   const router=useRouter();
+  const params=useSearchParams();
+  const linkedSuggestion=params.get("suggestion");
+  const requestKey=useRef<{key:string;payload:string}|null>(null);
+  const resolvedLink=useRef<string|null>(null);
+  const [linkedError,setLinkedError]=useState(false);
+  const versionIdentity=`${route.publicId}:${route.viewedVersion}`;
+  // Version geometry is immutable. Metadata refreshes must not recreate the map.
+  const [mapGeometry,setMapGeometry]=useState({identity:versionIdentity,value:route.geometry});
+  if(mapGeometry.identity!==versionIdentity)setMapGeometry({identity:versionIdentity,value:route.geometry});
   const [mode, setMode] = useState<RoutePageMode>("view");
   const [geometry, setGeometry] = useState<SuggestionGeometry>(EMPTY_SUGGESTION_GEOMETRY);
   const [form, setForm] = useState<SuggestionFormData>(EMPTY_SUGGESTION_FORM);
@@ -46,6 +55,16 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
 
   useEffect(() => { let active = true; (isOwner ? getOwnerRouteSuggestions(route.publicId) : getRouteSuggestions(route.publicId, route.viewedVersion)).then((items) => { if (active) setSuggestions(items); }).catch(() => { if (active) setSuggestions([]); }).finally(() => { if (active) setSuggestionsLoading(false); }); return () => { active = false; }; }, [route.publicId, route.viewedVersion, route.currentVersion, isOwner]);
 
+  useEffect(() => {
+    if(!linkedSuggestion||suggestionsLoading)return;
+    let active=true;
+    const linkKey=`${route.publicId}:${linkedSuggestion}:${isOwner}`;
+    if(resolvedLink.current===linkKey)return;
+    const existing=suggestions.find(item=>item.publicId===linkedSuggestion);
+    (existing?Promise.resolve(existing):getPublicSuggestion(route.publicId,linkedSuggestion)).then(item=>{if(active){resolvedLink.current=linkKey;setLinkedError(false);setSuggestions(items=>items.some(current=>current.publicId===item.publicId)?items:[...items,item]);setSelectedSuggestionId(item.publicId);}}).catch(()=>{if(active){resolvedLink.current=linkKey;setLinkedError(true);}});
+    return()=>{active=false};
+  },[linkedSuggestion,route.publicId,suggestions,suggestionsLoading,isOwner]);
+
   async function editRoute() {
     if (!isOwner || !route.isCurrentVersion || loadingEditor) return;
     setLoadingEditor(true); setEditError(false);
@@ -57,6 +76,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     setForm(EMPTY_SUGGESTION_FORM);
     setProcessStep("chooseType");
     setSubmitError(false);
+    requestKey.current=null;
   }, []);
 
   const finishSuggestion = useCallback(() => {
@@ -69,7 +89,18 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     finishSuggestion();
   }, [finishSuggestion, form, geometry, t]);
 
+  useEffect(() => {
+    const showInformation=() => {
+      if(hasSuggestionWork(geometry,form)&&!window.confirm(t("suggestion.discardConfirm")))return;
+      finishSuggestion();
+      requestAnimationFrame(()=>{const details=document.getElementById("route-details");details?.scrollIntoView({behavior:"smooth",block:"center"});details?.focus({preventScroll:true});});
+    };
+    window.addEventListener("route-show-information",showInformation);
+    return()=>window.removeEventListener("route-show-information",showInformation);
+  },[finishSuggestion,geometry,form,t]);
+
   function enterSuggestMode(tool: SuggestionTool = null) {
+    if(!route.suggestionsEnabled){window.alert(t("routeMetadata.closed"));return;}
     if(!route.isCurrentVersion){window.alert(t("versions.redirect", { version: route.currentVersion }));router.push(publicRoutePath(route.publicId));return;}
     setMode("suggest");
     setSelectedSuggestionId(null);
@@ -89,7 +120,9 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     setSubmitError(false);
     setProcessStep("submitting");
     try {
-      await createRouteSuggestion(route.publicId, suggestionRequest(geometry, form));
+      const body=suggestionRequest(geometry,form),payload=JSON.stringify(body);
+      if(requestKey.current?.payload!==payload)requestKey.current={key:crypto.randomUUID(),payload};
+      await createRouteSuggestion(route.publicId,body,requestKey.current.key);
       setProcessStep("success");
     } catch {
       setSubmitError(true);
@@ -160,16 +193,17 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   return <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
     <div className="min-w-0 space-y-4">
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <RouteMapToolbar mode={mode} selectedTool={geometry.type} onView={mode === "suggest" ? cancelSuggestion : () => setMode("view")} onSuggest={enterSuggestMode} onEdit={isOwner && route.isCurrentVersion && mode === "view" ? editRoute : undefined} />
+        <RouteMapToolbar mode={mode} selectedTool={geometry.type} onView={mode === "suggest" ? cancelSuggestion : () => setMode("view")} onSuggest={enterSuggestMode} suggestionsEnabled={route.suggestionsEnabled} onEdit={isOwner && route.isCurrentVersion && mode === "view" ? editRoute : undefined} />
+        {linkedError && <p role="alert" className="p-3 text-sm text-red-700">{t("routeActivity.linkUnavailable")}</p>}
         {loadingEditor && <p role="status" className="p-3 text-sm">{t("ownerEdit.loading")}</p>}
         {editError && <p role="alert" className="p-3 text-sm text-red-700">{t("ownerEdit.loadFailed")}</p>}
-        <RouteMap geometry={route.geometry} elevationProfile={route.elevationProfile} mode={mode} draft={geometry} drawingActive={processStep === "drawing"} suggestions={activeSuggestionsForVersion(suggestions, route.viewedVersion)} selectedSuggestionId={selectedSuggestionId} onSuggestionSelect={setSelectedSuggestionId} highlightedCoordinate={profileHighlight} onElevationHighlight={setProfileHighlight} onRouteClick={handleRouteClick} onMapClick={handleMapClick} workflowOverlay={workflowOverlay} />
+        <RouteMap key={versionIdentity} geometry={mapGeometry.value} elevationProfile={route.elevationProfile} mode={mode} draft={geometry} drawingActive={processStep === "drawing"} suggestions={activeSuggestionsForVersion(suggestions, route.viewedVersion)} selectedSuggestionId={selectedSuggestionId} onSuggestionSelect={setSelectedSuggestionId} highlightedCoordinate={profileHighlight} onElevationHighlight={setProfileHighlight} onRouteClick={handleRouteClick} onMapClick={handleMapClick} workflowOverlay={workflowOverlay} />
         <CommunityMarkerLegend />
       </section>
-      {mode === "view" && <><ElevationProfile samples={route.elevationProfile} onHighlight={setProfileHighlight} /><RouteInformation route={route} /></>}
+      {mode === "view" && <><ElevationProfile samples={route.elevationProfile} onHighlight={setProfileHighlight} /><RouteInformation route={route} isOwner={isOwner} /></>}
     </div>
     <div className="space-y-4 xl:sticky xl:top-4">
-      {mode === "view" ? <><ShareRouteCard /><RouteFeedbackSidebar routeId={route.publicId} currentVersion={route.currentVersion} isOwner={isOwner} readOnly={!route.isCurrentVersion} suggestions={suggestions} onSuggestionsChange={setSuggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item) => setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></> : <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="font-bold">{t("suggestion.create")}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{geometry.type ? t("suggestion.mapGuidance") : t("suggestion.chooseTypeHelp")}</p><button type="button" onClick={cancelSuggestion} className="mt-4 text-sm font-bold text-red-700">{t("suggestion.cancel")}</button></aside>}
+      {mode === "view" ? <><ShareRouteCard /><RouteFeedbackSidebar routeId={route.publicId} currentVersion={route.currentVersion} isOwner={isOwner} readOnly={!route.isCurrentVersion} suggestionsEnabled={route.suggestionsEnabled} suggestions={suggestions} onSuggestionsChange={setSuggestions} loading={suggestionsLoading} selectedId={selectedSuggestionId} onSelect={(item) => setSelectedSuggestionId(item.publicId)} onAddSuggestion={() => enterSuggestMode()} /></> : <aside className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="font-bold">{t("suggestion.create")}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{geometry.type ? t("suggestion.mapGuidance") : t("suggestion.chooseTypeHelp")}</p><button type="button" onClick={cancelSuggestion} className="mt-4 text-sm font-bold text-red-700">{t("suggestion.cancel")}</button></aside>}
     </div>
   </div>;
 }

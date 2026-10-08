@@ -351,7 +351,11 @@ class RouteApiIntegrationTest {
         var row=jdbc.queryForMap("select v.* from route_versions v join routes r on r.id=v.route_id where r.public_id=?",routeId);
         mvc.perform(post("/api/routes/{id}/owner/versions",routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.05))).andExpect(status().isCreated());
         mvc.perform(get("/api/routes/{id}/versions/1",routeId)).andExpect(status().isOk()).andExpect(jsonPath("$.elevationProfile[0].elevationMeters").isNumber());
-        mvc.perform(get("/api/routes/{id}/versions/1/gpx",routeId)).andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
+        clearInvocations(elevationProvider);
+        mvc.perform(get("/api/routes/{id}/versions/1/gpx",routeId)).andExpect(status().isOk())
+                .andExpect(header().string("X-Elevation-Available","false"))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("<ele>"))));
+        verifyNoInteractions(elevationProvider);
         assertThat(jdbc.queryForMap("select v.* from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=1",routeId)).isEqualTo(row);
         assertThat(Files.readString(file)).isEqualTo(raw);
     }

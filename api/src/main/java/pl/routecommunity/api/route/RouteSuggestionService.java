@@ -15,13 +15,16 @@ public class RouteSuggestionService {
     private static final Set<String> NOTE_CATEGORIES=Set.of("water","food","surface","view","services","other");
     private static final Set<String> PROBLEM_CATEGORIES=Set.of("highTraffic","badSurface","roadClosed","construction","dangerous","unpaved","other");
     private static final Set<String> DETOUR_TAGS=Set.of("betterSurface","lessTraffic","safer","scenic","avoidsClosure","other");
-    private final RouteRepository routes; private final RouteSuggestionRepository suggestions; private final SuggestionCommentRepository comments; private final PublicIdGenerator ids;
+    private final RouteRepository routes; private final RouteSuggestionRepository suggestions; private final SuggestionCommentRepository comments; private final PublicIdGenerator ids; private final RouteActivityService activity;
     private final GeometryFactory geometries=new GeometryFactory(new PrecisionModel(),4326);
-    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,SuggestionCommentRepository comments,PublicIdGenerator ids){this.routes=routes;this.suggestions=suggestions;this.comments=comments;this.ids=ids;}
+    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,SuggestionCommentRepository comments,PublicIdGenerator ids,RouteActivityService activity){this.routes=routes;this.suggestions=suggestions;this.comments=comments;this.ids=ids;this.activity=activity;}
 
     @Transactional
-    public SuggestionDto create(String routePublicId,CreateSuggestionRequest request){
-        Route route=routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
+    public SuggestionDto create(String routePublicId,CreateSuggestionRequest request,String requestKey){
+        Route route=routes.findLockedByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
+        var command=activity.command(route,RouteActivityType.SUGGESTION_CREATED,requestKey,request);
+        if(command!=null&&command.replayPublicId()!=null)return dto(suggestions.findByRoute_PublicIdAndPublicId(routePublicId,command.replayPublicId()).orElseThrow(),false);
+        if(!route.isSuggestionsEnabled())throw new ApiException(HttpStatus.CONFLICT,"Suggestions are closed for this route");
         validateFinite(request.start());
         Point start=point(request.start());
         RouteVersion baseVersion=route.getCurrentVersion();
@@ -51,7 +54,9 @@ public class RouteSuggestionService {
         String publicId=uniquePublicId(); Instant now=Instant.now();
         RouteSuggestion entity=new RouteSuggestion(publicId,route,baseVersion,request.type(),request.authorName().trim(),request.description().trim(),optional(request.category()),
                 request.tags()==null?null:String.join(",",request.tags()),start,end,proposed,request.start().distanceMeters(),endDistance,now);
-        suggestions.saveAndFlush(entity); return dto(entity,false);
+        suggestions.saveAndFlush(entity);
+        activity.record(route,RouteActivityType.SUGGESTION_CREATED,now,baseVersion,entity,null,entity.getAuthorName(),false,"suggestion:"+entity.getId(),command);
+        return dto(entity,false);
     }
 
     @Transactional(readOnly=true)
@@ -63,7 +68,7 @@ public class RouteSuggestionService {
                 .map(value->dto(value,false)).toList();
     }
     @Transactional(readOnly=true)
-    public SuggestionDto getPublic(String routePublicId,String suggestionPublicId){return dto(suggestions.findByRoute_PublicIdAndPublicIdAndModerationStatus(routePublicId,suggestionPublicId,ModerationStatus.PUBLISHED).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found")),false);}
+    public SuggestionDto getPublic(String routePublicId,String suggestionPublicId){routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));return dto(suggestions.findByRoute_PublicIdAndPublicIdAndModerationStatus(routePublicId,suggestionPublicId,ModerationStatus.PUBLISHED).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found")),false);}
     @Transactional(readOnly=true)
     public List<SuggestionDto> listOwner(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().map(value->dto(value,true)).toList();}
     @Transactional(readOnly=true)
@@ -72,7 +77,11 @@ public class RouteSuggestionService {
     public SuggestionDto moderate(String routePublicId,String suggestionPublicId,ModerationStatus target){
         routes.findLockedByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
         RouteSuggestion value=suggestions.findByRoute_PublicIdAndPublicId(routePublicId,suggestionPublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found"));
+        ModerationStatus previous=value.getModerationStatus();
+        if(previous==target&&previous!=ModerationStatus.REJECTED&&value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED)return dto(value,true);
         try{value.moderate(target,Instant.now());}catch(IllegalArgumentException|IllegalStateException e){throw bad(e.getMessage());}
+        RouteActivityType type=target==ModerationStatus.PUBLISHED?RouteActivityType.SUGGESTION_PUBLISHED:target==ModerationStatus.REJECTED?RouteActivityType.SUGGESTION_REJECTED:RouteActivityType.SUGGESTION_UNPUBLISHED;
+        activity.record(value.getRoute(),type,value.getUpdatedAt(),value.getBaseVersion(),value,null,null,target!=ModerationStatus.PUBLISHED,"suggestion-state:"+value.getId()+":"+value.getUpdatedAt());
         return dto(value,true);
     }
     private void requireOnRoute(RouteVersion version,Point point,String label){if(version.getTrackGeometry().distance(point)>ANCHOR_TOLERANCE_DEGREES)throw bad(label+" must lie on the route");}

@@ -24,7 +24,7 @@ public class RouteService {
     @Transactional public CreatedRoute createDrawn(CreateDrawnRouteRequest request){
         var document=request==null?null:request.editorDocument();
         GpxTrack source=editorTrack(document);
-        return persistNew(routeName(request.name(),"drawn-route.gpx"),optional(request.description()),"drawn-route.gpx",null,source,"DRAWN",definition(document),RouteVersionSource.INITIAL_DRAWN);
+        return persistNew(routeName(request.name(),"drawn-route.gpx"),RouteMetadataText.description(request.description()),"drawn-route.gpx",null,source,"DRAWN",definition(document),RouteVersionSource.INITIAL_DRAWN);
     }
     @Transactional(readOnly=true) public OwnerEditorDto ownerEditor(String publicId){
         Resolved resolved=resolve(publicId,null);RouteVersion version=resolved.version();
@@ -35,10 +35,12 @@ public class RouteService {
     @Transactional public RouteDto ownerEdit(String publicId,OwnerEditRouteRequest request){
         Route route=routes.findLockedByPublicId(publicId).orElseThrow(()->notFound("Route not found"));
         RouteVersion current=route.getCurrentVersion();
-        if(request.baseVersionNumber()!=current.getVersionNumber())throw new ApiException(HttpStatus.CONFLICT,"The route changed while you were editing. Reload the latest version before saving.");
+        if(request.baseVersionNumber()!=current.getVersionNumber() || request.expectedUpdatedAt()!=null&&!request.expectedUpdatedAt().equals(route.getUpdatedAt()))throw new ApiException(HttpStatus.CONFLICT,"The route changed while you were editing. Reload the latest version before saving.");
         if(request.name().isBlank())throw new ApiException(HttpStatus.BAD_REQUEST,"Route name is required");
+        String name=routeName(request.name(),current.getOriginalFilename()),description=RouteMetadataText.description(request.description());
+        if(!Objects.equals(route.getName(),name)||!Objects.equals(route.getDescription(),description))route.metadata(name,description,Instant.now());
         GpxTrack source=editorTrack(request.editorDocument());
-        var created=creation.create(route,current,RouteVersionSource.OWNER_EDIT,null,routeName(request.name(),current.getOriginalFilename()),optional(request.description()),current.getOriginalFilename(),source,null,"DRAWN",definition(request.editorDocument()));
+        var created=creation.create(route,current,RouteVersionSource.OWNER_EDIT,null,name,description,current.getOriginalFilename(),source,null,"DRAWN",definition(request.editorDocument()));
         return mapper.toDto(route,created.version(),created.track());
     }
     private GpxTrack editorTrack(CreateDrawnRouteRequest.EditorDocument document){
@@ -50,15 +52,14 @@ public class RouteService {
     @Transactional public CreatedRoute create(MultipartFile file,String requestedName,String description){
         if(file==null||file.isEmpty())throw new ApiException(HttpStatus.BAD_REQUEST,"A non-empty GPX file is required");if(file.getSize()>maxBytes)throw new ApiException(HttpStatus.PAYLOAD_TOO_LARGE,"The uploaded GPX file is too large");
         byte[] content;try{content=file.getBytes();}catch(IOException e){throw new ApiException(HttpStatus.BAD_REQUEST,"The uploaded GPX file could not be read");}GpxTrack track;try{track=parser.parse(content);}catch(InvalidGpxException e){throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,e.getMessage());}
-        String name=routeName(requestedName,file.getOriginalFilename());return persistNew(name,optional(description),safeFilename(file.getOriginalFilename()),content,track,"GPX",null,RouteVersionSource.INITIAL_UPLOAD);
+        String name=routeName(requestedName,file.getOriginalFilename());return persistNew(name,RouteMetadataText.description(description),safeFilename(file.getOriginalFilename()),content,track,"GPX",null,RouteVersionSource.INITIAL_UPLOAD);
     }
     private CreatedRoute persistNew(String name,String description,String filename,byte[] content,GpxTrack sourceTrack,String sourceType,String definition,RouteVersionSource source){
         String publicId=uniquePublicId(),token=ownership.newSecret();
-        Route route=routes.saveAndFlush(new Route(publicId,ownership.hash(token),Instant.now()));
+        Route route=new Route(publicId,ownership.hash(token),Instant.now());route.metadata(name,description,route.getCreatedAt());routes.saveAndFlush(route);
         creation.create(route,null,source,null,name,description,filename,sourceTrack,content,sourceType,definition);
         return new CreatedRoute(publicId,token,ownership.establish(publicId,token));
     }
-    @Transactional(readOnly=true) public byte[] download(String publicId,Integer versionNumber){RouteVersion version=resolve(publicId,versionNumber).version();return prepared(version).gpx();}
     @Transactional(readOnly=true) public RouteDto get(String publicId,Integer versionNumber){Resolved resolved=resolve(publicId,versionNumber);return mapper.toDto(resolved.route(),resolved.version(),prepared(resolved.version()).track());}
     @Transactional(readOnly=true) public List<RouteVersionSummaryDto> history(String publicId){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));return versions.findByRoute_PublicIdOrderByVersionNumberDesc(publicId).stream().map(version->mapper.summary(route,version)).toList();}
     private Resolved resolve(String publicId,Integer versionNumber){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));RouteVersion version=versionNumber==null?route.getCurrentVersion():versions.findByRoute_PublicIdAndVersionNumber(publicId,versionNumber).orElseThrow(()->notFound("Route version not found"));return new Resolved(route,version);}
@@ -74,6 +75,6 @@ public class RouteService {
     private boolean validCoordinate(List<Double> c){return c!=null&&c.size()==2&&c.get(0)!=null&&c.get(1)!=null&&Double.isFinite(c.get(0))&&Double.isFinite(c.get(1))&&c.get(0)>=-180&&c.get(0)<=180&&c.get(1)>=-90&&c.get(1)<=90;}
     private boolean same(List<Double>a,List<Double>b){return Math.abs(a.get(0)-b.get(0))<=1e-5&&Math.abs(a.get(1)-b.get(1))<=1e-5;}
     private String uniquePublicId(){for(int i=0;i<5;i++){String value=ids.next();if(!routes.existsByPublicId(value))return value;}throw new DataIntegrityViolationException("Could not allocate public ID");}
-    private String routeName(String requested,String filename){String value=optional(requested);if(value!=null){if(value.length()>200)throw new ApiException(HttpStatus.BAD_REQUEST,"Route name must not exceed 200 characters");return value;}String safe=safeFilename(filename);int dot=safe.lastIndexOf('.');String fallback=dot>0?safe.substring(0,dot):safe;return fallback.isBlank()?"Untitled route":fallback.substring(0,Math.min(200,fallback.length()));}
+    private String routeName(String requested,String filename){String value=optional(requested);if(value!=null){if(value.length()>200)throw new ApiException(HttpStatus.BAD_REQUEST,"Route name must not exceed 200 characters");return RouteMetadataText.name(value);}String safe=safeFilename(filename);int dot=safe.lastIndexOf('.');String fallback=dot>0?safe.substring(0,dot):safe;return RouteMetadataText.name(fallback.isBlank()?"Untitled route":fallback.substring(0,Math.min(200,fallback.length())));}
     private String optional(String value){return value==null||value.isBlank()?null:value.trim();}private String safeFilename(String value){if(value==null||value.isBlank())return "upload.gpx";String safe=Path.of(value).getFileName().toString();return safe.substring(0,Math.min(255,safe.length()));}
 }

@@ -17,11 +17,12 @@ class RouteVersionCreationService {
     private final RouteRepository routes;
     private final RouteVersionPipeline pipeline;
     private final FileStorage storage;
+    private final RouteActivityService activity;
     private final GeometryFactory geometries = new GeometryFactory(new PrecisionModel(), 4326);
 
     RouteVersionCreationService(RouteVersionRepository versions, RouteRepository routes,
-            RouteVersionPipeline pipeline, FileStorage storage) {
-        this.versions = versions; this.routes = routes; this.pipeline = pipeline; this.storage = storage;
+            RouteVersionPipeline pipeline, FileStorage storage, RouteActivityService activity) {
+        this.versions = versions; this.routes = routes; this.pipeline = pipeline; this.storage = storage; this.activity=activity;
     }
 
     // Existing-route callers must hold the route lock for the whole transaction.
@@ -38,11 +39,27 @@ class RouteVersionCreationService {
         });
         LineString geometry = geometries.createLineString(source.points().stream()
                 .map(p -> new Coordinate(p.longitude(), p.latitude())).toArray(Coordinate[]::new));
+        if(base==null) {
+            route.metadata(name,description,route.getCreatedAt());
+            if(originalGpx!=null) {
+                String originalKey=java.util.Arrays.equals(originalGpx,prepared.gpx())?key:storage.store(originalGpx);
+                if(!originalKey.equals(key)) TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                    @Override public void afterCompletion(int status){if(status!=STATUS_COMMITTED)storage.delete(originalKey);}
+                });
+                route.original(originalKey,filename);
+            }
+        }
         RouteVersion version = versions.saveAndFlush(new RouteVersion(route, base == null ? 1 : base.getVersionNumber() + 1,
-                Instant.now(), origin, base, suggestion, name, description, filename, key,
+                Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS), origin, base, suggestion, name, description, filename, key,
                 source.distanceMeters(), prepared.track().elevationGainMeters(), geometry, sourceType, editorDefinition));
         route.publish(version);
         routes.saveAndFlush(route);
+        RouteActivityType type=switch(origin){
+            case INITIAL_UPLOAD,INITIAL_DRAWN -> RouteActivityType.ROUTE_CREATED;
+            case OWNER_EDIT -> RouteActivityType.OWNER_EDITED;
+            case SUGGESTION_MERGE -> RouteActivityType.SUGGESTION_MERGED;
+        };
+        activity.record(route,type,version.getCreatedAt(),version,suggestion,null,null,false,"version:"+version.getId());
         return new Created(version, prepared.track());
     }
 

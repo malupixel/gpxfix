@@ -63,6 +63,7 @@ public class RouteOwnershipService {
     }
 
     String ownerSessionToken(String publicId, HttpServletRequest request) {
+        routes.findByPublicId(publicId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Route not found"));
         String token = cookieToken(request);
         if (token == null || sessions.findByRoute_PublicIdAndTokenHashAndExpiresAtAfter(publicId, hash(token), Instant.now()).isEmpty())
             throw new ApiException(HttpStatus.FORBIDDEN, "Route owner authorization required");

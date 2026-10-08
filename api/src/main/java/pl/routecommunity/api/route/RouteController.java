@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/routes")
 public class RouteController {
-    private final RouteService service; private final RouteOwnershipService ownership;
-    public RouteController(RouteService service,RouteOwnershipService ownership){this.service=service;this.ownership=ownership;}
+    private final RouteService service; private final RouteOwnershipService ownership; private final GpxExportService exports;
+    public RouteController(RouteService service,RouteOwnershipService ownership,GpxExportService exports){this.service=service;this.ownership=ownership;this.exports=exports;}
     @PostMapping(consumes=MediaType.MULTIPART_FORM_DATA_VALUE) @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CreateRouteResponse> create(@RequestParam("file") MultipartFile file,@RequestParam(required=false) String name,@RequestParam(required=false) String description){
         CreatedRoute created=service.create(file,name,description);
@@ -15,11 +15,15 @@ public class RouteController {
     }
     @PostMapping(value="/drawn",consumes=MediaType.APPLICATION_JSON_VALUE) @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CreateRouteResponse> createDrawn(@RequestBody CreateDrawnRouteRequest request){CreatedRoute created=service.createDrawn(request);return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.SET_COOKIE,ownership.cookieHeader(created.publicId(),created.sessionToken())).body(created.response());}
-    @GetMapping(value="/{publicId}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> download(@PathVariable String publicId){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+".gpx").body(service.download(publicId,null));}
+    @GetMapping(value="/{publicId}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> download(@PathVariable String publicId,@RequestParam(defaultValue="true") boolean elevation,@RequestParam(required=false) String filename){return downloadResponse(exports.export(publicId,null,elevation,filename));}
     @GetMapping("/{publicId}") public RouteDto get(@PathVariable String publicId){return service.get(publicId,null);}
     @GetMapping("/{publicId}/versions/{versionNumber}") public RouteDto getVersion(@PathVariable String publicId,@PathVariable int versionNumber){return service.get(publicId,versionNumber);}
     @GetMapping("/{publicId}/versions") public java.util.List<RouteVersionSummaryDto> history(@PathVariable String publicId){return service.history(publicId);}
-    @GetMapping(value="/{publicId}/versions/{versionNumber}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> downloadVersion(@PathVariable String publicId,@PathVariable int versionNumber){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=route-"+publicId+"-v"+versionNumber+".gpx").body(service.download(publicId,versionNumber));}
+    @GetMapping(value="/{publicId}/versions/{versionNumber}/gpx",produces="application/gpx+xml") public ResponseEntity<byte[]> downloadVersion(@PathVariable String publicId,@PathVariable int versionNumber,@RequestParam(defaultValue="true") boolean elevation,@RequestParam(required=false) String filename){return downloadResponse(exports.export(publicId,versionNumber,elevation,filename));}
+    @GetMapping(value="/{publicId}/gpx/original",produces="application/gpx+xml") public ResponseEntity<byte[]> original(@PathVariable String publicId){return downloadResponse(exports.original(publicId));}
+    private ResponseEntity<byte[]> downloadResponse(GpxExportService.Export exported){return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .header(HttpHeaders.CONTENT_DISPOSITION,ContentDisposition.attachment().filename(exported.filename(),java.nio.charset.StandardCharsets.UTF_8).build().toString())
+        .header("X-Elevation-Available",Boolean.toString(exported.elevationAvailable())).body(exported.bytes());}
     @PostMapping("/{publicId}/ownership")
     public ResponseEntity<Void> establishOwnership(@PathVariable String publicId,@RequestBody ManagementTokenRequest request){
         String session=ownership.establish(publicId,request.token());

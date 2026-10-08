@@ -13,10 +13,10 @@ public class RouteSuggestionController {
     RouteSuggestionController(RouteSuggestionService service,SuggestionCommentService commentService,RouteOwnershipService ownership,SuggestionMergeService mergeService){this.service=service;this.commentService=commentService;this.ownership=ownership;this.mergeService=mergeService;}
     @GetMapping public List<SuggestionDto> list(@PathVariable String routePublicId,@RequestParam(required=false) Integer versionNumber){return service.listPublic(routePublicId,versionNumber);}
     @GetMapping("/{suggestionPublicId}") public SuggestionDto get(@PathVariable String routePublicId,@PathVariable String suggestionPublicId){return service.getPublic(routePublicId,suggestionPublicId);}
-    @PostMapping public ResponseEntity<SuggestionDto> create(@PathVariable String routePublicId,@Valid @RequestBody CreateSuggestionRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(routePublicId,request));
+    @PostMapping public ResponseEntity<SuggestionDto> create(@PathVariable String routePublicId,@Valid @RequestBody CreateSuggestionRequest request,@RequestHeader(value="Idempotency-Key",required=false) String requestKey){
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(routePublicId,request,requestKey));
     }
-    @PostMapping("/{suggestionPublicId}/comments") public ResponseEntity<SuggestionCommentDto> comment(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,@Valid @RequestBody CreateSuggestionCommentRequest request){return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(routePublicId,suggestionPublicId,request));}
+    @PostMapping("/{suggestionPublicId}/comments") public ResponseEntity<SuggestionCommentDto> comment(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,@Valid @RequestBody CreateSuggestionCommentRequest request,@RequestHeader(value="Idempotency-Key",required=false) String requestKey){return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(routePublicId,suggestionPublicId,request,requestKey));}
     @GetMapping("/owner") public List<SuggestionDto> ownerList(@PathVariable String routePublicId,HttpServletRequest request){ownership.requireOwner(routePublicId,request);return service.listOwner(routePublicId);}
     @GetMapping("/owner/moderation-queue") public List<ModerationQueueItemDto> moderationQueue(@PathVariable String routePublicId,HttpServletRequest request){
       ownership.requireOwner(routePublicId,request);
@@ -27,6 +27,6 @@ public class RouteSuggestionController {
     @PatchMapping("/owner/{suggestionPublicId}/moderation") public SuggestionDto moderate(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,@Valid @RequestBody ModerationRequest body,HttpServletRequest request){ownership.requireOwner(routePublicId,request);return service.moderate(routePublicId,suggestionPublicId,body.moderationStatus());}
     @PostMapping("/owner/{suggestionPublicId}/merge") public RouteDto merge(@PathVariable String routePublicId,@PathVariable String suggestionPublicId,HttpServletRequest request){ownership.requireOwner(routePublicId,request);return mergeService.merge(routePublicId,suggestionPublicId);}
     @PatchMapping("/owner/comments/{commentPublicId}/moderation") public SuggestionCommentDto moderateComment(@PathVariable String routePublicId,@PathVariable String commentPublicId,@Valid @RequestBody ModerationRequest body,HttpServletRequest request){
-      ownership.requireOwner(routePublicId,request);if(!commentService.owningRoutePublicId(commentPublicId).equals(routePublicId))throw new pl.routecommunity.api.common.error.ApiException(HttpStatus.NOT_FOUND,"Comment not found");return commentService.moderate(commentPublicId,body.moderationStatus());
+      ownership.requireOwner(routePublicId,request);if(!commentService.owningRoutePublicId(commentPublicId).equals(routePublicId))throw new pl.routecommunity.api.common.error.ApiException(HttpStatus.NOT_FOUND,"Comment not found");return commentService.moderate(routePublicId,commentPublicId,body.moderationStatus());
     }
 }
