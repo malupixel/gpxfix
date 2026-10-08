@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
     document.documentElement.setAttribute("lang", locale);
     await i18n.changeLanguage(locale);
   }
-  return <div className="fixed right-3 top-3 z-[10000] flex rounded-lg border border-slate-200 bg-white/95 p-1 text-xs font-bold shadow-sm backdrop-blur" role="group" aria-label={t("common.language")}>
-    {supportedLocales.map((locale) => <button key={locale} type="button" aria-pressed={selected === locale} onClick={() => void choose(locale)} className={`rounded px-2 py-1.5 ${selected === locale ? "bg-emerald-700 text-white" : "text-slate-500 hover:bg-slate-100"}`}>{locale.toUpperCase()}</button>)}
+  return <div className="flex shrink-0 rounded-lg border border-slate-200 bg-white/95 p-1 text-xs font-bold shadow-sm backdrop-blur" role="group" aria-label={t("common.language")}>
+    {supportedLocales.map((locale) => <button key={locale} type="button" aria-pressed={selected === locale} onClick={() => void choose(locale)} className={`rounded min-h-10 px-2.5 py-2 ${selected === locale ? "bg-emerald-700 text-white" : "text-slate-500 hover:bg-slate-100"}`}>{locale.toUpperCase()}</button>)}
   </div>;
 }

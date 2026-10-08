@@ -60,11 +60,11 @@ public class RouteSuggestionService {
     }
 
     @Transactional(readOnly=true)
-    public List<SuggestionDto> listPublic(String routePublicId,Integer versionNumber){
+    public List<SuggestionDto> listPublic(String routePublicId,Integer versionNumber,boolean includeArchived){
         Route route=routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
         int viewed=versionNumber==null?route.getCurrentVersion().getVersionNumber():versionNumber;
         return suggestions.findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId,ModerationStatus.PUBLISHED).stream()
-                .filter(value->value.getBaseVersion().getVersionNumber()==viewed && value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED)
+                .filter(value->includeArchived || (value.getBaseVersion().getVersionNumber()==viewed && value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED))
                 .map(value->dto(value,false)).toList();
     }
     @Transactional(readOnly=true)

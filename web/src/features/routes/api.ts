@@ -17,8 +17,11 @@ export async function getRouteOwnerStatus(publicId: string): Promise<boolean> {
 export function getOwnerAccessToken(publicId: string): Promise<{ token: string }> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/access-token`, { cache: "no-store" });
 }
-export function getRouteSuggestions(publicId: string, versionNumber?: number): Promise<RouteSuggestion[]> {
-  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions${versionNumber ? `?versionNumber=${versionNumber}` : ""}`, { cache: "no-store" });
+export function getRouteSuggestions(publicId: string, versionNumber?: number, includeArchived = false): Promise<RouteSuggestion[]> {
+  const query = new URLSearchParams();
+  if (versionNumber) query.set("versionNumber", String(versionNumber));
+  if (includeArchived) query.set("includeArchived", "true");
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions${query.size ? `?${query}` : ""}`, { cache: "no-store" });
 }
 export type OwnerEditorData = { route: RouteData; editorDocument: RouteEditorDocument | null };
 export function getOwnerEditor(publicId: string): Promise<OwnerEditorData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/editor`, { cache: "no-store" }); }

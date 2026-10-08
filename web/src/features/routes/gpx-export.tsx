@@ -47,5 +47,5 @@ export function GpxExportDialog({ route, initialVersion, onClose }: { route: Rou
 }
 export function RouteDownload({ route }: { route: RouteData }) {
   const { t } = useTranslation(); const [open, setOpen] = useState(false);
-  return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("info.download")}</h2><button onClick={() => setOpen(true)} className="route-button mt-4 w-full">{t("info.downloadGpx")}</button><p className="mt-3 text-xs text-slate-600">{t("export.help")}</p>{open && <GpxExportDialog route={route} onClose={() => setOpen(false)} />}</section>;
+  return <><button onClick={() => setOpen(true)} className="route-button border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800">{t("info.downloadGpx")}</button>{open && <GpxExportDialog route={route} onClose={() => setOpen(false)} />}</>;
 }

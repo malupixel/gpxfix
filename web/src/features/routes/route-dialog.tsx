@@ -22,7 +22,7 @@ export function RouteDialog({ title, onClose, children, busy = false }: { title:
     return () => { document.removeEventListener("keydown", key); document.body.style.overflow = overflow; previous?.focus(); };
   }, []);
   return <div className="fixed inset-0 z-[10020] grid place-items-center bg-slate-950/50 p-4" onClick={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
-    <section ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-busy={busy} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl">
+    <section ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-busy={busy} className="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl sm:p-6">
       <header className="mb-4 flex items-start justify-between gap-4"><h2 id={titleId} className="text-xl font-bold">{title}</h2><button type="button" disabled={busy} onClick={onClose} aria-label={t("common.cancel")} className="route-button">×</button></header>{children}
     </section>
   </div>;

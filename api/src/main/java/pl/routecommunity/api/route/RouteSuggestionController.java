@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RouteSuggestionController {
     private final RouteSuggestionService service; private final SuggestionCommentService commentService; private final RouteOwnershipService ownership; private final SuggestionMergeService mergeService;
     RouteSuggestionController(RouteSuggestionService service,SuggestionCommentService commentService,RouteOwnershipService ownership,SuggestionMergeService mergeService){this.service=service;this.commentService=commentService;this.ownership=ownership;this.mergeService=mergeService;}
-    @GetMapping public List<SuggestionDto> list(@PathVariable String routePublicId,@RequestParam(required=false) Integer versionNumber){return service.listPublic(routePublicId,versionNumber);}
+    @GetMapping public List<SuggestionDto> list(@PathVariable String routePublicId,@RequestParam(required=false) Integer versionNumber,@RequestParam(defaultValue="false") boolean includeArchived){return service.listPublic(routePublicId,versionNumber,includeArchived);}
     @GetMapping("/{suggestionPublicId}") public SuggestionDto get(@PathVariable String routePublicId,@PathVariable String suggestionPublicId){return service.getPublic(routePublicId,suggestionPublicId);}
     @PostMapping public ResponseEntity<SuggestionDto> create(@PathVariable String routePublicId,@Valid @RequestBody CreateSuggestionRequest request,@RequestHeader(value="Idempotency-Key",required=false) String requestKey){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(routePublicId,request,requestKey));

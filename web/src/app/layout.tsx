@@ -5,11 +5,12 @@ import { Providers } from "@/components/providers";
 import { cookies, headers } from "next/headers";
 import { localeCookieName, resolveLocale } from "@/i18n/config";
 import { getServerTranslation } from "@/i18n/server";
+import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getServerTranslation();
-  return { title: t("landing.title"), description: t("metadata.description") };
+  return { metadataBase: new URL("https://tweakmyroute.com"), title: t("landing.title"), description: t("metadata.description") };
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -18,7 +19,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const locale = resolveLocale(cookieStore.get(localeCookieName)?.value, headerStore.get("accept-language"));
   return (
     <html lang={locale}>
-      <body><Providers initialLocale={locale}>{children}<SiteFooter /></Providers></body>
+      <body><Providers initialLocale={locale}><SiteHeader />{children}<SiteFooter /></Providers></body>
     </html>
   );
 }

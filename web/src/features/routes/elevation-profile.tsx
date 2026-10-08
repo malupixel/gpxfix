@@ -12,12 +12,13 @@ export function ElevationProfile({ samples, onHighlight }: Props) {
   const { t } = useTranslation();
   const model = useMemo(() => elevationProfileModel(samples), [samples]);
 
-  if (!model) return <section className="route-card p-4"><h2 className="text-lg font-bold">{t("elevation.title")}</h2><div className="mt-4 grid min-h-36 place-items-center rounded-lg border border-dashed border-slate-300 bg-slate-50/90 px-6 text-center"><p className="text-sm font-semibold text-slate-600">{t("elevation.noData")}</p></div></section>;
+  if (!model) return <section className="route-card p-5 sm:p-6"><h2 className="text-lg font-bold">{t("elevation.title")}</h2><div className="mt-4 grid min-h-36 place-items-center rounded-lg border border-dashed border-slate-300 bg-slate-50/90 px-6 text-center"><p className="text-sm font-semibold text-slate-600">{t("elevation.noData")}</p></div></section>;
 
   const { summary } = model;
-  return <section className="route-card p-4">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">{t("elevation.title")}</h2><div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-semibold text-slate-600"><span>{t("elevation.gain", { value: Math.round(summary.gainMeters) })}</span><span>{t("elevation.loss", { value: Math.round(summary.lossMeters) })}</span><span>{t("elevation.minimum", { value: Math.round(summary.minMeters) })}</span><span>{t("elevation.maximum", { value: Math.round(summary.maxMeters) })}</span></div></div>
-    <ElevationChart model={model} onHighlight={onHighlight} className="mt-3 h-[220px]" />
+  return <section className="route-card p-5 sm:p-6">
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">{t("elevation.title")}</h2><div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-semibold text-slate-600"><span>{t("elevation.loss", { value: Math.round(summary.lossMeters) })}</span><span>{t("elevation.minimum", { value: Math.round(summary.minMeters) })}</span><span>{t("elevation.maximum", { value: Math.round(summary.maxMeters) })}</span></div></div>
+    <div className="mt-3 flex justify-between text-xs text-slate-500"><span>{t("routeUi.elevationAxis")}</span><span>{t("routeUi.distanceAxis")}</span></div>
+    <ElevationChart model={model} onHighlight={onHighlight} className="mt-2 h-[190px] sm:h-[220px]" />
   </section>;
 }
 

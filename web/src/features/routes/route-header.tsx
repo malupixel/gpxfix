@@ -1,124 +1,58 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { RouteData } from "@/types/route";
 import { RouteMoreMenu } from "./route-more-menu";
 import { RouteVersionNavigation } from "./route-version-navigation";
-import type { RouteData } from "@/types/route";
+import { RouteDownload } from "./gpx-export";
+import { RouteShareDialog } from "./route-share-dialog";
 import { elevationSummary } from "./elevation-profile-data";
-import { formatRouteDate } from "./route-format";
-import { managementRouteUrl, routeVersionPath } from "./route-links";
-import { getOwnerAccessToken } from "./api";
-import { useTranslation } from "react-i18next";
+import { routeVersionPath, publicRoutePath } from "./route-links";
+import Link from "next/link";
 
 type Props = { route: RouteData; isOwner: boolean };
 
 export function RouteHeader({ route, isOwner }: Props) {
-  const [copied, setCopied] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [copyError, setCopyError] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false), [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false), [copyError, setCopyError] = useState(false);
   const { t, i18n } = useTranslation();
   const elevation = elevationSummary(route.elevationProfile);
-  const routePath = routeVersionPath(route.publicId, route.viewedVersion);
-
-  async function copyRouteUrl() {
-    const url = new URL(routePath, window.location.origin).toString();
+  const format = (value: number, digits = 0) => new Intl.NumberFormat(i18n.language, { maximumFractionDigits: digits }).format(value);
+  async function copyVersion() {
     setCopyError(false);
-    try { await navigator.clipboard.writeText(url); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
-    catch { setCopyError(true); }
+    try { await navigator.clipboard.writeText(new URL(routeVersionPath(route.publicId, route.viewedVersion), window.location.origin).toString()); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
+    catch { setCopyError(true); setShareOpen(true); }
   }
-
-  return (
-    <header className="mb-6">
-      <nav aria-label={t("route.breadcrumb")} className="mb-3 flex items-center gap-2 text-xs font-semibold text-emerald-700">
-        <Link href="/">{t("landing.title")}</Link><span className="text-slate-400">›</span><span>{t("route.viewRoute")}</span>
-      </nav>
-      <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="min-w-0 break-words text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{route.name}</h1>
-            <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white">v{route.viewedVersion}</span>
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">{t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")}</span>
-            {isOwner && <OwnerAccess publicId={route.publicId} />}
-          </div>
-          {route.description && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{route.description}</p>}
-          <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-            <Metric icon="↔" label={t("route.distance")} value={`${(route.distanceMeters / 1000).toFixed(1)} km`} />
-            {elevation && <Metric icon="△" label={t("route.elevationGain")} value={`${Math.round(elevation.gainMeters)} m`} />}
-            <Metric icon="□" label={t("route.shared")} value={formatRouteDate(route.createdAt, i18n.language)} />
-          </dl>
-          <RouteVersionNavigation route={route} open={historyOpen} onToggle={() => setHistoryOpen(value => !value)}/>
+  return <header className="mb-5">
+    <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+      <div className="min-w-0 flex-1">
+        <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium">
+          <span className="inline-flex items-center gap-1.5 text-slate-600"><span aria-hidden="true" className={`size-1.5 rounded-full ${route.suggestionsEnabled ? "bg-emerald-600" : "bg-slate-400"}`} />{t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")}</span>
+          {isOwner && <span className="border-l border-slate-300 pl-3 text-amber-800">{t("route.ownerMode")}</span>}
         </div>
-        <div className="w-full shrink-0 sm:w-auto lg:w-80">
-          <div className="flex gap-2 sm:justify-end">
-            <RouteMoreMenu route={route} isOwner={isOwner} onHistory={() => setHistoryOpen(true)} onCopy={() => void copyRouteUrl()} />
-            <button onClick={copyRouteUrl} className="route-button flex-1 border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800">⌯&nbsp;&nbsp; {t("route.share")}</button>
-          </div>
-          {copyError && <p role="alert" className="mt-2 text-sm text-red-700">{t("management.copyFailed")}</p>}
-          <div className="mt-2 flex items-center rounded-lg border border-slate-200 bg-white p-1 pl-3 shadow-sm">
-            <span className="min-w-0 flex-1 truncate text-xs text-slate-600">{routePath}</span>
-            <button onClick={copyRouteUrl} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold hover:bg-slate-50">{copied ? t("common.copied") : t("common.copy")}</button>
-          </div>
+        <div className="flex items-start gap-3">
+          <h1 className="min-w-0 break-words text-2xl font-bold leading-tight tracking-tight text-slate-950 [overflow-wrap:anywhere] sm:text-3xl lg:text-4xl">{route.name}</h1>
+          <button onClick={() => setHistoryOpen(true)} aria-label={t("routeUi.versionLabel", { version: route.viewedVersion })} className="route-button mt-0.5 shrink-0 bg-white text-slate-700">v{route.viewedVersion} <span aria-hidden="true">▾</span></button>
         </div>
+        <dl className="mt-4 flex flex-wrap gap-x-7 gap-y-3">
+          <Metric label={t("route.distance")} value={`${format(route.distanceMeters / 1000, 1)} km`} />
+          {elevation && <Metric label={t("routeMetadata.gain")} value={`${format(elevation.gainMeters)} m`} />}
+        </dl>
       </div>
-    </header>
-  );
+      <div className="route-header-actions grid grid-cols-[1fr_1fr_auto] items-center gap-2 lg:shrink-0">
+        <button onClick={() => setShareOpen(true)} className="route-button bg-white hover:bg-slate-50">{t("route.share")}</button>
+        <RouteDownload route={route} />
+        <RouteMoreMenu route={route} isOwner={isOwner} onHistory={() => setHistoryOpen(true)} onCopy={() => void copyVersion()} />
+      </div>
+    </div>
+    {!route.isCurrentVersion && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"><span>{t("versions.historical")}</span><Link className="font-semibold underline" href={publicRoutePath(route.publicId)}>{t("versions.goCurrent", { version: route.currentVersion })}</Link></div>}
+    {copied && <p role="status" className="mt-2 text-sm text-emerald-800">{t("common.copied")}</p>}
+    {copyError && <p role="alert" className="mt-2 text-sm text-red-700">{t("management.copyFailed")}</p>}
+    <RouteVersionNavigation route={route} open={historyOpen} onToggle={() => setHistoryOpen(false)} />
+    {shareOpen && <RouteShareDialog route={route} onClose={() => setShareOpen(false)} />}
+  </header>;
 }
-
-function OwnerAccess({ publicId }: { publicId: string }) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const [url, setUrl] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [error, setError] = useState(false);
-  const panel = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function close(event: MouseEvent) { if (!panel.current?.contains(event.target as Node)) setOpen(false); }
-    function escape(event: KeyboardEvent) { if (event.key === "Escape") setOpen(false); }
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", escape);
-    return () => { document.removeEventListener("mousedown", close); document.removeEventListener("keydown", escape); };
-  }, [open]);
-
-  async function toggle() {
-    const next = !open;
-    setOpen(next);
-    if (!next || url) return;
-    setError(false);
-    try {
-      const { token } = await getOwnerAccessToken(publicId);
-      setUrl(managementRouteUrl(publicId, token, window.location.origin));
-    } catch { setError(true); }
-  }
-
-  async function copyOwnerUrl() {
-    if (!url) return;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch { setError(true); }
-  }
-
-  return <div ref={panel} className="relative">
-    <button type="button" onClick={toggle} aria-expanded={open} className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">
-      🔑 {t("route.ownerMode")} <span aria-hidden="true">▾</span>
-    </button>
-    {open && <section role="dialog" aria-label={t("ownerAccess.title")} className="absolute left-0 z-30 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-amber-200 bg-white p-4 shadow-xl">
-      <h2 className="font-bold text-slate-950">🔑 {t("ownerAccess.title")}</h2>
-      <p className="mt-2 text-sm leading-5 text-slate-600">{t("ownerAccess.explanation")}</p>
-      {url && <><label className="mt-4 block text-xs font-semibold uppercase tracking-wide text-amber-900" htmlFor="owner-access-url">{t("ownerAccess.label")}</label>
-        <input id="owner-access-url" readOnly value={url} onFocus={(event) => event.currentTarget.select()} className="mt-1 w-full rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-slate-700" />
-        <button type="button" onClick={copyOwnerUrl} className="mt-3 w-full rounded-lg border border-amber-700 bg-amber-700 px-4 py-2 text-sm font-bold text-white hover:bg-amber-800">{copied ? t("common.copied") : t("ownerAccess.copy")}</button></>}
-      {!url && !error && <p className="mt-4 text-sm text-slate-500">{t("ownerAccess.loading")}</p>}
-      {error && <p role="alert" className="mt-4 text-sm font-medium text-red-700">{t("ownerAccess.failed")}</p>}
-    </section>}
-  </div>;
-}
-
-function Metric({ icon, label, value }: { icon: string; label: string; value: string }) {
-  return <div className="grid grid-cols-[24px_auto] items-center gap-x-2"><span className="row-span-2 grid size-6 place-items-center rounded-full border border-slate-300 text-xs text-slate-600">{icon}</span><dt className="text-xs text-slate-500">{label}</dt><dd className="font-semibold text-slate-800">{value}</dd></div>;
+function Metric({ label, value }: { label: string; value: string }) {
+  return <div><dt className="text-xs text-slate-500">{label}</dt><dd className="mt-0.5 text-lg font-semibold tabular-nums text-slate-900">{value}</dd></div>;
 }

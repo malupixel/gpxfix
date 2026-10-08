@@ -145,6 +145,16 @@ class RouteManagementApiIntegrationTest {
         mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",route.id(),id).cookie(route.cookie())).andExpect(status().isConflict());
         assertThat(count(route)).isEqualTo(before+2);assertThat(route(route).get("versionCount").asInt()).isEqualTo(2);
         assertThat(activity(route,false,100,null).get("items").get(0).get("type").asText()).isEqualTo("SUGGESTION_MERGED");
+        String pending=suggestion(route,"private-archive");
+        String rejected=suggestion(route,"rejected-archive");moderate(route,rejected,"REJECTED");
+        assertThat(read(mvc.perform(get("/api/routes/{id}/suggestions",route.id())).andExpect(status().isOk())).size()).isZero();
+        JsonNode archive=read(mvc.perform(get("/api/routes/{id}/suggestions",route.id()).param("includeArchived","true")).andExpect(status().isOk()));
+        assertThat(archive.size()).isEqualTo(1);assertThat(archive.get(0).get("publicId").asText()).isEqualTo(id);
+        assertThat(archive.get(0).get("integrationStatus").asText()).isEqualTo("MERGED");
+        assertThat(archive.toString()).doesNotContain(pending,rejected);
+        String withdrawn=suggestion(route,"withdrawn-archive");moderate(route,withdrawn,"PUBLISHED");moderate(route,withdrawn,"PENDING");
+        assertThat(read(mvc.perform(get("/api/routes/{id}/suggestions",route.id()).param("includeArchived","true")).andExpect(status().isOk())).size()).isEqualTo(1);
+
     }
 
     @Test void versionResponsesProvideReusableOptimisticConcurrencyTimestamps() throws Exception {

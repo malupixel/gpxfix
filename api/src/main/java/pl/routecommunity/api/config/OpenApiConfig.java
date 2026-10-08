@@ -10,7 +10,7 @@ public class OpenApiConfig {
     @Bean
     OpenAPI routeCommunityOpenApi() {
         return new OpenAPI().info(new Info()
-                .title("Route Community API")
+                .title("TweakMyRoute API")
                 .version("v1")
                 .description("API for community GPX route sharing and review."));
     }

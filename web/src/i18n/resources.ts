@@ -1,5 +1,6 @@
 export const resources = {
   pl: { translation: {
+    routeUi: {"home": "TweakMyRoute — strona główna", "versionLabel": "Wersja v{{version}} — historia wersji", "versionLink": "Link do wersji v{{version}}", "copyLatest": "Kopiuj link do zawsze aktualnej trasy", "suggestions": "Sugestie", "pending": "Oczekujące", "published": "Opublikowane", "merged": "Scalono", "rejected": "Odrzucone", "statusFilter": "Status sugestii", "typeFilter": "Typ sugestii", "needsAttention": "{{count}} oczekujących", "noMatches": "Brak sugestii pasujących do filtrów.", "emptySuggestions": "Ta trasa nie ma jeszcze sugestii. Możesz pomóc ją ulepszyć.", "noDescription": "Opis nie został jeszcze dodany.", "jumpSuggestions": "Przejdź do sugestii", "backMap": "Wróć do mapy", "suggestionsFailed": "Nie udało się pobrać sugestii. Spróbuj ponownie.", "editMode": "Edytuj trasę", "commentsCount": "Komentarze: {{count}}", "elevationAxis": "Wysokość (m)", "distanceAxis": "Dystans (km)"},
     routeActivity: { linkUnavailable: "Ta sugestia jest niedostępna lub wymaga uprawnień właściciela.",
       "loading": "Wczytywanie aktywności…",
       "failed": "Nie udało się pobrać aktywności trasy.",
@@ -137,7 +138,7 @@ export const resources = {
     },
     metadata: {
       "description": "Społecznościowe udostępnianie i ulepszanie tras GPX",
-      "routeDescription": "Trasa rowerowa o długości {{distance}} km udostępniona przez Route Community."
+      "routeDescription": "Trasa rowerowa o długości {{distance}} km udostępniona przez TweakMyRoute."
     },
     apiErrors: {
       "network": "Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.",
@@ -156,9 +157,9 @@ export const resources = {
     versionOrigin: { initialUpload: "Import GPX", initialDrawn: "Narysowana trasa", suggestionMerge: "Scalona sugestia", ownerEdit: "Edycja właściciela" },
     map: { loadFailed: "Nie udało się załadować części mapy. Sprawdź połączenie i odśwież stronę.", zoomIn: "Przybliż", zoomOut: "Oddal", resetBearing: "Ustaw północ u góry mapy", attribution: "Pokaż informacje o źródłach mapy", feedback: "Zgłoś problem z mapą", showSquadratsGrid: "Pokaż siatkę Squadrats", squadratsZoomIn: "Przybliż mapę, aby zobaczyć siatkę Squadrats." },
     common: { optional: "(opcjonalnie)", copy: "Kopiuj", copied: "Skopiowano!", select: "Wybierz…", description: "Opis", name: "Imię", cancel: "Anuluj", back: "Wróć", language: "Język", noAccount: "Konto nie jest wymagane." },
-    landing: { uploadTitle: "Wgraj GPX", uploadHelp: "Użyj wcześniej przygotowanej trasy.", drawTitle: "Narysuj trasę", drawHelp: "Rysuj bezpośrednio na mapie, łącząc odcinki wzdłuż dróg z liniami prostymi.", title: "Route Community", subtitle: "Wgraj trasę GPX i udostępnij ją osobom, które znają okolicę." },
+    landing: { uploadTitle: "Wgraj GPX", uploadHelp: "Użyj wcześniej przygotowanej trasy.", drawTitle: "Narysuj trasę", drawHelp: "Rysuj bezpośrednio na mapie, łącząc odcinki wzdłuż dróg z liniami prostymi.", title: "TweakMyRoute", subtitle: "Wgraj trasę GPX i udostępnij ją osobom, które znają okolicę." },
     upload: { file: "Plik GPX", routeName: "Nazwa trasy", description: "Opis", submit: "Wgraj trasę", uploading: "Wgrywanie…", emptyFile: "Wybierz niepusty plik GPX.", failed: "Nie udało się wgrać trasy." },
-    ownerLink: { title: "Zapisz link do zarządzania", private: "Ten prywatny link daje Ci pełną kontrolę nad trasą. Zachowaj go w bezpiecznym miejscu i nie udostępniaj publicznie.", warning: "Route Community nie korzysta z kont, dlatego w razie utraty linku nie będziemy mogli przywrócić dostępu do zarządzania trasą.", label: "Link do zarządzania", copyAndContinue: "Skopiuj link do zarządzania i przejdź dalej", copiedOpening: "Skopiowano! Otwieranie trasy…", copyFailed: "Automatyczne kopiowanie zostało zablokowane. Zaznacz i skopiuj powyższy link ręcznie, a następnie potwierdź poniżej.", manualConfirm: "Link do zarządzania został przeze mnie skopiowany i bezpiecznie zapisany.", continue: "Przejdź do trasy" },
+    ownerLink: { title: "Zapisz link do zarządzania", private: "Ten prywatny link daje Ci pełną kontrolę nad trasą. Zachowaj go w bezpiecznym miejscu i nie udostępniaj publicznie.", warning: "TweakMyRoute nie korzysta z kont, dlatego w razie utraty linku nie będziemy mogli przywrócić dostępu do zarządzania trasą.", label: "Link do zarządzania", copyAndContinue: "Skopiuj link do zarządzania i przejdź dalej", copiedOpening: "Skopiowano! Otwieranie trasy…", copyFailed: "Automatyczne kopiowanie zostało zablokowane. Zaznacz i skopiuj powyższy link ręcznie, a następnie potwierdź poniżej.", manualConfirm: "Link do zarządzania został przeze mnie skopiowany i bezpiecznie zapisany.", continue: "Przejdź do trasy" },
     ownerAccess: { title: "Dostęp właściciela", explanation: "Ten prywatny link daje pełny dostęp do zarządzania tą trasą. Zachowaj go w bezpiecznym miejscu i nie udostępniaj publicznie.", label: "Prywatny link właściciela", copy: "Kopiuj link właściciela", loading: "Przygotowywanie prywatnego linku…", failed: "Nie udało się pobrać linku właściciela. Odśwież stronę i spróbuj ponownie." },
     persistence: { saving: "Zapisuję sugestię…", saved: "Sugestia została dodana.", awaitingModeration: "Sugestia została wysłana i pojawi się po zatwierdzeniu przez właściciela trasy.", saveFailed: "Nie udało się zapisać sugestii.", pending: "Oczekuje", loading: "Wczytywanie sugestii…", empty: "Brak sugestii w tej kategorii." },
     moderation: { title: "Do moderacji", pending: "Oczekuje na zatwierdzenie", published: "Opublikowano", rejected: "Odrzucono", publish: "Opublikuj", reject: "Odrzuć" },
@@ -175,6 +176,7 @@ export const resources = {
     errors: { generic: "Coś poszło nie tak. Spróbuj ponownie." }
   } },
   en: { translation: {
+    routeUi: {"home": "TweakMyRoute — home", "versionLabel": "Version v{{version}} — version history", "versionLink": "Link to version v{{version}}", "copyLatest": "Copy link to the latest route", "suggestions": "Suggestions", "pending": "Pending", "published": "Published", "merged": "Merged", "rejected": "Rejected", "statusFilter": "Suggestion status", "typeFilter": "Suggestion type", "needsAttention": "{{count}} pending", "noMatches": "No suggestions match these filters.", "emptySuggestions": "This route has no suggestions yet. You can help improve it.", "noDescription": "No description has been added yet.", "jumpSuggestions": "Go to suggestions", "backMap": "Back to map", "suggestionsFailed": "Could not load suggestions. Please try again.", "editMode": "Edit route", "commentsCount": "Comments: {{count}}", "elevationAxis": "Elevation (m)", "distanceAxis": "Distance (km)"},
     routeActivity: { linkUnavailable: "This suggestion is unavailable or requires owner access.",
       "loading": "Loading activity…",
       "failed": "Could not load route activity.",
@@ -312,7 +314,7 @@ export const resources = {
     },
     metadata: {
       "description": "Share and improve GPX routes with the community",
-      "routeDescription": "{{distance}} km cycling route shared on Route Community."
+      "routeDescription": "{{distance}} km cycling route shared on TweakMyRoute."
     },
     apiErrors: {
       "network": "Could not connect to the server. Check your connection and try again.",
@@ -331,9 +333,9 @@ export const resources = {
     versionOrigin: { initialUpload: "GPX import", initialDrawn: "Drawn route", suggestionMerge: "Merged suggestion", ownerEdit: "Owner edit" },
     map: { loadFailed: "Some map data could not be loaded. Check your connection and refresh the page.", zoomIn: "Zoom in", zoomOut: "Zoom out", resetBearing: "Reset bearing to north", attribution: "Toggle attribution", feedback: "Map feedback", showSquadratsGrid: "Show Squadrats grid", squadratsZoomIn: "Zoom in to see the Squadrats grid." },
     common: { optional: "(optional)", copy: "Copy", copied: "Copied!", select: "Select…", description: "Description", name: "Name", cancel: "Cancel", back: "Back", language: "Language", noAccount: "No account required." },
-    landing: { uploadTitle: "Upload GPX", uploadHelp: "Use a route you already prepared.", drawTitle: "Draw a route", drawHelp: "Sketch directly on the map and mix road-following with direct sections.", title: "Route Community", subtitle: "Upload a GPX route and share it with people who know the area." },
+    landing: { uploadTitle: "Upload GPX", uploadHelp: "Use a route you already prepared.", drawTitle: "Draw a route", drawHelp: "Sketch directly on the map and mix road-following with direct sections.", title: "TweakMyRoute", subtitle: "Upload a GPX route and share it with people who know the area." },
     upload: { file: "GPX file", routeName: "Route name", description: "Description", submit: "Upload route", uploading: "Uploading…", emptyFile: "Choose a non-empty GPX file.", failed: "Upload failed." },
-    ownerLink: { title: "Save your management link", private: "This private link gives you full control over this route. Keep it somewhere safe and do not share it publicly.", warning: "Route Community does not use accounts, so if you lose this link, we cannot recover access to route management.", label: "Management link", copyAndContinue: "Copy management link and continue", copiedOpening: "Copied! Opening route…", copyFailed: "Automatic copying was blocked. Select and copy the link above manually, then confirm below.", manualConfirm: "I have copied and safely saved the management link.", continue: "Continue to route" },
+    ownerLink: { title: "Save your management link", private: "This private link gives you full control over this route. Keep it somewhere safe and do not share it publicly.", warning: "TweakMyRoute does not use accounts, so if you lose this link, we cannot recover access to route management.", label: "Management link", copyAndContinue: "Copy management link and continue", copiedOpening: "Copied! Opening route…", copyFailed: "Automatic copying was blocked. Select and copy the link above manually, then confirm below.", manualConfirm: "I have copied and safely saved the management link.", continue: "Continue to route" },
     ownerAccess: { title: "Owner access", explanation: "This private link gives full management access to this route. Keep it safe and do not share it publicly.", label: "Private owner link", copy: "Copy owner link", loading: "Preparing your private link…", failed: "The owner link could not be retrieved. Refresh the page and try again." },
     persistence: { saving: "Saving suggestion…", saved: "Suggestion added.", awaitingModeration: "Your suggestion was submitted and will appear after the route owner approves it.", saveFailed: "The suggestion could not be saved.", pending: "Pending", loading: "Loading suggestions…", empty: "No suggestions in this category." },
     moderation: { title: "Pending moderation", pending: "Awaiting approval", published: "Published", rejected: "Rejected", publish: "Publish", reject: "Reject" },

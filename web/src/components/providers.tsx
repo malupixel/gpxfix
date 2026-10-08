@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-import { I18nProvider, LanguageSwitcher } from "@/i18n/provider";
+import { I18nProvider } from "@/i18n/provider";
 import type { Locale } from "@/i18n/config";
 
 export function Providers({ children, initialLocale }: { children: React.ReactNode; initialLocale: Locale }) {
@@ -10,5 +10,5 @@ export function Providers({ children, initialLocale }: { children: React.ReactNo
     defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
   }));
 
-  return <I18nProvider initialLocale={initialLocale}><QueryClientProvider client={queryClient}><LanguageSwitcher />{children}</QueryClientProvider></I18nProvider>;
+  return <I18nProvider initialLocale={initialLocale}><QueryClientProvider client={queryClient}>{children}</QueryClientProvider></I18nProvider>;
 }
