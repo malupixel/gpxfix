@@ -26,6 +26,7 @@ import { elevationProfileModel } from "@/features/routes/elevation-profile-data"
 import type { RoutePageMode, SuggestionGeometry } from "@/features/routes/route-page-state";
 import type { RouteData, RouteSuggestion } from "@/types/route";
 import { SquadratsGrid } from "./squadrats-grid";
+import { localizeMapControls } from "./map-translations";
 
 const DEFAULT_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
 const ROUTE_SOURCE_ID = "route-source";
@@ -75,6 +76,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
   const elevationModel = useMemo(() => elevationProfileModel(elevationProfile), [elevationProfile]);
 
   useEffect(() => { labelsRef.current = { start: t("route.start"), finish: t("route.finish") }; }, [i18n.language, t]);
+  useEffect(() => { if (loadedMap) localizeMapControls(loadedMap.getContainer(), t, t("route.interactiveMap")); }, [loadedMap, t]);
 
   const toggleFullscreen = useCallback(async () => {
     const fullscreenContainer = fullscreenContainerRef.current;

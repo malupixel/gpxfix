@@ -70,7 +70,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   }, [finishSuggestion, form, geometry, t]);
 
   function enterSuggestMode(tool: SuggestionTool = null) {
-    if(!route.isCurrentVersion){window.alert(`Suggestions are created against the current version (v${route.currentVersion}). You will be taken there now.`);router.push(publicRoutePath(route.publicId));return;}
+    if(!route.isCurrentVersion){window.alert(t("versions.redirect", { version: route.currentVersion }));router.push(publicRoutePath(route.publicId));return;}
     setMode("suggest");
     setSelectedSuggestionId(null);
     setSubmitError(false);

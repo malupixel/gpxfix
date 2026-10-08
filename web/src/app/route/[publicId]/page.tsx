@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getRoute } from "@/features/routes/api";
 import { ApiError } from "@/lib/api-client";
 import { OwnershipGate } from "@/features/routes/ownership-gate";
+import { getServerTranslation } from "@/i18n/server";
 
 type Props = { params: Promise<{ publicId: string }> };
 
@@ -15,7 +16,8 @@ async function load(publicId: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { publicId } = await params;
   const route = await load(publicId);
-  return { title: `${route.name} | Route Community`, description: route.description || `${(route.distanceMeters / 1000).toFixed(1)} km cycling route shared on Route Community.` };
+  const t = await getServerTranslation();
+  return { title: `${route.name} | ${t("landing.title")}`, description: route.description || t("metadata.routeDescription", { distance: (route.distanceMeters / 1000).toFixed(1) }) };
 }
 
 export default async function RoutePage({ params }: Props) {

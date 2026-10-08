@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { uploadRoute } from "./api";
 import { managementRouteUrl, publicRoutePath } from "./route-links";
 import { managementModalCanContinue } from "./management-modal-state";
+import { apiErrorKey } from "@/i18n/api-errors";
 import { useTranslation } from "react-i18next";
 
 type CreatedRoute = { publicId: string; managementUrl: string };
@@ -13,15 +14,15 @@ export function UploadForm({compact=false}:{compact?:boolean}) {
   const router=useRouter(); const [error,setError]=useState<string|null>(null);
   const { t }=useTranslation();
   const [created,setCreated]=useState<CreatedRoute|null>(null); const [copyFailed,setCopyFailed]=useState(false); const [copied,setCopied]=useState(false); const [manualConfirmed,setManualConfirmed]=useState(false);
-  const mutation=useMutation({mutationFn:uploadRoute,onSuccess:({publicId,managementToken})=>setCreated({publicId,managementUrl:managementRouteUrl(publicId,managementToken,window.location.origin)}),onError:(uploadError)=>setError(uploadError instanceof Error?`${t("upload.failed")} ${uploadError.message}`:t("upload.failed"))});
-  function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setError(null);const form=new FormData(event.currentTarget);const file=form.get("file");if(!(file instanceof File)||file.size===0){setError(t("upload.emptyFile"));return;}mutation.mutate(form);}
+  const mutation=useMutation({mutationFn:uploadRoute,onSuccess:({publicId,managementToken})=>setCreated({publicId,managementUrl:managementRouteUrl(publicId,managementToken,window.location.origin)}),onError:(uploadError)=>setError(apiErrorKey(uploadError, "upload.failed"))});
+  function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setError(null);const form=new FormData(event.currentTarget);const file=form.get("file");if(!(file instanceof File)||file.size===0){setError("upload.emptyFile");return;}mutation.mutate(form);}
   async function copyAndContinue(){if(!created)return;try{await navigator.clipboard.writeText(created.managementUrl);setCopied(true);window.setTimeout(()=>router.push(publicRoutePath(created.publicId)),600);}catch{setCopyFailed(true);}}
   function continueAfterManualCopy(){if(created&&managementModalCanContinue(copied,copyFailed,manualConfirmed))router.push(publicRoutePath(created.publicId));}
   return <><form onSubmit={submit} className={compact?"space-y-4":"mt-8 space-y-5 rounded-xl border border-slate-200 bg-white p-6 text-left shadow-sm"}>
     <label className="block"><span className="mb-2 block font-medium">{t("upload.file")}</span><input required name="file" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" className="block w-full rounded border border-slate-300 p-2" /></label>
     <label className="block"><span className="mb-2 block font-medium">{t("upload.routeName")} <span className="font-normal text-slate-500">{t("common.optional")}</span></span><input name="name" maxLength={200} className="block w-full rounded border border-slate-300 p-2" /></label>
     <label className="block"><span className="mb-2 block font-medium">{t("upload.description")} <span className="font-normal text-slate-500">{t("common.optional")}</span></span><textarea name="description" rows={4} className="block w-full rounded border border-slate-300 p-2" /></label>
-    {error&&<p role="alert" className="text-sm text-red-700">{error}</p>}
+    {error&&<p role="alert" className="text-sm text-red-700">{t(error)}</p>}
     <button disabled={mutation.isPending} className="rounded bg-emerald-700 px-5 py-2.5 font-semibold text-white disabled:opacity-60">{mutation.isPending?t("upload.uploading"):t("upload.submit")}</button>
   </form>{created&&<div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/60 p-4" role="presentation">
     <section role="dialog" aria-modal="true" aria-labelledby="management-title" className="w-full max-w-xl rounded-2xl border border-amber-200 bg-white p-6 shadow-2xl sm:p-8">

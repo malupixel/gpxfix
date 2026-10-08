@@ -1,4 +1,6 @@
 "use client";
+import { useTranslation } from "react-i18next";
+import { localizeMapControls } from "@/components/map/map-translations";
 import type * as GeoJSON from "geojson";
 import { Map as MapLibreMap, Marker, NavigationControl, type GeoJSONSource, type MapMouseEvent } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +22,7 @@ type Props = {
 };
 
 export function EditorMap(props: Props) {
+  const { t } = useTranslation();
   const { document: routeDocument, selectedSegmentId, selectedPointId, inserting } = props;
   const node = useRef<HTMLDivElement>(null), mapRef = useRef<MapLibreMap | null>(null), callbacks = useRef(props);
   const documentRef = useRef(routeDocument), selectedSegmentRef = useRef(selectedSegmentId), insertingRef = useRef(inserting);
@@ -70,7 +73,7 @@ export function EditorMap(props: Props) {
       const element = window.document.createElement("button"); element.type = "button";
       element.className = `route-control-point ${controlPoint.id === selectedPointId ? "route-control-point-selected" : ""}`;
       element.dataset.kind = index === 0 ? "start" : index === routeDocument.points.length - 1 ? "end" : "control";
-      element.title = `${index === 0 ? "Start" : index === routeDocument.points.length - 1 ? "Route end" : "Control point"} — drag to move`;
+      element.title = t(index === 0 ? "editor.startPoint" : index === routeDocument.points.length - 1 ? "editor.endPoint" : "editor.controlPoint");
       element.setAttribute("aria-label", element.title);
       element.addEventListener("click", (event) => { event.stopPropagation(); callbacks.current.onSelectSegment(null); callbacks.current.onSelectPoint(controlPoint.id); });
       const marker = new Marker({ element, draggable: true }).setLngLat(controlPoint.coordinate).addTo(map);
@@ -81,9 +84,11 @@ export function EditorMap(props: Props) {
       return marker;
     });
     return () => markers.forEach((marker) => marker.remove());
-  }, [routeDocument.points, selectedPointId]);
+  }, [routeDocument.points, selectedPointId, t]);
 
-  return <><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label="Route editor map" /><div className="absolute left-3 top-16 z-10"><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">Nie udało się załadować części mapy. Sprawdź połączenie i odśwież stronę.</div>}</>;
+  useEffect(() => { if (loadedMap) localizeMapControls(loadedMap.getContainer(), t, t("editor.mapLabel")); }, [loadedMap, t]);
+
+  return <><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="absolute left-3 top-16 z-10"><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
 }
 
 function updateMap(map: MapLibreMap | null, document: RouteEditorDocument, selectedId: string | null) {
