@@ -8,6 +8,8 @@ logging:
   level:
     root: warn
 app:
+  preview:
+    poll-delay-ms: 3600000
   elevation:
     provider: remote
   ownership:

@@ -4,6 +4,8 @@ Production-oriented foundation for a registration-free community GPX route shari
 
 ## Architecture
 
+Public route SEO, favicons, locally rendered route previews and deployment requirements are documented in [SHARE_PREVIEWS.md](SHARE_PREVIEWS.md).
+
 - `api/`: Java 21, Spring Boot 3.5, Maven, JPA, Flyway, PostgreSQL/PostGIS, springdoc, and Actuator.
 - `web/`: Next.js App Router, React, TypeScript, Tailwind CSS, TanStack Query, React Hook Form, Zod, and MapLibre GL JS.
 - `docker-compose.yml`: one PostgreSQL/PostGIS database, API, and web application with health-aware startup.

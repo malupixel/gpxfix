@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { getRoute } from "@/features/routes/api";
 import { ApiError } from "@/lib/api-client";
 import { OwnershipGate } from "@/features/routes/ownership-gate";
-import { getServerTranslation } from "@/i18n/server";
+import { cookies, headers } from "next/headers";
+import { localeCookieName, resolveLocale } from "@/i18n/config";
+import { apiClient } from "@/lib/api-client";
+import { routeMetadata, type RouteShareData } from "@/features/routes/route-metadata";
 
 type Props = { params: Promise<{ publicId: string }> };
 
@@ -15,9 +18,12 @@ async function load(publicId: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { publicId } = await params;
-  const route = await load(publicId);
-  const t = await getServerTranslation();
-  return { alternates: { canonical: `/route/${encodeURIComponent(publicId)}` }, title: `${route.name} | ${t("landing.title")}`, description: route.description || t("metadata.routeDescription", { distance: (route.distanceMeters / 1000).toFixed(1) }) };
+  let share: RouteShareData;
+  try { share = await apiClient<RouteShareData>(`/api/routes/${encodeURIComponent(publicId)}/share`, { cache: "no-store" }); }
+  catch (error) { if (error instanceof ApiError && error.status === 404) notFound(); throw error; }
+  const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
+  const locale = resolveLocale(cookieStore.get(localeCookieName)?.value, headerStore.get("accept-language"));
+  return routeMetadata(share, locale);
 }
 
 export default async function RoutePage({ params }: Props) {

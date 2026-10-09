@@ -7,10 +7,11 @@ import { localeCookieName, resolveLocale } from "@/i18n/config";
 import { getServerTranslation } from "@/i18n/server";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { publicSiteUrl } from "@/lib/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getServerTranslation();
-  return { metadataBase: new URL("https://tweakmyroute.com"), title: t("landing.title"), description: t("metadata.description") };
+  return { metadataBase: publicSiteUrl(), icons: { icon: { url: "/favicon.png", type: "image/png" } }, title: t("landing.title"), description: t("metadata.description") };
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
