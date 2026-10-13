@@ -28,8 +28,10 @@ class RouteManagementService {
     @Transactional void delete(String publicId,String confirmationName) {
         Route route=locked(publicId);
         if(!route.getName().equals(confirmationName))throw new ApiException(HttpStatus.BAD_REQUEST,"Route name confirmation does not match");
-        Instant now=Instant.now();route.delete(now);
+        Instant now=Instant.now();softDelete(route,now);
         activity.record(route,RouteActivityType.ROUTE_DELETED,now,null,null,null,null,true,"deleted");
     }
+    // Shared domain transition for owner and administrator; neither removes files or versions.
+    void softDelete(Route route,Instant now){route.delete(now);}
     private Route locked(String publicId){return routes.findLockedByPublicId(publicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));}
 }

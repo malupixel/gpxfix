@@ -4,6 +4,8 @@ Production-oriented foundation for a registration-free community GPX route shari
 
 ## Architecture
 
+The independent Kotlin/Compose desktop administration application is documented in [admin-desktop/README.md](admin-desktop/README.md). Its protected API includes all routes (also soft-deleted), review filters, restoration, audit and read-only permanent-delete planning. Production deployment remains manual.
+
 Public route SEO, favicons, locally rendered route previews and deployment requirements are documented in [SHARE_PREVIEWS.md](SHARE_PREVIEWS.md).
 
 - `api/`: Java 21, Spring Boot 3.5, Maven, JPA, Flyway, PostgreSQL/PostGIS, springdoc, and Actuator.

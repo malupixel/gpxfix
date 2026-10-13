@@ -23,6 +23,8 @@ class Route {
     void metadata(String name,String description,Instant at){this.name=name;this.description=description;this.updatedAt=at.truncatedTo(java.time.temporal.ChronoUnit.MICROS);}
     void suggestions(boolean enabled,Instant at){this.suggestionsEnabled=enabled;this.updatedAt=at.truncatedTo(java.time.temporal.ChronoUnit.MICROS);}
     void delete(Instant at){this.deletedAt=at;this.updatedAt=at.truncatedTo(java.time.temporal.ChronoUnit.MICROS);}
+    void restore(Instant at){this.deletedAt=null;this.updatedAt=at.truncatedTo(java.time.temporal.ChronoUnit.MICROS);}
+    Instant getDeletedAt(){return deletedAt;}
     void original(String key,String filename){this.originalUploadStorageKey=key;this.originalUploadFilename=filename;}
     String getName(){return name;} String getDescription(){return description;} Instant getUpdatedAt(){return updatedAt;}
     boolean isSuggestionsEnabled(){return suggestionsEnabled;} String getOriginalUploadStorageKey(){return originalUploadStorageKey;}

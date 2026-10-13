@@ -28,6 +28,7 @@ services:
       context: ./api
     environment:
       SPRING_PROFILES_ACTIVE: local
+      ADMIN_SECRET: ${ADMIN_SECRET:-}
       DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-routecommunity}
       POSTGRES_USER: ${POSTGRES_USER:-routecommunity}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-routecommunity}

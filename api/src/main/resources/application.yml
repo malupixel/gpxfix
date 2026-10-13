@@ -32,6 +32,8 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 app:
+  admin:
+    secret: ${ADMIN_SECRET:}
   preview:
     storage-path: ${ROUTE_PREVIEW_STORAGE_PATH:${app.storage.gpx-path}/previews}
     poll-delay-ms: ${ROUTE_PREVIEW_POLL_DELAY_MS:5000}

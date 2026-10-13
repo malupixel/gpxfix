@@ -80,7 +80,7 @@ class RouteActivityService {
                 c.public_id AS comment_public_id,a.actor_kind,a.actor_name
             FROM route_activity a LEFT JOIN route_versions v ON v.id=a.version_id
             LEFT JOIN route_suggestions s ON s.id=a.suggestion_id LEFT JOIN suggestion_comments c ON c.id=a.comment_id
-            WHERE a.route_id=?
+            WHERE a.route_id=? AND a.actor_kind<>'ADMIN'
             """+before+visibility+" ORDER BY a.occurred_at DESC,a.id DESC LIMIT ?",(rs,n)->new RouteActivityDto(
                 rs.getObject("id",UUID.class),rs.getString("event_type"),rs.getTimestamp("occurred_at").toInstant(),
                 rs.getObject("version_number",Integer.class),rs.getString("suggestion_public_id"),rs.getString("comment_public_id"),

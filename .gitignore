@@ -10,6 +10,12 @@ web/out/
 web/.env*.local
 *.log
 *.tsbuildinfo
+admin-desktop/.gradle/
+admin-desktop/.kotlin/
+admin-desktop/build/
+**/tweakmyroute-admin/production.json
+**/tweakmyroute-admin/local.json
+**/tweakmyroute-admin/.credential-*
 # DEM data belongs outside the application/repository.
 *.hgt
 *.hgt.zip
