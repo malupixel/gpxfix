@@ -1,0 +1,16 @@
+{
+  "original_no_route_expectation_was_invalid": true,
+  "reason": "RoutingContext.cleanNogoList removes nogos with waypoints within; test_fixture.py is the actual access-negative control",
+  "comparisons": [
+    {
+      "profile": "road-v1",
+      "identical_geometry": true,
+      "http_status": 200
+    },
+    {
+      "profile": "gravel-v1",
+      "identical_geometry": true,
+      "http_status": 200
+    }
+  ]
+}

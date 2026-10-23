@@ -1,0 +1,62 @@
+[
+  {
+    "case": "warszawa-lodz",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 4.89,
+    "maximum_nearest_via_vertex_m": 5.96
+  },
+  {
+    "case": "warszawa-lodz",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 8.72,
+    "maximum_nearest_via_vertex_m": 5.96
+  },
+  {
+    "case": "city-cycleway",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "city-cycleway",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "multi-200km",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 4.89,
+    "maximum_nearest_via_vertex_m": 5.99
+  },
+  {
+    "case": "multi-200km",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 6.22,
+    "maximum_nearest_via_vertex_m": 5.99
+  }
+]

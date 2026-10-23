@@ -1,0 +1,53 @@
+{
+  "engine": "1.7.10",
+  "release_sha256": "023fec3ba997758e8cd7ab9e1bae52e962af3f00b57683e3de86b84ffad01532",
+  "captured_at": "2026-10-16T08:33:08.073856+00:00",
+  "coverage_rectangle": [
+    10,
+    45,
+    25,
+    55
+  ],
+  "files": [
+    {
+      "name": "downloads/brouter-1.7.10.zip",
+      "bytes": 6724983,
+      "sha256": "023fec3ba997758e8cd7ab9e1bae52e962af3f00b57683e3de86b84ffad01532"
+    },
+    {
+      "name": "profiles/lookups.dat",
+      "bytes": 31604,
+      "sha256": "bf8fc3b2c052b7204e9c5a8d78e4d6ab6b125d3236a943f34583b838c477f419"
+    },
+    {
+      "name": "segments4/E10_N45.rd5",
+      "bytes": 198921647,
+      "sha256": "5df92863bbf35c99aa7deecea23d234423b9acf3ff543587cdf4514ee6e4d9db"
+    },
+    {
+      "name": "segments4/E10_N50.rd5",
+      "bytes": 125005906,
+      "sha256": "263bb6b0cff857fedf9bbef98f5a513c20db7f2fe5c802972ee485eab84ef62a"
+    },
+    {
+      "name": "segments4/E15_N45.rd5",
+      "bytes": 130008994,
+      "sha256": "00ea5f1eed001fde610d686e82eb1352dfe02eb244230ff829d9b565ac047068"
+    },
+    {
+      "name": "segments4/E15_N50.rd5",
+      "bytes": 90252449,
+      "sha256": "f5b745e8d16620bb339381efffdd711afa9d09ff99f7d686bbbdbc1947dd412d"
+    },
+    {
+      "name": "segments4/E20_N45.rd5",
+      "bytes": 67643415,
+      "sha256": "31613e074605941cf8cd086df51fabd44d7f801c277bd594af08c0ba766d5fc3"
+    },
+    {
+      "name": "segments4/E20_N50.rd5",
+      "bytes": 68660103,
+      "sha256": "e08a552c49806969645a9b6001b3425b7a9714b6a819d9b6cf7ad72730998a28"
+    }
+  ]
+}

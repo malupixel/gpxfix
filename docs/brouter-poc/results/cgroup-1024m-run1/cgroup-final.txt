@@ -1,0 +1,16 @@
+78008320
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+usage_usec 499706
+user_usec 419271
+system_usec 80435
+core_sched.force_idle_usec 0
+nr_periods 5
+nr_throttled 1
+throttled_usec 45242
+nr_bursts 0
+burst_usec 0

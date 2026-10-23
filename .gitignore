@@ -24,3 +24,10 @@ data/elevation/
 Copernicus_DSM_*/
 Copernicus_DSM_*.tif
 **/__pycache__/
+# Regional BRouter graph / runtime binaries stay outside Git.
+*.rd5
+*.rd5.diff
+BRouterApp.*.apk
+brouter-*.jar
+brouter-*.zip
+**/brouter-runtime/

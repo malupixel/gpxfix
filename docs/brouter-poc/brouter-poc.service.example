@@ -1,0 +1,27 @@
+# Example only. Not installed or enabled by this PoC.
+# Replace paths/user first. Use a NEW dedicated unit, never overwrite app services.
+[Unit]
+Description=TweakMyRoute local BRouter PoC
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USER
+WorkingDirectory=/absolute/path/outside/repo/brouter/runtime
+ExecStart=/usr/bin/python3 /absolute/path/repo/docs/brouter-poc/poc.py serve --home /absolute/path/outside/repo/brouter --heap 640 --threads 2 --port 17777
+MemoryMax=1G
+MemorySwapMax=0
+CPUQuota=200%
+TasksMax=128
+Restart=no
+TimeoutStopSec=10
+KillSignal=SIGTERM
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/absolute/path/outside/repo/brouter/runtime
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

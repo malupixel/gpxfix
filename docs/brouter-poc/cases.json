@@ -1,0 +1,256 @@
+[
+  {
+    "id": "warszawa-lodz",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "purpose": "Regression A1/A2; motorway/trunk/motorroad forbidden"
+  },
+  {
+    "id": "warszawa-gora-kalwaria",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "purpose": "Compare primary/secondary proxy, never actual traffic counts"
+  },
+  {
+    "id": "bodzentyn-swiety-krzyz",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "purpose": "National park access, surfaces, summit endpoint snap"
+  },
+  {
+    "id": "kabaty-powsin",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "purpose": "Same forest endpoints for ROAD/GRAVEL; watch endpoint snapping"
+  },
+  {
+    "id": "kabaty-through",
+    "points": [
+      [
+        21.036,
+        52.126
+      ],
+      [
+        21.1085,
+        52.0895
+      ]
+    ],
+    "purpose": "Northwest to southeast across forest; paved alternative vs legal forest roads"
+  },
+  {
+    "id": "city-river-access-problem",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "purpose": "Short Warsaw river cycle corridor"
+  },
+  {
+    "id": "city-cycleway",
+    "points": [
+      [
+        21.011522,
+        52.23074
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "purpose": "Known connected central Warsaw cycle crossings and urban cycleways"
+  },
+  {
+    "id": "city-local",
+    "points": [
+      [
+        20.9848,
+        52.263
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "purpose": "Short urban local roads and cycleways"
+  },
+  {
+    "id": "multi-arbitrary-snap-problem",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        20.8878,
+        52.2117
+      ],
+      [
+        20.7996,
+        52.2106
+      ],
+      [
+        20.6185,
+        52.1987
+      ],
+      [
+        20.4237,
+        52.1881
+      ],
+      [
+        20.2378,
+        52.2293
+      ],
+      [
+        20.125,
+        52.225
+      ],
+      [
+        19.945,
+        52.182
+      ],
+      [
+        19.856,
+        52.108
+      ],
+      [
+        19.715,
+        52.059
+      ],
+      [
+        19.511,
+        51.986
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "purpose": "12 ordered waypoints, target 100–300 km; no automatic via removal"
+  },
+  {
+    "id": "multi-200km",
+    "points": [
+      [
+        21.012233,
+        52.229678
+      ],
+      [
+        20.954541,
+        52.227555
+      ],
+      [
+        20.882491,
+        52.205131
+      ],
+      [
+        20.823942,
+        52.170079
+      ],
+      [
+        20.798203,
+        52.124272
+      ],
+      [
+        20.736612,
+        52.060609
+      ],
+      [
+        20.563223,
+        51.980428
+      ],
+      [
+        20.38962,
+        51.892245
+      ],
+      [
+        20.05831,
+        51.845763
+      ],
+      [
+        19.784839,
+        51.750483
+      ],
+      [
+        19.553681,
+        51.757196
+      ],
+      [
+        19.456008,
+        51.759161
+      ]
+    ],
+    "purpose": "12 fixed waypoints sampled from recorded ROAD Warszawa–Łódź geometry; successful corridor control, 100–300km",
+    "source": "cgroup-1024m-final/warszawa-lodz-road-v1.json; frozen coordinates"
+  },
+  {
+    "id": "nogo-endpoint-exemption",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "params": {
+      "nogos": "21.037,52.230,1000000"
+    },
+    "expected": "route",
+    "purpose": "Semantics control: nogos containing requested waypoints are removed by cleanNogoList; NOT a valid no-route fixture. Compare geometry with city-river-access-problem."
+  },
+  {
+    "id": "out-of-coverage",
+    "points": [
+      [
+        -74.0,
+        40.71
+      ],
+      [
+        -73.98,
+        40.72
+      ]
+    ],
+    "expected": "coverage_error",
+    "purpose": "Missing regional tile must be explicit error; no fallback"
+  }
+]

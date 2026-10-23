@@ -1,0 +1,610 @@
+[
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0008,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "warszawa-lodz",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "warszawa-lodz",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0005,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "warszawa-gora-kalwaria",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-gora-kalwaria-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "warszawa-gora-kalwaria",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-gora-kalwaria-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0007,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "road-v1",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "bodzentyn-swiety-krzyz-road-v1.txt",
+    "server_cpu_s": 0.01,
+    "server_cpu_pct": 1000.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0009,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "bodzentyn-swiety-krzyz-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0008,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "kabaty-powsin",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-powsin-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "kabaty-powsin",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-powsin-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.036%2C52.126%7C21.1085%2C52.0895&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "kabaty-through",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.036,
+        52.126
+      ],
+      [
+        21.1085,
+        52.0895
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-through-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0005,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.036%2C52.126%7C21.1085%2C52.0895&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "kabaty-through",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.036,
+        52.126
+      ],
+      [
+        21.1085,
+        52.0895
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-through-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0004,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-river-access-problem",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-river-access-problem-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0005,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-river-access-problem",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-river-access-problem-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0004,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-cycleway",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.011522,
+        52.23074
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0004,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-cycleway",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.011522,
+        52.23074
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9848%2C52.263%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-local",
+    "profile": "road-v1",
+    "points": [
+      [
+        20.9848,
+        52.263
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-local-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0007,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9848%2C52.263%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "city-local",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        20.9848,
+        52.263
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-local-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0006,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C20.8878%2C52.2117%7C20.7996%2C52.2106%7C20.6185%2C52.1987%7C20.4237%2C52.1881%7C20.2378%2C52.2293%7C20.125%2C52.225%7C19.945%2C52.182%7C19.856%2C52.108%7C19.715%2C52.059%7C19.511%2C51.986%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "multi-200km",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        20.8878,
+        52.2117
+      ],
+      [
+        20.7996,
+        52.2106
+      ],
+      [
+        20.6185,
+        52.1987
+      ],
+      [
+        20.4237,
+        52.1881
+      ],
+      [
+        20.2378,
+        52.2293
+      ],
+      [
+        20.125,
+        52.225
+      ],
+      [
+        19.945,
+        52.182
+      ],
+      [
+        19.856,
+        52.108
+      ],
+      [
+        19.715,
+        52.059
+      ],
+      [
+        19.511,
+        51.986
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-road-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0008,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C20.8878%2C52.2117%7C20.7996%2C52.2106%7C20.6185%2C52.1987%7C20.4237%2C52.1881%7C20.2378%2C52.2293%7C20.125%2C52.225%7C19.945%2C52.182%7C19.856%2C52.108%7C19.715%2C52.059%7C19.511%2C51.986%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "multi-200km",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        20.8878,
+        52.2117
+      ],
+      [
+        20.7996,
+        52.2106
+      ],
+      [
+        20.6185,
+        52.1987
+      ],
+      [
+        20.4237,
+        52.1881
+      ],
+      [
+        20.2378,
+        52.2293
+      ],
+      [
+        20.125,
+        52.225
+      ],
+      [
+        19.945,
+        52.182
+      ],
+      [
+        19.856,
+        52.108
+      ],
+      [
+        19.715,
+        52.059
+      ],
+      [
+        19.511,
+        51.986
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0011,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1&nogos=21.037%2C52.230%2C1000000",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "no-legal-crossing",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "no_route",
+    "raw_file": "no-legal-crossing-road-v1.txt",
+    "server_cpu_s": 0.01,
+    "server_cpu_pct": 909.1,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0007,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1&nogos=21.037%2C52.230%2C1000000",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "no-legal-crossing",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "no_route",
+    "raw_file": "no-legal-crossing-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0015,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=-74.0%2C40.71%7C-73.98%2C40.72&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b",
+    "case": "out-of-coverage",
+    "profile": "road-v1",
+    "points": [
+      [
+        -74.0,
+        40.71
+      ],
+      [
+        -73.98,
+        40.72
+      ]
+    ],
+    "expected": "coverage_error",
+    "raw_file": "out-of-coverage-road-v1.txt",
+    "server_cpu_s": 0.01,
+    "server_cpu_pct": 666.7,
+    "error": "[Errno 104] Connection reset by peer",
+    "accepted": false
+  },
+  {
+    "http_status": 0,
+    "elapsed_s": 0.0009,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=-74.0%2C40.71%7C-73.98%2C40.72&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09",
+    "case": "out-of-coverage",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        -74.0,
+        40.71
+      ],
+      [
+        -73.98,
+        40.72
+      ]
+    ],
+    "expected": "coverage_error",
+    "raw_file": "out-of-coverage-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "Remote end closed connection without response",
+    "accepted": false
+  }
+]

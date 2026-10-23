@@ -1,0 +1,202 @@
+[
+  {
+    "case": "warszawa-lodz",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:20.291112+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=fastbike&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.037
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:21.428976+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=trekking&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "osrm",
+    "profile": "cycling",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:22.530654+00:00",
+    "url": "https://router.project-osrm.org/route/v1/cycling/21.0122,52.2297;19.456,51.7592?overview=full&geometries=geojson&steps=true",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.0
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "osrm",
+    "profile": "driving",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:23.631920+00:00",
+    "url": "https://router.project-osrm.org/route/v1/driving/21.0122,52.2297;19.456,51.7592?overview=full&geometries=geojson&steps=true",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:24.733978+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=fastbike&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:25.835826+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=trekking&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:26.937772+00:00",
+    "url": "https://brouter.de/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=fastbike&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.0
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:28.038773+00:00",
+    "url": "https://brouter.de/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=trekking&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "kabin-lasy",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:29.142133+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=fastbike&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  },
+  {
+    "case": "kabin-lasy",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "requested_at": "2026-10-15T09:22:30.244564+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=trekking&alternativeidx=0&format=geojson",
+    "status": "error",
+    "error": "<urlopen error [Errno -2] Name or service not known>",
+    "elapsed_s": 0.001
+  }
+]

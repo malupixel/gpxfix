@@ -1,0 +1,230 @@
+[
+  {
+    "case": "warszawa-lodz",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 4.89,
+    "maximum_nearest_via_vertex_m": 5.96
+  },
+  {
+    "case": "warszawa-lodz",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 8.72,
+    "maximum_nearest_via_vertex_m": 5.96
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.01,
+    "maximum_nearest_via_vertex_m": 26.3
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 5.25,
+    "maximum_nearest_via_vertex_m": 26.3
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 5.56,
+    "maximum_nearest_via_vertex_m": 19.83
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 9.52,
+    "maximum_nearest_via_vertex_m": 19.83
+  },
+  {
+    "case": "kabaty-powsin",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "recorded_error": "pass0 timeout after 30 seconds\n"
+  },
+  {
+    "case": "kabaty-powsin",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 259.51
+  },
+  {
+    "case": "kabaty-through",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 7.59,
+    "maximum_nearest_via_vertex_m": 219.2
+  },
+  {
+    "case": "kabaty-through",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 2.17,
+    "maximum_nearest_via_vertex_m": 219.2
+  },
+  {
+    "case": "city-river-access-problem",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 86.34
+  },
+  {
+    "case": "city-river-access-problem",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 86.34
+  },
+  {
+    "case": "city-cycleway",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "city-cycleway",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "city-local",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "city-local",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 20.24
+  },
+  {
+    "case": "multi-arbitrary-snap-problem",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 6.12,
+    "maximum_nearest_via_vertex_m": 309.33
+  },
+  {
+    "case": "multi-arbitrary-snap-problem",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 10.29,
+    "maximum_nearest_via_vertex_m": 309.33
+  },
+  {
+    "case": "multi-200km",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 4.89,
+    "maximum_nearest_via_vertex_m": 5.99
+  },
+  {
+    "case": "multi-200km",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": false,
+    "unknown_surface_pct": 6.22,
+    "maximum_nearest_via_vertex_m": 5.99
+  },
+  {
+    "case": "nogo-timeout-problem",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 86.34
+  },
+  {
+    "case": "nogo-timeout-problem",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "diagnostic_accounting": true,
+    "hard_violations": [],
+    "snap_exceeds_proposed_30m": true,
+    "unknown_surface_pct": 0.0,
+    "maximum_nearest_via_vertex_m": 86.34
+  },
+  {
+    "case": "out-of-coverage",
+    "profile": "road-v1",
+    "capture_integrity": true,
+    "recorded_error": "datafile W75_N40.rd5 not found\n"
+  },
+  {
+    "case": "out-of-coverage",
+    "profile": "gravel-v1",
+    "capture_integrity": true,
+    "recorded_error": "datafile W75_N40.rd5 not found\n"
+  }
+]

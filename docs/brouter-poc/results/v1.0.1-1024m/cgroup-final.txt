@@ -1,0 +1,16 @@
+226906112
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+usage_usec 143045159
+user_usec 142170696
+system_usec 874463
+core_sched.force_idle_usec 0
+nr_periods 1017
+nr_throttled 155
+throttled_usec 7753209
+nr_bursts 0
+burst_usec 0

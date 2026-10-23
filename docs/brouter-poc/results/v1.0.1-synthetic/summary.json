@@ -1,0 +1,138 @@
+[
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 0.2125,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "bbfa684f582dc1be03c637655640be0f0b5cdf2b7e934282cce691800aeaed16",
+    "permission": "yes",
+    "profile": "road-v1",
+    "distance_m": 12390.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 119,
+    "geometry_sha256": "7f23ee05bcc513e9b910566e5918cc928a20751788b2df36fec392c510ca8cef",
+    "surface_m": {
+      "asphalt": 12390.0
+    },
+    "highway_m": {
+      "residential": 12390.0
+    },
+    "unknown_surface_m": 0,
+    "unknown_surface_pct": 0.0,
+    "major_road_proxy_m": 0,
+    "diagnostic_distance_m": 12390.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          20.013,
+          51.01
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.19,
+          51.01
+        ],
+        "nearest_geometry_m": 0.0
+      }
+    ],
+    "snap_start_m": 0.0,
+    "snap_end_m": 0.0,
+    "accounting_ok": true,
+    "passed": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 0.0303,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "29897d95dad562639f5fc000094697d2a84728661fc441a98301e7a7765fd4d9",
+    "permission": "yes",
+    "profile": "gravel-v1",
+    "distance_m": 12390.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 119,
+    "geometry_sha256": "7f23ee05bcc513e9b910566e5918cc928a20751788b2df36fec392c510ca8cef",
+    "surface_m": {
+      "asphalt": 12390.0
+    },
+    "highway_m": {
+      "residential": 12390.0
+    },
+    "unknown_surface_m": 0,
+    "unknown_surface_pct": 0.0,
+    "major_road_proxy_m": 0,
+    "diagnostic_distance_m": 12390.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          20.013,
+          51.01
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.19,
+          51.01
+        ],
+        "nearest_geometry_m": 0.0
+      }
+    ],
+    "snap_start_m": 0.0,
+    "snap_end_m": 0.0,
+    "accounting_ok": true,
+    "passed": true
+  },
+  {
+    "http_status": 400,
+    "error_text": "target island detected for section 0\n",
+    "elapsed_s": 0.1686,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "e20b1c247e9a9311bbcb0969362911416c3f1f2916174cccd4c90930f2fae97b",
+    "permission": "no",
+    "profile": "road-v1",
+    "error": "target island detected for section 0\n",
+    "passed": true
+  },
+  {
+    "http_status": 400,
+    "error_text": "target island detected for section 0\n",
+    "elapsed_s": 0.0355,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "e20b1c247e9a9311bbcb0969362911416c3f1f2916174cccd4c90930f2fae97b",
+    "permission": "no",
+    "profile": "gravel-v1",
+    "error": "target island detected for section 0\n",
+    "passed": true
+  },
+  {
+    "http_status": 400,
+    "error_text": "target island detected for section 0\n",
+    "elapsed_s": 0.1714,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "e20b1c247e9a9311bbcb0969362911416c3f1f2916174cccd4c90930f2fae97b",
+    "permission": "dismount",
+    "profile": "road-v1",
+    "error": "target island detected for section 0\n",
+    "passed": true
+  },
+  {
+    "http_status": 400,
+    "error_text": "target island detected for section 0\n",
+    "elapsed_s": 0.0349,
+    "url": "http://127.0.0.1:17779/brouter?lonlats=20.013%2C51.01%7C20.19%2C51.01&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "e20b1c247e9a9311bbcb0969362911416c3f1f2916174cccd4c90930f2fae97b",
+    "permission": "dismount",
+    "profile": "gravel-v1",
+    "error": "target island detected for section 0\n",
+    "passed": true
+  }
+]

@@ -1,0 +1,1636 @@
+{
+  "tests": [
+    {
+      "profile": "road-v1",
+      "name": "bicycle=no",
+      "tags": "highway=residential surface=asphalt bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=private",
+      "tags": "highway=residential surface=asphalt bicycle=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=dismount",
+      "tags": "highway=residential surface=asphalt bicycle=dismount",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=use_sidepath",
+      "tags": "highway=residential surface=asphalt bicycle=use_sidepath",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=destination",
+      "tags": "highway=residential surface=asphalt bicycle=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=permit",
+      "tags": "highway=residential surface=asphalt bicycle=permit",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "vehicle=no",
+      "tags": "highway=residential surface=asphalt vehicle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "vehicle=private",
+      "tags": "highway=residential surface=asphalt vehicle=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "vehicle=destination",
+      "tags": "highway=residential surface=asphalt vehicle=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=no",
+      "tags": "highway=residential surface=asphalt access=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=private",
+      "tags": "highway=residential surface=asphalt access=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=destination",
+      "tags": "highway=residential surface=asphalt access=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=forestry",
+      "tags": "highway=residential surface=asphalt access=forestry",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "motorroad=yes",
+      "tags": "highway=residential surface=asphalt motorroad=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "smoothness=very_bad",
+      "tags": "highway=residential surface=asphalt smoothness=very_bad",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "smoothness=impassable",
+      "tags": "highway=residential surface=asphalt smoothness=impassable",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "mtb:scale=2",
+      "tags": "highway=residential surface=asphalt mtb:scale=2",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "sac_scale=mountain_hiking",
+      "tags": "highway=residential surface=asphalt sac_scale=mountain_hiking",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "motorway",
+      "tags": "highway=motorway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "motorway_link",
+      "tags": "highway=motorway_link surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "trunk",
+      "tags": "highway=trunk surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "trunk_link",
+      "tags": "highway=trunk_link surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "steps",
+      "tags": "highway=steps surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "construction",
+      "tags": "highway=construction surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "proposed",
+      "tags": "highway=proposed surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "platform",
+      "tags": "highway=platform surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "raceway",
+      "tags": "highway=raceway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "corridor",
+      "tags": "highway=corridor surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "tram is not a bicycle road",
+      "tags": "railway=tram oneway=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "rail is not a bicycle road",
+      "tags": "railway=rail",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "path unknown permission",
+      "tags": "highway=path surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "path bike yes",
+      "tags": "highway=path surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "path cycle route not permission",
+      "tags": "highway=path route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "footway unknown permission",
+      "tags": "highway=footway surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "footway bike yes",
+      "tags": "highway=footway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "footway cycle route not permission",
+      "tags": "highway=footway route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "pedestrian unknown permission",
+      "tags": "highway=pedestrian surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "pedestrian bike yes",
+      "tags": "highway=pedestrian surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "pedestrian cycle route not permission",
+      "tags": "highway=pedestrian route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bridleway unknown permission",
+      "tags": "highway=bridleway surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bridleway bike yes",
+      "tags": "highway=bridleway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bridleway cycle route not permission",
+      "tags": "highway=bridleway route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=no vehicle=no bicycle=yes",
+      "tags": "highway=residential surface=asphalt access=no vehicle=no bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=private bicycle=designated",
+      "tags": "highway=residential surface=asphalt access=private bicycle=designated",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "motor_vehicle=no",
+      "tags": "highway=residential surface=asphalt motor_vehicle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "access=no vehicle=yes",
+      "tags": "highway=residential surface=asphalt access=no vehicle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bicycle=permissive",
+      "tags": "highway=residential surface=asphalt bicycle=permissive",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "smoothness=good",
+      "tags": "highway=residential surface=asphalt smoothness=good",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "mtb:scale=0",
+      "tags": "highway=residential surface=asphalt mtb:scale=0",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "oneway forward direction",
+      "tags": "highway=residential oneway=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "reverse oneway",
+      "tags": "highway=residential oneway=-1",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike contraflow",
+      "tags": "highway=residential oneway=yes oneway:bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "reverse oneway bike exemption",
+      "tags": "highway=residential oneway=-1 oneway:bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike forward prohibition",
+      "tags": "highway=residential bicycle:forward=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike backward prohibition",
+      "tags": "highway=residential bicycle:backward=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "roundabout",
+      "tags": "highway=residential junction=roundabout",
+      "reverse": false,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike route cannot lift ban",
+      "tags": "highway=residential bicycle=no route_bicycle_lcn=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "oneway forward direction",
+      "tags": "highway=residential oneway=yes",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "reverse oneway",
+      "tags": "highway=residential oneway=-1",
+      "reverse": true,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike contraflow",
+      "tags": "highway=residential oneway=yes oneway:bicycle=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "reverse oneway bike exemption",
+      "tags": "highway=residential oneway=-1 oneway:bicycle=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike forward prohibition",
+      "tags": "highway=residential bicycle:forward=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 2.3,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike backward prohibition",
+      "tags": "highway=residential bicycle:backward=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "roundabout",
+      "tags": "highway=residential junction=roundabout",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "bike route cannot lift ban",
+      "tags": "highway=residential bicycle=no route_bicycle_lcn=yes",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node bicycle=no",
+      "tags": "bicycle=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node bicycle=dismount",
+      "tags": "bicycle=dismount",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node bicycle=private",
+      "tags": "bicycle=private",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node access=no",
+      "tags": "access=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node vehicle=no",
+      "tags": "vehicle=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=stile",
+      "tags": "barrier=stile",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=wall",
+      "tags": "barrier=wall",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=kissing_gate",
+      "tags": "barrier=kissing_gate",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=bollard",
+      "tags": "barrier=bollard",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=cycle_barrier",
+      "tags": "barrier=cycle_barrier",
+      "reverse": false,
+      "context": "node",
+      "cost": 60.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node barrier=gate",
+      "tags": "barrier=gate",
+      "reverse": false,
+      "context": "node",
+      "cost": 30.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node access=no bicycle=yes",
+      "tags": "access=no bicycle=yes",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "node vehicle=no bicycle=designated",
+      "tags": "vehicle=no bicycle=designated",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "asphalt beats gravel",
+      "cost_good": 1.15,
+      "cost_bad": 25.3,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "asphalt beats unknown",
+      "cost_good": 1.15,
+      "cost_bad": 2.3,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "local beats primary",
+      "cost_good": 1.15,
+      "cost_bad": 9.0,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "good beats bad smoothness",
+      "cost_good": 2.3,
+      "cost_bad": 9.2,
+      "passed": true
+    },
+    {
+      "profile": "road-v1",
+      "name": "grade1 beats grade4",
+      "cost_good": 25.199999,
+      "cost_bad": 302.4,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=no",
+      "tags": "highway=residential surface=asphalt bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=private",
+      "tags": "highway=residential surface=asphalt bicycle=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=dismount",
+      "tags": "highway=residential surface=asphalt bicycle=dismount",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=use_sidepath",
+      "tags": "highway=residential surface=asphalt bicycle=use_sidepath",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=destination",
+      "tags": "highway=residential surface=asphalt bicycle=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=permit",
+      "tags": "highway=residential surface=asphalt bicycle=permit",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "vehicle=no",
+      "tags": "highway=residential surface=asphalt vehicle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "vehicle=private",
+      "tags": "highway=residential surface=asphalt vehicle=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "vehicle=destination",
+      "tags": "highway=residential surface=asphalt vehicle=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=no",
+      "tags": "highway=residential surface=asphalt access=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=private",
+      "tags": "highway=residential surface=asphalt access=private",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=destination",
+      "tags": "highway=residential surface=asphalt access=destination",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=forestry",
+      "tags": "highway=residential surface=asphalt access=forestry",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "motorroad=yes",
+      "tags": "highway=residential surface=asphalt motorroad=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "smoothness=very_bad",
+      "tags": "highway=residential surface=asphalt smoothness=very_bad",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "smoothness=impassable",
+      "tags": "highway=residential surface=asphalt smoothness=impassable",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "mtb:scale=2",
+      "tags": "highway=residential surface=asphalt mtb:scale=2",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "sac_scale=mountain_hiking",
+      "tags": "highway=residential surface=asphalt sac_scale=mountain_hiking",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "motorway",
+      "tags": "highway=motorway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "motorway_link",
+      "tags": "highway=motorway_link surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "trunk",
+      "tags": "highway=trunk surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "trunk_link",
+      "tags": "highway=trunk_link surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "steps",
+      "tags": "highway=steps surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "construction",
+      "tags": "highway=construction surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "proposed",
+      "tags": "highway=proposed surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "platform",
+      "tags": "highway=platform surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "raceway",
+      "tags": "highway=raceway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "corridor",
+      "tags": "highway=corridor surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "tram is not a bicycle road",
+      "tags": "railway=tram oneway=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "rail is not a bicycle road",
+      "tags": "railway=rail",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "path unknown permission",
+      "tags": "highway=path surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "path bike yes",
+      "tags": "highway=path surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.4,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "path cycle route not permission",
+      "tags": "highway=path route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "footway unknown permission",
+      "tags": "highway=footway surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "footway bike yes",
+      "tags": "highway=footway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.4,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "footway cycle route not permission",
+      "tags": "highway=footway route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "pedestrian unknown permission",
+      "tags": "highway=pedestrian surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "pedestrian bike yes",
+      "tags": "highway=pedestrian surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.4,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "pedestrian cycle route not permission",
+      "tags": "highway=pedestrian route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bridleway unknown permission",
+      "tags": "highway=bridleway surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bridleway bike yes",
+      "tags": "highway=bridleway surface=asphalt bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.4,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bridleway cycle route not permission",
+      "tags": "highway=bridleway route_bicycle_lcn=yes surface=asphalt",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=no vehicle=no bicycle=yes",
+      "tags": "highway=residential surface=asphalt access=no vehicle=no bicycle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=private bicycle=designated",
+      "tags": "highway=residential surface=asphalt access=private bicycle=designated",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "motor_vehicle=no",
+      "tags": "highway=residential surface=asphalt motor_vehicle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "access=no vehicle=yes",
+      "tags": "highway=residential surface=asphalt access=no vehicle=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bicycle=permissive",
+      "tags": "highway=residential surface=asphalt bicycle=permissive",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "smoothness=good",
+      "tags": "highway=residential surface=asphalt smoothness=good",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "mtb:scale=0",
+      "tags": "highway=residential surface=asphalt mtb:scale=0",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.15,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "oneway forward direction",
+      "tags": "highway=residential oneway=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "reverse oneway",
+      "tags": "highway=residential oneway=-1",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike contraflow",
+      "tags": "highway=residential oneway=yes oneway:bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "reverse oneway bike exemption",
+      "tags": "highway=residential oneway=-1 oneway:bicycle=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike forward prohibition",
+      "tags": "highway=residential bicycle:forward=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike backward prohibition",
+      "tags": "highway=residential bicycle:backward=no",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "roundabout",
+      "tags": "highway=residential junction=roundabout",
+      "reverse": false,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike route cannot lift ban",
+      "tags": "highway=residential bicycle=no route_bicycle_lcn=yes",
+      "reverse": false,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "oneway forward direction",
+      "tags": "highway=residential oneway=yes",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "reverse oneway",
+      "tags": "highway=residential oneway=-1",
+      "reverse": true,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike contraflow",
+      "tags": "highway=residential oneway=yes oneway:bicycle=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "reverse oneway bike exemption",
+      "tags": "highway=residential oneway=-1 oneway:bicycle=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike forward prohibition",
+      "tags": "highway=residential bicycle:forward=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 1.84,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike backward prohibition",
+      "tags": "highway=residential bicycle:backward=no",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "roundabout",
+      "tags": "highway=residential junction=roundabout",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "bike route cannot lift ban",
+      "tags": "highway=residential bicycle=no route_bicycle_lcn=yes",
+      "reverse": true,
+      "context": "way",
+      "cost": 10000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node bicycle=no",
+      "tags": "bicycle=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node bicycle=dismount",
+      "tags": "bicycle=dismount",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node bicycle=private",
+      "tags": "bicycle=private",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node access=no",
+      "tags": "access=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node vehicle=no",
+      "tags": "vehicle=no",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=stile",
+      "tags": "barrier=stile",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=wall",
+      "tags": "barrier=wall",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=kissing_gate",
+      "tags": "barrier=kissing_gate",
+      "reverse": false,
+      "context": "node",
+      "cost": 1000000.0,
+      "expected_allowed": false,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=bollard",
+      "tags": "barrier=bollard",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=cycle_barrier",
+      "tags": "barrier=cycle_barrier",
+      "reverse": false,
+      "context": "node",
+      "cost": 60.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node barrier=gate",
+      "tags": "barrier=gate",
+      "reverse": false,
+      "context": "node",
+      "cost": 30.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node access=no bicycle=yes",
+      "tags": "access=no bicycle=yes",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "node vehicle=no bicycle=designated",
+      "tags": "vehicle=no bicycle=designated",
+      "reverse": false,
+      "context": "node",
+      "cost": 0.0,
+      "expected_allowed": true,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "asphalt beats gravel",
+      "cost_good": 1.15,
+      "cost_bad": 1.6099999,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "asphalt beats unknown",
+      "cost_good": 1.15,
+      "cost_bad": 1.84,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "local beats primary",
+      "cost_good": 1.15,
+      "cost_bad": 9.0,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "good beats bad smoothness",
+      "cost_good": 1.84,
+      "cost_bad": 3.68,
+      "passed": true
+    },
+    {
+      "profile": "gravel-v1",
+      "name": "grade1 beats grade4",
+      "cost_good": 1.38,
+      "cost_bad": 6.9,
+      "passed": true
+    }
+  ],
+  "passed": 166,
+  "total": 166
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "regionPolicy": "pl-border",
+  "lookupVersion": 11,
+  "lookupMinorVersion": 2,
+  "status": "EXPERIMENTAL_NOT_PRODUCTION_APPROVED",
+  "profiles": [
+    {"travelProfile":"ROAD","id":"road-v1","revision":"1.0.1","file":"road-v1.brf"},
+    {"travelProfile":"GRAVEL","id":"gravel-v1","revision":"1.0.1","file":"gravel-v1.brf"}
+  ]
+}

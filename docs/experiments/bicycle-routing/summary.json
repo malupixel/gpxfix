@@ -1,0 +1,344 @@
+{
+  "osrm_cycling_driving_identical_geometry": true,
+  "results": [
+    {
+      "file": "bodzentyn-swiety-krzyz-fastbike-lowtraffic.json",
+      "sha256": "c586a5263fbc0b2dec1e45c5b482388281ef39924d3260414e65e1bb47d88538",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 26261.0,
+      "surface_m": {
+        "UNKNOWN": 9.0,
+        "paving_stones": 147.0,
+        "sett": 4.0,
+        "asphalt": 26101.0
+      },
+      "highway_m": {
+        "footway": 13.0,
+        "residential": 21.0,
+        "secondary": 19325.0,
+        "tertiary": 3120.0,
+        "unclassified": 3487.0,
+        "living_street": 102.0,
+        "service": 193.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 26261.0
+    },
+    {
+      "file": "bodzentyn-swiety-krzyz-gravel.json",
+      "sha256": "811e5ee927e446f0c166c9d02896ec84a6a69135b057d08d0c486e4344c013c9",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 27291.0,
+      "surface_m": {
+        "UNKNOWN": 2867.0,
+        "paving_stones": 1270.0,
+        "sett": 4.0,
+        "asphalt": 23150.0
+      },
+      "highway_m": {
+        "footway": 1426.0,
+        "residential": 3722.0,
+        "secondary": 2358.0,
+        "service": 386.0,
+        "cycleway": 5232.0,
+        "track": 33.0,
+        "unclassified": 13228.0,
+        "tertiary": 804.0,
+        "living_street": 102.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 27291.0
+    },
+    {
+      "file": "bodzentyn-swiety-krzyz-osrm-cycling.json",
+      "sha256": "e5c598d302b16f0ef6cb063fe7aea6bf2ff42c6b7d65e7f97d24e7591d7ff043",
+      "engine": "OSRM public demo; version unknown",
+      "distance_m": 26259.6,
+      "motorway_named_steps": []
+    },
+    {
+      "file": "kabaty-powsin-fastbike-lowtraffic.json",
+      "sha256": "47b31c2bf57d68d50d59292fce9a94feb797e5b02920ad2c1f971a49c6b73e7b",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 5354.0,
+      "surface_m": {
+        "paving_stones": 337.0,
+        "asphalt": 4131.0,
+        "concrete": 479.0,
+        "gravel": 67.0,
+        "UNKNOWN": 340.0
+      },
+      "highway_m": {
+        "path": 613.0,
+        "residential": 1744.0,
+        "unclassified": 1943.0,
+        "track": 412.0,
+        "service": 642.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 5354.0
+    },
+    {
+      "file": "kabaty-powsin-gravel.json",
+      "sha256": "79a9fbb508799c15e3901fa877bf48bb418957b8061d0fecbe636086b4bd1d4f",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 3445.0,
+      "surface_m": {
+        "paving_stones": 383.0,
+        "asphalt": 381.0,
+        "fine_gravel": 8.0,
+        "unpaved": 765.0,
+        "UNKNOWN": 985.0,
+        "sand": 870.0,
+        "gravel": 53.0
+      },
+      "highway_m": {
+        "path": 1300.0,
+        "residential": 989.0,
+        "track": 870.0,
+        "service": 286.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 3445.0
+    },
+    {
+      "file": "kabaty-powsin-osrm-cycling.json",
+      "sha256": "e99c0546621ef8dadb3b6585ea070392f56650d123e9ea0cc5ba5beca71a9a64",
+      "engine": "OSRM public demo; version unknown",
+      "distance_m": 8785.5,
+      "motorway_named_steps": []
+    },
+    {
+      "file": "warszawa-gora-kalwaria-fastbike-lowtraffic.json",
+      "sha256": "4aacc04017dedfcff4cfb6fe8b27e6e6442cf4c609a3e6e79cde7ab5869ec68d",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 35767.0,
+      "surface_m": {
+        "asphalt": 28844.0,
+        "paving_stones": 4652.0,
+        "paved": 1351.0,
+        "UNKNOWN": 920.0
+      },
+      "highway_m": {
+        "secondary": 2172.0,
+        "cycleway": 9557.0,
+        "path": 4453.0,
+        "residential": 3463.0,
+        "tertiary": 12443.0,
+        "service": 2376.0,
+        "unclassified": 1268.0,
+        "footway": 35.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 35767.0
+    },
+    {
+      "file": "warszawa-gora-kalwaria-gravel.json",
+      "sha256": "a6a32581de18cefea84acb06d248fedce46d329908c96301980f94d044f8d419",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 39174.0,
+      "surface_m": {
+        "asphalt": 30084.0,
+        "paving_stones": 1189.0,
+        "paved": 664.0,
+        "concrete": 330.0,
+        "UNKNOWN": 1272.0,
+        "ground": 3634.0,
+        "unpaved": 1718.0,
+        "compacted": 283.0
+      },
+      "highway_m": {
+        "secondary": 272.0,
+        "cycleway": 10325.0,
+        "residential": 1441.0,
+        "path": 8584.0,
+        "service": 960.0,
+        "tertiary": 10119.0,
+        "unclassified": 4539.0,
+        "track": 2653.0,
+        "footway": 281.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 39174.0
+    },
+    {
+      "file": "warszawa-gora-kalwaria-osrm-cycling.json",
+      "sha256": "18d00fd3db181176abdb8b3ff47e7936fc7ed0ea7a4d7e9f0a35c4e267e4e122",
+      "engine": "OSRM public demo; version unknown",
+      "distance_m": 36534,
+      "motorway_named_steps": []
+    },
+    {
+      "file": "warszawa-lodz-fastbike-lowtraffic.json",
+      "sha256": "08f725f70a37269d6afb73decc91e6110210402e7f4001db0f248e3e03b63959",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 139105.0,
+      "surface_m": {
+        "asphalt": 125936.0,
+        "paving_stones": 9070.0,
+        "paved": 383.0,
+        "concrete": 2143.0,
+        "UNKNOWN": 1561.0,
+        "metal": 12.0
+      },
+      "highway_m": {
+        "secondary": 12345.0,
+        "cycleway": 15337.0,
+        "path": 7486.0,
+        "service": 493.0,
+        "unclassified": 11526.0,
+        "tertiary": 78152.0,
+        "residential": 11889.0,
+        "footway": 123.0,
+        "track": 131.0,
+        "primary": 1623.0
+      },
+      "review_flags": [],
+      "messages_distance_m": 139105.0
+    },
+    {
+      "file": "warszawa-lodz-gravel.json",
+      "sha256": "8949cb76907c4f3321470f6909c70081032417072bf016e17da867dfa1697ad3",
+      "engine": "BRouter-1.7.10",
+      "distance_m": 150694.0,
+      "surface_m": {
+        "asphalt": 83135.0,
+        "paving_stones": 9786.0,
+        "paved": 737.0,
+        "concrete": 776.0,
+        "ground": 8194.0,
+        "UNKNOWN": 28877.0,
+        "unpaved": 1465.0,
+        "dirt": 1128.0,
+        "fine_gravel": 4577.0,
+        "gravel": 8796.0,
+        "compacted": 1516.0,
+        "sand": 939.0,
+        "grass": 768.0
+      },
+      "highway_m": {
+        "secondary": 334.0,
+        "residential": 27925.0,
+        "cycleway": 34950.0,
+        "path": 13976.0,
+        "service": 4736.0,
+        "footway": 1092.0,
+        "tertiary": 10827.0,
+        "living_street": 186.0,
+        "track": 31982.0,
+        "unclassified": 24439.0,
+        "primary": 247.0
+      },
+      "review_flags": [
+        {
+          "distance_m": 3.0,
+          "tags": {
+            "highway": "footway",
+            "surface": "asphalt",
+            "bicycle": "dismount",
+            "footway": "crossing"
+          },
+          "location": [
+            20.614251,
+            52.101799
+          ]
+        },
+        {
+          "distance_m": 8.0,
+          "tags": {
+            "highway": "footway",
+            "surface": "paving_stones",
+            "bicycle": "dismount",
+            "footway": "sidewalk"
+          },
+          "location": [
+            20.614225,
+            52.101743
+          ]
+        },
+        {
+          "distance_m": 4.0,
+          "tags": {
+            "highway": "footway",
+            "surface": "asphalt",
+            "bicycle": "dismount",
+            "footway": "crossing"
+          },
+          "location": [
+            20.569069,
+            52.090109
+          ]
+        },
+        {
+          "distance_m": 4.0,
+          "tags": {
+            "highway": "footway",
+            "surface": "asphalt",
+            "bicycle": "dismount",
+            "footway": "crossing"
+          },
+          "location": [
+            20.569087,
+            52.090075
+          ]
+        },
+        {
+          "distance_m": 11.0,
+          "tags": {
+            "highway": "footway",
+            "surface": "asphalt",
+            "bicycle": "dismount",
+            "footway": "sidewalk"
+          },
+          "location": [
+            20.569083,
+            52.089995
+          ]
+        }
+      ],
+      "messages_distance_m": 150694.0
+    },
+    {
+      "file": "warszawa-lodz-osrm-cycling.json",
+      "sha256": "936057ecf5b484fb0a8521cfdeade6b5ed1e8813109df4001bfa972a150be373",
+      "engine": "OSRM public demo; version unknown",
+      "distance_m": 136113.8,
+      "motorway_named_steps": [
+        {
+          "name": "Autostrada Wolności",
+          "ref": "A2",
+          "distance_m": 90140.1
+        },
+        {
+          "name": "Autostrada Bursztynowa",
+          "ref": "A1",
+          "distance_m": 16552.2
+        }
+      ]
+    },
+    {
+      "file": "warszawa-lodz-osrm-driving.json",
+      "sha256": "936057ecf5b484fb0a8521cfdeade6b5ed1e8813109df4001bfa972a150be373",
+      "engine": "OSRM public demo; version unknown",
+      "distance_m": 136113.8,
+      "motorway_named_steps": [
+        {
+          "name": "Autostrada Wolności",
+          "ref": "A2",
+          "distance_m": 90140.1
+        },
+        {
+          "name": "Autostrada Bursztynowa",
+          "ref": "A1",
+          "distance_m": 16552.2
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Single public-service samples; latency is not a benchmark.",
+    "BRouter messages expose profile-used tags, not complete raw OSM tags.",
+    "UNKNOWN is missing diagnostic surface, never assumed asphalt.",
+    "Review flags are candidates, not determinations of legality."
+  ]
+}

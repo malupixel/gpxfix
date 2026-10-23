@@ -1,0 +1,141 @@
+{
+  "capture_date": "2026-10-15",
+  "audited_commit": "8f64657",
+  "method": "Direct curl calls; total_seconds from curl time_total; file_written_utc from captured file mtime. One sample per request, no production endpoint. Profile snapshots downloaded after routing calls; server data/build identity not exposed.",
+  "requests": [
+    {
+      "file": "warszawa-lodz-fastbike-lowtraffic.json",
+      "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.455%2C51.7592&profile=fastbike-lowtraffic&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 2.222653,
+      "file_written_utc": "2026-10-15T09:21:51.618248+00:00",
+      "sha256": "08f725f70a37269d6afb73decc91e6110210402e7f4001db0f248e3e03b63959"
+    },
+    {
+      "file": "warszawa-lodz-gravel.json",
+      "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.455%2C51.7592&profile=gravel&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 2.295334,
+      "file_written_utc": "2026-10-15T09:21:55.106241+00:00",
+      "sha256": "8949cb76907c4f3321470f6909c70081032417072bf016e17da867dfa1697ad3"
+    },
+    {
+      "file": "warszawa-lodz-osrm-cycling.json",
+      "url": "https://router.project-osrm.org/route/v1/cycling/21.0122,52.2297;19.455,51.7592?overview=full&geometries=geojson&steps=true",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.183485,
+      "file_written_utc": "2026-10-15T09:22:28.666165+00:00",
+      "sha256": "936057ecf5b484fb0a8521cfdeade6b5ed1e8813109df4001bfa972a150be373"
+    },
+    {
+      "file": "warszawa-lodz-osrm-driving.json",
+      "url": "https://router.project-osrm.org/route/v1/driving/21.0122,52.2297;19.455,51.7592?overview=full&geometries=geojson&steps=true",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.174746,
+      "file_written_utc": "2026-10-15T09:22:33.975153+00:00",
+      "sha256": "936057ecf5b484fb0a8521cfdeade6b5ed1e8813109df4001bfa972a150be373"
+    },
+    {
+      "file": "warszawa-gora-kalwaria-fastbike-lowtraffic.json",
+      "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2155%2C51.9761&profile=fastbike-lowtraffic&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 1.074824,
+      "file_written_utc": "2026-10-15T09:21:57.355236+00:00",
+      "sha256": "4aacc04017dedfcff4cfb6fe8b27e6e6442cf4c609a3e6e79cde7ab5869ec68d"
+    },
+    {
+      "file": "warszawa-gora-kalwaria-gravel.json",
+      "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2155%2C51.9761&profile=gravel&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 1.27886,
+      "file_written_utc": "2026-10-15T09:21:59.801230+00:00",
+      "sha256": "a6a32581de18cefea84acb06d248fedce46d329908c96301980f94d044f8d419"
+    },
+    {
+      "file": "warszawa-gora-kalwaria-osrm-cycling.json",
+      "url": "https://router.project-osrm.org/route/v1/cycling/21.0122,52.2297;21.2155,51.9761?overview=full&geometries=geojson&steps=true",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.157814,
+      "file_written_utc": "2026-10-15T09:22:30.001163+00:00",
+      "sha256": "18d00fd3db181176abdb8b3ff47e7936fc7ed0ea7a4d7e9f0a35c4e267e4e122"
+    },
+    {
+      "file": "bodzentyn-swiety-krzyz-fastbike-lowtraffic.json",
+      "url": "https://brouter.de/brouter?lonlats=20.957%2C50.9413%7C21.0528%2C50.8587&profile=fastbike-lowtraffic&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.207318,
+      "file_written_utc": "2026-10-15T09:22:01.145227+00:00",
+      "sha256": "c586a5263fbc0b2dec1e45c5b482388281ef39924d3260414e65e1bb47d88538"
+    },
+    {
+      "file": "bodzentyn-swiety-krzyz-gravel.json",
+      "url": "https://brouter.de/brouter?lonlats=20.957%2C50.9413%7C21.0528%2C50.8587&profile=gravel&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.226085,
+      "file_written_utc": "2026-10-15T09:22:02.517224+00:00",
+      "sha256": "811e5ee927e446f0c166c9d02896ec84a6a69135b057d08d0c486e4344c013c9"
+    },
+    {
+      "file": "bodzentyn-swiety-krzyz-osrm-cycling.json",
+      "url": "https://router.project-osrm.org/route/v1/cycling/20.957,50.9413;21.0528,50.8587?overview=full&geometries=geojson&steps=true",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.161687,
+      "file_written_utc": "2026-10-15T09:22:31.339159+00:00",
+      "sha256": "e5c598d302b16f0ef6cb063fe7aea6bf2ff42c6b7d65e7f97d24e7591d7ff043"
+    },
+    {
+      "file": "kabaty-powsin-fastbike-lowtraffic.json",
+      "url": "https://brouter.de/brouter?lonlats=21.052%2C52.104%7C21.087%2C52.116&profile=fastbike-lowtraffic&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.183162,
+      "file_written_utc": "2026-10-15T09:22:03.856221+00:00",
+      "sha256": "47b31c2bf57d68d50d59292fce9a94feb797e5b02920ad2c1f971a49c6b73e7b"
+    },
+    {
+      "file": "kabaty-powsin-gravel.json",
+      "url": "https://brouter.de/brouter?lonlats=21.052%2C52.104%7C21.087%2C52.116&profile=gravel&alternativeidx=0&format=geojson",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.126375,
+      "file_written_utc": "2026-10-15T09:22:05.140218+00:00",
+      "sha256": "79a9fbb508799c15e3901fa877bf48bb418957b8061d0fecbe636086b4bd1d4f"
+    },
+    {
+      "file": "kabaty-powsin-osrm-cycling.json",
+      "url": "https://router.project-osrm.org/route/v1/cycling/21.052,52.104;21.087,52.116?overview=full&geometries=geojson&steps=true",
+      "http_status": 200,
+      "curl_exit": 0,
+      "total_seconds": 0.124288,
+      "file_written_utc": "2026-10-15T09:22:32.606157+00:00",
+      "sha256": "e99c0546621ef8dadb3b6585ea070392f56650d123e9ea0cc5ba5beca71a9a64"
+    }
+  ],
+  "profiles": [
+    {
+      "file": "LICENSE",
+      "url": "https://raw.githubusercontent.com/abrensch/brouter/master/LICENSE",
+      "sha256": "73408906d3e5226b76a3649051221c7faadb076fac25013feb600821b923f05e"
+    },
+    {
+      "file": "fastbike-lowtraffic.brf",
+      "url": "https://brouter.de/brouter/profiles2/fastbike-lowtraffic.brf",
+      "sha256": "dc851a8067c39bf3a3b5d29943ef04104766b9683028fb0553c587b471640b79"
+    },
+    {
+      "file": "gravel.brf",
+      "url": "https://brouter.de/brouter/profiles2/gravel.brf",
+      "sha256": "122b73ae82f4938e4401a12301267064628412bf1be16ef2bf26932bdea0e744"
+    }
+  ]
+}

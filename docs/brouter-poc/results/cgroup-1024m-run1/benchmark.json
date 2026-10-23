@@ -1,0 +1,336 @@
+{
+  "recorded_at": "2026-10-16T08:45:55.233039+00:00",
+  "host": {
+    "system": "Linux",
+    "node": "malupixel-MSI",
+    "release": "6.8.0-146-generic",
+    "version": "#146-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  3 16:12:30 UTC 2026",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "startup_s": 0.3875,
+  "idle": {
+    "rss_kib": 39336,
+    "hwm_kib": 39336,
+    "cpu_s": 0.15
+  },
+  "final": {
+    "rss_kib": 43156,
+    "hwm_kib": 43156,
+    "cpu_s": 0.33
+  },
+  "peak_rss_kib": 43156,
+  "heap_mib": 640,
+  "memory_cap_mib": 1024,
+  "threads": 2,
+  "config": {
+    "image": "sha256:be15c983f424d4cc583651a8af84fb8acc43c96a8306b7e8f8a8e93d5d93f7fb",
+    "host_config": {
+      "Memory": 1073741824,
+      "MemorySwap": 1073741824,
+      "NanoCpus": 2000000000,
+      "PortBindings": {
+        "17777/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "17777"
+          }
+        ]
+      }
+    },
+    "java_version": "openjdk version \"21.0.12.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)\n"
+  },
+  "batches": [
+    {
+      "clients": 1,
+      "requests": 8,
+      "wall_s": 0.0124,
+      "server_cpu_s": 0.04,
+      "responses": [
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0013,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.001,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0018,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0012,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.001,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0006,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0006,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0006,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        }
+      ]
+    },
+    {
+      "clients": 2,
+      "requests": 8,
+      "wall_s": 0.0068,
+      "server_cpu_s": 0.02,
+      "responses": [
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0012,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0011,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        }
+      ]
+    },
+    {
+      "clients": 4,
+      "requests": 8,
+      "wall_s": 0.0089,
+      "server_cpu_s": 0.02,
+      "responses": [
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0031,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0039,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0038,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0019,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0026,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "745a819ff2a23818d8ca929f70e649c6803bf241e54e161974866b2937648b09"
+        },
+        {
+          "case": "city-cycleway",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0033,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "road-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0031,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        },
+        {
+          "case": "warszawa-lodz",
+          "profile": "gravel-v1",
+          "http_status": 0,
+          "elapsed_s": 0.0024,
+          "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+          "raw_sha256": "1392261ef9e8b2d811be11a7e1bb60638d6a36ac1da6ac59eb24086648daab8b"
+        }
+      ]
+    }
+  ],
+  "disk_bytes": {
+    "app": 8549939,
+    "segments4": 680492514,
+    "downloads": 6724983
+  },
+  "profile_sha256": {
+    "road-v1": "be86262ce16fa211163a8f9d05b8fee14d682e66157b7a3cd5a2a27fb99cad48",
+    "gravel-v1": "39b8d3c65e06b7ada0fa9329ae2b8fc84b241f016d570360f0706dac458d3084"
+  },
+  "data_manifest": {
+    "engine": "1.7.10",
+    "release_sha256": "023fec3ba997758e8cd7ab9e1bae52e962af3f00b57683e3de86b84ffad01532",
+    "captured_at": "2026-10-16T08:33:08.073856+00:00",
+    "coverage_rectangle": [
+      10,
+      45,
+      25,
+      55
+    ],
+    "files": [
+      {
+        "name": "downloads/brouter-1.7.10.zip",
+        "bytes": 6724983,
+        "sha256": "023fec3ba997758e8cd7ab9e1bae52e962af3f00b57683e3de86b84ffad01532"
+      },
+      {
+        "name": "profiles/lookups.dat",
+        "bytes": 31604,
+        "sha256": "bf8fc3b2c052b7204e9c5a8d78e4d6ab6b125d3236a943f34583b838c477f419"
+      },
+      {
+        "name": "segments4/E10_N45.rd5",
+        "bytes": 198921647,
+        "sha256": "5df92863bbf35c99aa7deecea23d234423b9acf3ff543587cdf4514ee6e4d9db"
+      },
+      {
+        "name": "segments4/E10_N50.rd5",
+        "bytes": 125005906,
+        "sha256": "263bb6b0cff857fedf9bbef98f5a513c20db7f2fe5c802972ee485eab84ef62a"
+      },
+      {
+        "name": "segments4/E15_N45.rd5",
+        "bytes": 130008994,
+        "sha256": "00ea5f1eed001fde610d686e82eb1352dfe02eb244230ff829d9b565ac047068"
+      },
+      {
+        "name": "segments4/E15_N50.rd5",
+        "bytes": 90252449,
+        "sha256": "f5b745e8d16620bb339381efffdd711afa9d09ff99f7d686bbbdbc1947dd412d"
+      },
+      {
+        "name": "segments4/E20_N45.rd5",
+        "bytes": 67643415,
+        "sha256": "31613e074605941cf8cd086df51fabd44d7f801c277bd594af08c0ba766d5fc3"
+      },
+      {
+        "name": "segments4/E20_N50.rd5",
+        "bytes": 68660103,
+        "sha256": "e08a552c49806969645a9b6001b3425b7a9714b6a819d9b6cf7ad72730998a28"
+      }
+    ]
+  },
+  "container_state_before_stop": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 178897,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-16T08:45:53.957936884Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  }
+}

@@ -1,0 +1,83 @@
+# TweakMyRoute ROAD 1.0.1 — Poland policy, experimental; MIT.
+# Independent cost policy informed by BRouter fastbike/trekking v1.7.10.
+# Hard exclusion >=10000. No walking fallback, no cycleroute access override.
+---context:global
+assign validForBikes true
+assign considerTurnRestrictions true
+assign correctMisplacedViaPoints false
+assign processUnusedTags true
+assign turnInstructionMode 0
+assign totalMass 90
+assign maxSpeed 40
+assign bikerPower 150
+assign S_C_x 0.3
+assign C_r 0.006
+assign gravel false
+---context:way
+# Explicit mode-specific permission overrides generic restrictions.
+# Non-public destination/permit access excluded even at endpoints (conservative).
+assign publicaccess or access= access=yes|permissive|designated
+assign vehicleaccess switch vehicle= publicaccess vehicle=yes|permissive|designated
+assign bikeaccess switch bicycle= vehicleaccess bicycle=yes|permissive|designated
+assign directionaccess switch reversedirection=yes ( or bicycle:backward= bicycle:backward=yes|designated ) ( or bicycle:forward= bicycle:forward=yes|designated )
+# Respect oneway:bicycle=no including generic oneway=-1.
+assign badoneway
+ switch oneway:bicycle=no false
+ switch oneway:bicycle=yes reversedirection=yes
+ switch oneway=-1 not reversedirection=yes
+ switch oneway=yes|true|1 reversedirection=yes
+ switch oneway= switch junction=roundabout|circular reversedirection=yes false
+ oneway=reversible
+assign prohibited or not bikeaccess or not directionaccess or badoneway
+ or motorroad=yes highway=motorway|motorway_link|trunk|trunk_link|steps|construction|proposed|abandoned
+# A pedestrian path requires affirmative bike permission; cycle-route membership is insufficient.
+assign pedestrianblocked and highway=footway|pedestrian|path|bridleway not bicycle=yes|designated|permissive
+assign technical or not sac_scale= or not ( or mtb:scale= mtb:scale=0|0-|0+ ) smoothness=very_bad|horrible|very_horrible|impassable
+assign supportedroad highway=primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|cycleway|residential|living_street|unclassified|service|track|path|footway|pedestrian|bridleway|road
+assign hardblocked or not supportedroad or prohibited or pedestrianblocked technical
+assign sealed surface=asphalt|concrete|paved|paving_stones
+assign unknownsurface or surface= surface=unknown
+assign surfacecost
+ switch surface=asphalt 1
+ switch surface=concrete 1.15
+ switch surface=paved 1.3
+ switch surface=paving_stones 1.8
+ switch surface=sett|cobblestone 7
+ switch unknownsurface
+   switch highway=track|path|footway|bridleway 14
+   switch highway=cycleway 2.5
+   switch highway=road 5 2
+ switch surface=fine_gravel|compacted 14
+ switch surface=gravel|unpaved 22
+ switch surface=ground|dirt|earth|grass|clay 35
+ switch surface=sand|mud|rock|stone|pebblestone 100
+ 30
+assign roughcost switch smoothness=bad 4 switch smoothness=intermediate 1.7 1
+assign trackcost switch tracktype=grade5 20 switch tracktype=grade4 12 switch tracktype=grade3 7 switch tracktype=grade2 3 1
+# Classes are proxies, never measured traffic; do not assume a painted lane is protected.
+assign roadcost
+ switch highway=primary|primary_link 9
+ switch highway=secondary|secondary_link 5
+ switch highway=tertiary|tertiary_link 2.2
+ switch highway=cycleway 1
+ switch highway=residential|living_street 1.15
+ switch highway=unclassified 1.25
+ switch highway=service 1.5
+ switch highway=track 1.8
+ switch highway=path|footway|pedestrian|bridleway 2
+ switch highway=road 3
+ 10000
+assign speedcost switch maxspeed=90|100|110|120|130 1.5 switch maxspeed=70|80 1.2 1
+assign costfactor switch hardblocked 10000 min 9998 multiply speedcost multiply roadcost multiply surfacecost multiply roughcost trackcost
+assign turncost switch junction=roundabout 0 45
+assign uphillcost 40
+assign uphillcutoff 1.5
+assign downhillcost 40
+assign downhillcutoff 2
+assign nodeaccessgranted false
+---context:node
+assign publicaccess or access= access=yes|permissive|designated
+assign vehicleaccess switch vehicle= publicaccess vehicle=yes|permissive|designated
+assign bikeaccess switch bicycle= vehicleaccess bicycle=yes|permissive|designated
+assign blockedbarrier barrier=stile|turnstile|kissing_gate|fence|wall|ditch|block|log|debris|sally_port|full-height_turnstile
+assign initialcost switch not bikeaccess 1000000 switch blockedbarrier 1000000 switch barrier=cycle_barrier 60 switch barrier=gate|lift_gate|swing_gate 30 switch highway=traffic_signals 20 0

@@ -1,0 +1,7 @@
+case,profile,http_status,accepted,distance_m,elapsed_s,server_cpu_s,unknown_surface_pct,major_road_proxy_m,snap_start_m,snap_end_m,error
+warszawa-lodz,road-v1,200,True,160893.0,9.7011,16.54,4.9,779.0,3.32,4.37,
+warszawa-lodz,gravel-v1,200,True,158154.0,8.2023,11.82,8.72,614.0,3.32,4.37,
+city-cycleway,road-v1,200,True,3216.0,0.173,0.3,0.0,0,0.0,20.24,
+city-cycleway,gravel-v1,200,True,3216.0,0.1744,0.24,0.0,0,0.0,20.24,
+multi-200km,road-v1,200,True,160894.0,2.3535,4.55,4.9,780.0,0.14,0.14,
+multi-200km,gravel-v1,200,True,161114.0,2.2525,4.02,6.23,693.0,0.14,0.14,

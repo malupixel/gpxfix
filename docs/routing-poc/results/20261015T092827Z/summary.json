@@ -1,0 +1,332 @@
+[
+  {
+    "case": "warszawa-lodz",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:27.157531+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=fastbike&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "warszawa-lodz-brouter-fastbike.json",
+    "raw_sha256": "e2cbec932c8e8260b6543b0d71d1279d2173ed40ea001cc88fbab0c5131069d3",
+    "distance_m": 136367.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 2517,
+    "message_distance_m": 136367.0,
+    "known_paved_m": 134772.0,
+    "known_other_surface_m": 0,
+    "unknown_surface_m": 1595.0,
+    "track_path_m": 1846.0,
+    "cycleway_m": 4428.0,
+    "primary_secondary_m": 30900.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 2.016
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:30.274284+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=trekking&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "warszawa-lodz-brouter-trekking.json",
+    "raw_sha256": "9059c20327f73fc288254ac37ab0581f30b91695e8c08347754070dd20fbe556",
+    "distance_m": 145077.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 4035,
+    "message_distance_m": 145077.0,
+    "known_paved_m": 112192.0,
+    "known_other_surface_m": 6799.0,
+    "unknown_surface_m": 26086.0,
+    "track_path_m": 33302.0,
+    "cycleway_m": 27513.0,
+    "primary_secondary_m": 13184.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 59.0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 2.175
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "osrm",
+    "profile": "cycling",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:33.549429+00:00",
+    "url": "https://router.project-osrm.org/route/v1/cycling/21.0122,52.2297;19.456,51.7592?overview=full&geometries=geojson&steps=true",
+    "http_status": 200,
+    "raw_file": "warszawa-lodz-osrm-cycling.json",
+    "raw_sha256": "b206cde84a992beb084f06d3ee5024011a8cb2b3808fea1c59895ebbd20be788",
+    "distance_m": 136045,
+    "vertices": 1897,
+    "geometry_sha256": "41f70d9d5ba88f6072370de7100093b9b46209265274cb07f41ae9c88a119b87",
+    "status": "ok",
+    "elapsed_s": 0.195
+  },
+  {
+    "case": "warszawa-lodz",
+    "engine": "osrm",
+    "profile": "driving",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:34.845902+00:00",
+    "url": "https://router.project-osrm.org/route/v1/driving/21.0122,52.2297;19.456,51.7592?overview=full&geometries=geojson&steps=true",
+    "http_status": 200,
+    "raw_file": "warszawa-lodz-osrm-driving.json",
+    "raw_sha256": "b206cde84a992beb084f06d3ee5024011a8cb2b3808fea1c59895ebbd20be788",
+    "distance_m": 136045,
+    "vertices": 1897,
+    "geometry_sha256": "41f70d9d5ba88f6072370de7100093b9b46209265274cb07f41ae9c88a119b87",
+    "status": "ok",
+    "elapsed_s": 0.208
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:36.155033+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=fastbike&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "warszawa-gora-kalwaria-brouter-fastbike.json",
+    "raw_sha256": "34d0067f8eb355445677d0a373a44e904b7d1721e4df4e70ce3cf7a845ada39b",
+    "distance_m": 33842.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 1169,
+    "message_distance_m": 33842.0,
+    "known_paved_m": 33324.0,
+    "known_other_surface_m": 0,
+    "unknown_surface_m": 518.0,
+    "track_path_m": 2553.0,
+    "cycleway_m": 2297.0,
+    "primary_secondary_m": 23381.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.852
+  },
+  {
+    "case": "warszawa-gora-kalwaria",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:38.108648+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=trekking&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "warszawa-gora-kalwaria-brouter-trekking.json",
+    "raw_sha256": "8a1f76dc5beeb4a44c630afb869801dd0b23db07b048211e18fb681e51e801ca",
+    "distance_m": 35716.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 1323,
+    "message_distance_m": 35716.0,
+    "known_paved_m": 32753.0,
+    "known_other_surface_m": 1554.0,
+    "unknown_surface_m": 1409.0,
+    "track_path_m": 5031.0,
+    "cycleway_m": 9303.0,
+    "primary_secondary_m": 2379.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.682
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:39.892611+00:00",
+    "url": "https://brouter.de/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=fastbike&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "bodzentyn-swiety-krzyz-brouter-fastbike.json",
+    "raw_sha256": "d83de80c592406420742df8501e6336d969e460351377e22d7a8e03e83b5667a",
+    "distance_m": 26286.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 526,
+    "message_distance_m": 26286.0,
+    "known_paved_m": 26227.0,
+    "known_other_surface_m": 10.0,
+    "unknown_surface_m": 49.0,
+    "track_path_m": 10.0,
+    "cycleway_m": 0,
+    "primary_secondary_m": 19325.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.5
+  },
+  {
+    "case": "bodzentyn-swiety-krzyz",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:41.494688+00:00",
+    "url": "https://brouter.de/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=trekking&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "bodzentyn-swiety-krzyz-brouter-trekking.json",
+    "raw_sha256": "bb922be736d262f2026b38d5f097f3d726f9e6c7fbe2a531e6de06dfb7322cbe",
+    "distance_m": 17221.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 360,
+    "message_distance_m": 17221.0,
+    "known_paved_m": 13740.0,
+    "known_other_surface_m": 1337.0,
+    "unknown_surface_m": 2144.0,
+    "track_path_m": 1469.0,
+    "cycleway_m": 1526.0,
+    "primary_secondary_m": 11409.0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.17
+  },
+  {
+    "case": "kabin-lasy",
+    "engine": "brouter",
+    "profile": "fastbike",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:42.765924+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=fastbike&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "kabin-lasy-brouter-fastbike.json",
+    "raw_sha256": "4a7f9aeeed73e891a66611d7366290fe929a8ce8ef4f999ab95eb2c8facd772a",
+    "distance_m": 3985.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 144,
+    "message_distance_m": 3985.0,
+    "known_paved_m": 3065.0,
+    "known_other_surface_m": 465.0,
+    "unknown_surface_m": 455.0,
+    "track_path_m": 908.0,
+    "cycleway_m": 0,
+    "primary_secondary_m": 0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.146
+  },
+  {
+    "case": "kabin-lasy",
+    "engine": "brouter",
+    "profile": "trekking",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "requested_at": "2026-10-15T09:28:44.012670+00:00",
+    "url": "https://brouter.de/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=trekking&alternativeidx=0&format=geojson",
+    "http_status": 200,
+    "raw_file": "kabin-lasy-brouter-trekking.json",
+    "raw_sha256": "55ad1054dfeefa88f5e9eb7537612849e401b67d818258c65969d92f7e333646",
+    "distance_m": 4256.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 103,
+    "message_distance_m": 4256.0,
+    "known_paved_m": 1209.0,
+    "known_other_surface_m": 3047.0,
+    "unknown_surface_m": 0,
+    "track_path_m": 3137.0,
+    "cycleway_m": 0,
+    "primary_secondary_m": 0,
+    "motorway_trunk_m": 0,
+    "bicycle_no_or_dismount_m": 0,
+    "restricted_access_m": 0,
+    "status": "ok",
+    "elapsed_s": 0.129
+  }
+]

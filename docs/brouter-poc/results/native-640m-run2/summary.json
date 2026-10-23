@@ -1,0 +1,562 @@
+[
+  {
+    "http_status": 200,
+    "elapsed_s": 9.9947,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "2848243ce713c96b573034e82c412e435337ee5a25287542e6f4bea3843aebdd",
+    "case": "warszawa-lodz",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-road-v1.json",
+    "server_cpu_s": 18.87,
+    "server_cpu_pct": 188.8,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 5096 column 3 (char 503199)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 8.1791,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "f6e745e694484e665bf60f847b2ed39798b1ec9d3603bbefe47af2ab280a8e22",
+    "case": "warszawa-lodz",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-gravel-v1.json",
+    "server_cpu_s": 11.13,
+    "server_cpu_pct": 136.1,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 5289 column 3 (char 515875)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 2.0025,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "46f7f66dd79d0e2652f9e3b0195b4138a4d7302a06947c13c0d3237dd354437e",
+    "case": "warszawa-gora-kalwaria",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-gora-kalwaria-road-v1.json",
+    "server_cpu_s": 2.94,
+    "server_cpu_pct": 146.8,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 1746 column 3 (char 162333)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 2.1324,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C21.2156%2C51.976&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "8e7e5b49c3670d0e97f1179bcf261a604daa2d31ed810695835fb22c8805d3c1",
+    "case": "warszawa-gora-kalwaria",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        21.2156,
+        51.976
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-gora-kalwaria-gravel-v1.json",
+    "server_cpu_s": 4.02,
+    "server_cpu_pct": 188.5,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 2173 column 3 (char 211589)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.2167,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "60a4c8aaeb4829ac90119eb22b8f92c75b7c85c424ed2be2c4807f1d6843856e",
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "road-v1",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "bodzentyn-swiety-krzyz-road-v1.json",
+    "server_cpu_s": 0.32,
+    "server_cpu_pct": 147.7,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 957 column 3 (char 79072)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.2506,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9576%2C50.9415%7C21.0525%2C50.8586&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "e4fe958f7a01d10a9ffd360f258b7b213bbfb83a7f4857fb295046c9544f8fe2",
+    "case": "bodzentyn-swiety-krzyz",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        20.9576,
+        50.9415
+      ],
+      [
+        21.0525,
+        50.8586
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "bodzentyn-swiety-krzyz-gravel-v1.json",
+    "server_cpu_s": 0.33,
+    "server_cpu_pct": 131.7,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 889 column 3 (char 72180)"
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0109,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "kabaty-powsin",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-powsin-road-v1.txt",
+    "server_cpu_s": 32.13,
+    "server_cpu_pct": 107.1,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.6243,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0585%2C52.1102%7C21.091%2C52.1&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "882d0dece439fc46025207f639affe5f3dca73472a1ecafea3af136e059e8dfc",
+    "case": "kabaty-powsin",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0585,
+        52.1102
+      ],
+      [
+        21.091,
+        52.1
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-powsin-gravel-v1.json",
+    "server_cpu_s": 0.9,
+    "server_cpu_pct": 144.2,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 303 column 3 (char 21276)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.3596,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.036%2C52.126%7C21.1085%2C52.0895&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "b295845db49ef814637ecefae85473d4160da15f9feebe1803474ecdcce14eda",
+    "case": "kabaty-through",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.036,
+        52.126
+      ],
+      [
+        21.1085,
+        52.0895
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-through-road-v1.json",
+    "server_cpu_s": 0.64,
+    "server_cpu_pct": 178.0,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 520 column 3 (char 47313)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.2661,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.036%2C52.126%7C21.1085%2C52.0895&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "4922baa83d4135d529cea460daf12fff261393c9056a636e572ed7a658e74a4d",
+    "case": "kabaty-through",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.036,
+        52.126
+      ],
+      [
+        21.1085,
+        52.0895
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "kabaty-through-gravel-v1.json",
+    "server_cpu_s": 0.53,
+    "server_cpu_pct": 199.2,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 341 column 3 (char 26488)"
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0032,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "city-cycleway",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-road-v1.txt",
+    "server_cpu_s": 33.39,
+    "server_cpu_pct": 111.3,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0255,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "city-cycleway",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-gravel-v1.txt",
+    "server_cpu_s": 33.66,
+    "server_cpu_pct": 112.1,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.1762,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9848%2C52.263%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "e050e243790cecfb529f1498895ad5ba474cbad16f21899c0a40ca97fb8b10a4",
+    "case": "city-local",
+    "profile": "road-v1",
+    "points": [
+      [
+        20.9848,
+        52.263
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-local-road-v1.json",
+    "server_cpu_s": 0.26,
+    "server_cpu_pct": 147.6,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 229 column 3 (char 20910)"
+  },
+  {
+    "http_status": 200,
+    "elapsed_s": 0.1784,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=20.9848%2C52.263%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "70b896551dc2657f1b978e4ff9dc89ea10f4a33ff53c1a7927a45c0fbcd78e24",
+    "case": "city-local",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        20.9848,
+        52.263
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-local-gravel-v1.json",
+    "server_cpu_s": 0.35,
+    "server_cpu_pct": 196.2,
+    "accepted": false,
+    "analysis_error": "Expecting value: line 229 column 3 (char 20912)"
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0344,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C20.8878%2C52.2117%7C20.7996%2C52.2106%7C20.6185%2C52.1987%7C20.4237%2C52.1881%7C20.2378%2C52.2293%7C20.125%2C52.225%7C19.945%2C52.182%7C19.856%2C52.108%7C19.715%2C52.059%7C19.511%2C51.986%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "multi-200km",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        20.8878,
+        52.2117
+      ],
+      [
+        20.7996,
+        52.2106
+      ],
+      [
+        20.6185,
+        52.1987
+      ],
+      [
+        20.4237,
+        52.1881
+      ],
+      [
+        20.2378,
+        52.2293
+      ],
+      [
+        20.125,
+        52.225
+      ],
+      [
+        19.945,
+        52.182
+      ],
+      [
+        19.856,
+        52.108
+      ],
+      [
+        19.715,
+        52.059
+      ],
+      [
+        19.511,
+        51.986
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-road-v1.txt",
+    "server_cpu_s": 32.25,
+    "server_cpu_pct": 107.4,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0048,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C20.8878%2C52.2117%7C20.7996%2C52.2106%7C20.6185%2C52.1987%7C20.4237%2C52.1881%7C20.2378%2C52.2293%7C20.125%2C52.225%7C19.945%2C52.182%7C19.856%2C52.108%7C19.715%2C52.059%7C19.511%2C51.986%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "multi-200km",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        20.8878,
+        52.2117
+      ],
+      [
+        20.7996,
+        52.2106
+      ],
+      [
+        20.6185,
+        52.1987
+      ],
+      [
+        20.4237,
+        52.1881
+      ],
+      [
+        20.2378,
+        52.2293
+      ],
+      [
+        20.125,
+        52.225
+      ],
+      [
+        19.945,
+        52.182
+      ],
+      [
+        19.856,
+        52.108
+      ],
+      [
+        19.715,
+        52.059
+      ],
+      [
+        19.511,
+        51.986
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-gravel-v1.txt",
+    "server_cpu_s": 31.97,
+    "server_cpu_pct": 106.5,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0047,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1&nogos=21.037%2C52.230%2C1000000",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "no-legal-crossing",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "no_route",
+    "raw_file": "no-legal-crossing-road-v1.txt",
+    "server_cpu_s": 32.93,
+    "server_cpu_pct": 109.7,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 30.0024,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0297%2C52.2395%7C21.0477%2C52.2199&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1&nogos=21.037%2C52.230%2C1000000",
+    "raw_sha256": "6d3caa2816452c8ca7554a1422ded06a2d8f6fc3db12ef61f95e6de96cb81d04",
+    "case": "no-legal-crossing",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0297,
+        52.2395
+      ],
+      [
+        21.0477,
+        52.2199
+      ]
+    ],
+    "expected": "no_route",
+    "raw_file": "no-legal-crossing-gravel-v1.txt",
+    "server_cpu_s": 31.92,
+    "server_cpu_pct": 106.4,
+    "error": "pass0 timeout after 30 seconds\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 0.0041,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=-74.0%2C40.71%7C-73.98%2C40.72&profile=road-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "a2fcf71b9958cf0205bc2a56779288dabd18538163555ece8ea78609a0ac6efc",
+    "case": "out-of-coverage",
+    "profile": "road-v1",
+    "points": [
+      [
+        -74.0,
+        40.71
+      ],
+      [
+        -73.98,
+        40.72
+      ]
+    ],
+    "expected": "coverage_error",
+    "raw_file": "out-of-coverage-road-v1.txt",
+    "server_cpu_s": 0.01,
+    "server_cpu_pct": 243.9,
+    "error": "datafile W75_N40.rd5 not found\n",
+    "accepted": false
+  },
+  {
+    "http_status": 400,
+    "elapsed_s": 0.0018,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=-74.0%2C40.71%7C-73.98%2C40.72&profile=gravel-v1&alternativeidx=0&format=geojson&exportCorrectedWaypoints=1",
+    "raw_sha256": "a2fcf71b9958cf0205bc2a56779288dabd18538163555ece8ea78609a0ac6efc",
+    "case": "out-of-coverage",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        -74.0,
+        40.71
+      ],
+      [
+        -73.98,
+        40.72
+      ]
+    ],
+    "expected": "coverage_error",
+    "raw_file": "out-of-coverage-gravel-v1.txt",
+    "server_cpu_s": 0.0,
+    "server_cpu_pct": 0.0,
+    "error": "datafile W75_N40.rd5 not found\n",
+    "accepted": false
+  }
+]

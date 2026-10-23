@@ -1,0 +1,16 @@
+228978688
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+usage_usec 100291604
+user_usec 99646956
+system_usec 644647
+core_sched.force_idle_usec 0
+nr_periods 661
+nr_throttled 136
+throttled_usec 8037977
+nr_bursts 0
+burst_usec 0

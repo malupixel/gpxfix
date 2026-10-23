@@ -1,0 +1,6531 @@
+[
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 10.9473,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "f4b94f61a3affa865082be301e3c7d125d1386a7967a2e7d2c34755d395bfe22",
+    "case": "warszawa-lodz",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-road-v1.json",
+    "server_cpu_s": 20.03,
+    "server_cpu_pct": 183.0,
+    "distance_m": 160893.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 3799,
+    "geometry_sha256": "f9e23a688419969b38afff1c3beb88f2ba07067ea34c0b6cd983f8b54f5c207d",
+    "surface_m": {
+      "asphalt": 143133.0,
+      "paving_stones": 7551.0,
+      "concrete": 486.0,
+      "paved": 1847.0,
+      "UNKNOWN": 7876.0
+    },
+    "highway_m": {
+      "secondary": 779.0,
+      "residential": 22208.0,
+      "cycleway": 33919.0,
+      "path": 2894.0,
+      "service": 3071.0,
+      "tertiary": 34742.0,
+      "tertiary_link": 12.0,
+      "living_street": 719.0,
+      "unclassified": 62543.0,
+      "UNKNOWN": 6.0
+    },
+    "unknown_surface_m": 7876.0,
+    "unknown_surface_pct": 4.9,
+    "major_road_proxy_m": 779.0,
+    "diagnostic_distance_m": 160893.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [
+      {
+        "distance_m": 2.0,
+        "location": [
+          21.012258,
+          52.229694
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "good",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          21.012205,
+          52.229915
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012191,
+          52.22994
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          21.012105,
+          52.230043
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          21.011968,
+          52.230141
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 61.0,
+        "location": [
+          21.011448,
+          52.230595
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "3",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 78.0,
+        "location": [
+          20.833465,
+          52.178439
+        ],
+        "tags": {
+          "highway": "residential",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          20.832089,
+          52.175752
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.832086,
+          52.175724
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 33.0,
+        "location": [
+          20.83204,
+          52.175434
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 8.0,
+        "location": [
+          20.827726,
+          52.174571
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 125.0,
+        "location": [
+          20.825907,
+          52.174457
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          20.825848,
+          52.174453
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.801201,
+          52.095635
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "4",
+          "estimated_river_class": "1",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          20.801314,
+          52.095579
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "6",
+          "lanes": "2",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 2.0,
+        "location": [
+          20.801336,
+          52.095568
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "6",
+          "lanes": "2",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.799541,
+          52.089496
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "lit": "yes",
+          "foot": "yes",
+          "cycleway": "crossing",
+          "segregated": "no",
+          "crossing": "uncontrolled"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.792916,
+          52.083691
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1137.0,
+        "location": [
+          20.604966,
+          51.995518
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 419.0,
+        "location": [
+          20.602985,
+          51.991964
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 106.0,
+        "location": [
+          20.602434,
+          51.99107
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 174.0,
+        "location": [
+          20.527375,
+          51.974247
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          20.527231,
+          51.97404
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 32.0,
+        "location": [
+          20.527144,
+          51.973882
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_traffic_class": "3",
+          "junction": "roundabout"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 238.0,
+        "location": [
+          20.424291,
+          51.891025
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.424257,
+          51.891016
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 41.0,
+        "location": [
+          20.42432,
+          51.890646
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 152.0,
+        "location": [
+          20.424399,
+          51.889278
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1113.0,
+        "location": [
+          20.399612,
+          51.889649
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "5",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          20.300584,
+          51.900103
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "6",
+          "bridge": "yes",
+          "route_bicycle_lcn": "yes",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 95.0,
+        "location": [
+          20.243639,
+          51.885699
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "2",
+          "estimated_noise_class": "5",
+          "estimated_traffic_class": "1",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.243506,
+          51.885639
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 109.0,
+        "location": [
+          20.242535,
+          51.884862
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          20.058084,
+          51.845428
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          19.96939,
+          51.815289
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.96935,
+          51.814801
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 142.0,
+        "location": [
+          19.968902,
+          51.813556
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.968846,
+          51.813413
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 438.0,
+        "location": [
+          19.905118,
+          51.788419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 622.0,
+        "location": [
+          19.904958,
+          51.776519
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 58.0,
+        "location": [
+          19.904899,
+          51.775999
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_traffic_class": "1",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 86.0,
+        "location": [
+          19.904789,
+          51.77523
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.845336,
+          51.749914
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 34.0,
+        "location": [
+          19.845353,
+          51.746937
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 255.0,
+        "location": [
+          19.842509,
+          51.748392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 619.0,
+        "location": [
+          19.834092,
+          51.758157
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          19.826979,
+          51.757007
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.826854,
+          51.756985
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.826777,
+          51.756975
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 7.0,
+        "location": [
+          19.826679,
+          51.75696
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 19.0,
+        "location": [
+          19.826409,
+          51.756916
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.826354,
+          51.756906
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          19.825986,
+          51.756811
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 65.0,
+        "location": [
+          19.825061,
+          51.75669
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 259.0,
+        "location": [
+          19.821448,
+          51.756053
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 183.0,
+        "location": [
+          19.819979,
+          51.754703
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.819887,
+          51.754592
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 410.0,
+        "location": [
+          19.810589,
+          51.754321
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 94.0,
+        "location": [
+          19.811553,
+          51.75372
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 112.0,
+        "location": [
+          19.80676,
+          51.748286
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 47.0,
+        "location": [
+          19.807365,
+          51.748093
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 21.0,
+        "location": [
+          19.807641,
+          51.748005
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          19.807556,
+          51.747929
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 398.0,
+        "location": [
+          19.80428,
+          51.745001
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          19.804193,
+          51.744915
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 138.0,
+        "location": [
+          19.798233,
+          51.746263
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 296.0,
+        "location": [
+          19.645039,
+          51.733998
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "3",
+          "sidewalk:left": "separate",
+          "sidewalk:right": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.644999,
+          51.733919
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "3",
+          "sidewalk:left": "separate",
+          "sidewalk:right": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          19.595744,
+          51.749645
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.595709,
+          51.749622
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.595662,
+          51.74959
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595248,
+          51.749814
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595182,
+          51.749851
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.456008,
+          51.759161
+        ],
+        "tags": {
+          "railway": "tram",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      }
+    ],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.0122,
+          52.2297
+        ],
+        "nearest_geometry_m": 3.32
+      },
+      {
+        "requested": [
+          19.456,
+          51.7592
+        ],
+        "nearest_geometry_m": 4.37
+      }
+    ],
+    "snap_start_m": 3.32,
+    "snap_end_m": 4.37,
+    "accounting_ok": true,
+    "accepted": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 9.1003,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.0122%2C52.2297%7C19.456%2C51.7592&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "aaaa5918f3fad0b32817bd57d484cbf46e40efccfeb0bb4d3ee7cc59263bdcba",
+    "case": "warszawa-lodz",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.0122,
+        52.2297
+      ],
+      [
+        19.456,
+        51.7592
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "warszawa-lodz-gravel-v1.json",
+    "server_cpu_s": 13.92,
+    "server_cpu_pct": 153.0,
+    "distance_m": 158154.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 3930,
+    "geometry_sha256": "28c87e498914bd9653b321911adb52efacb97885868b6d3106b6c84cb0993427",
+    "surface_m": {
+      "asphalt": 121739.0,
+      "paving_stones": 15151.0,
+      "paved": 3559.0,
+      "concrete": 1033.0,
+      "unpaved": 2492.0,
+      "UNKNOWN": 13798.0,
+      "compacted": 187.0,
+      "gravel": 195.0
+    },
+    "highway_m": {
+      "secondary": 614.0,
+      "residential": 35687.0,
+      "cycleway": 38690.0,
+      "path": 13536.0,
+      "service": 1255.0,
+      "tertiary": 19445.0,
+      "living_street": 946.0,
+      "track": 1249.0,
+      "unclassified": 46726.0,
+      "UNKNOWN": 6.0
+    },
+    "unknown_surface_m": 13798.0,
+    "unknown_surface_pct": 8.72,
+    "major_road_proxy_m": 614.0,
+    "diagnostic_distance_m": 158154.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [
+      {
+        "distance_m": 2.0,
+        "location": [
+          21.012258,
+          52.229694
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "good",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          21.012205,
+          52.229915
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012191,
+          52.22994
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          21.012105,
+          52.230043
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          21.011968,
+          52.230141
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 61.0,
+        "location": [
+          21.011448,
+          52.230595
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "3",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 65.0,
+        "location": [
+          20.828138,
+          52.187768
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "unpaved",
+          "estimated_forest_class": "3",
+          "smoothness": "bad"
+        },
+        "reasons": [
+          "other_surface",
+          "rough"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          20.797773,
+          52.173861
+        ],
+        "tags": {
+          "highway": "path",
+          "lit": "yes",
+          "estimated_river_class": "4",
+          "foot": "designated",
+          "bicycle": "designated",
+          "segregated": "yes",
+          "cycleway:surface": "asphalt",
+          "footway:surface": "paving_stones"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 209.0,
+        "location": [
+          20.749612,
+          52.16863
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "concrete",
+          "smoothness": "bad",
+          "concrete": "plates"
+        },
+        "reasons": [
+          "rough"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          20.730426,
+          52.155045
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "foot": "yes",
+          "segregated": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 7.0,
+        "location": [
+          20.726448,
+          52.149928
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "estimated_forest_class": "5",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 85.0,
+        "location": [
+          20.718681,
+          52.14812
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 121.0,
+        "location": [
+          20.691391,
+          52.128149
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 187.0,
+        "location": [
+          20.688879,
+          52.127501
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "compacted",
+          "estimated_forest_class": "4"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 17.0,
+        "location": [
+          20.681366,
+          52.122298
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2",
+          "sidewalk": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 138.0,
+        "location": [
+          20.672224,
+          52.118655
+        ],
+        "tags": {
+          "highway": "path",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "3",
+          "foot": "designated",
+          "bicycle": "designated",
+          "segregated": "yes",
+          "cycleway:surface": "asphalt",
+          "footway:surface": "paving_stones"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          20.671477,
+          52.118461
+        ],
+        "tags": {
+          "highway": "path",
+          "estimated_forest_class": "3",
+          "estimated_noise_class": "4",
+          "foot": "designated",
+          "bicycle": "designated",
+          "footway": "crossing",
+          "segregated": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 8.0,
+        "location": [
+          20.671419,
+          52.11852
+        ],
+        "tags": {
+          "highway": "path",
+          "estimated_forest_class": "3",
+          "estimated_noise_class": "4",
+          "foot": "designated",
+          "bicycle": "designated",
+          "footway": "crossing",
+          "segregated": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          20.65218,
+          52.111692
+        ],
+        "tags": {
+          "highway": "path",
+          "estimated_noise_class": "3",
+          "foot": "designated",
+          "bicycle": "designated",
+          "path": "crossing",
+          "segregated": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.652142,
+          52.111683
+        ],
+        "tags": {
+          "highway": "path",
+          "estimated_noise_class": "3",
+          "foot": "designated",
+          "bicycle": "designated",
+          "path": "crossing",
+          "segregated": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 18.0,
+        "location": [
+          20.642374,
+          52.108878
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 111.0,
+        "location": [
+          20.640958,
+          52.108392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 46.0,
+        "location": [
+          20.640371,
+          52.108192
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          20.640258,
+          52.108157
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          20.632906,
+          52.106427
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_river_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 74.0,
+        "location": [
+          20.631936,
+          52.106133
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_river_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 60.0,
+        "location": [
+          20.631154,
+          52.105896
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_river_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.631094,
+          52.105877
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_river_class": "3",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 60.0,
+        "location": [
+          20.6303,
+          52.10564
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_river_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          20.614817,
+          52.105665
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 40.0,
+        "location": [
+          20.614745,
+          52.105309
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 51.0,
+        "location": [
+          20.614655,
+          52.104854
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 251.0,
+        "location": [
+          20.608693,
+          52.104899
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 357.0,
+        "location": [
+          20.574878,
+          52.084093
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "estimated_forest_class": "2",
+          "estimated_river_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 175.0,
+        "location": [
+          20.572636,
+          52.083363
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "estimated_river_class": "3",
+          "tracktype": "grade3"
+        },
+        "reasons": [
+          "unknown_surface",
+          "rough_track"
+        ]
+      },
+      {
+        "distance_m": 177.0,
+        "location": [
+          20.570317,
+          52.082673
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "unpaved",
+          "tracktype": "grade3"
+        },
+        "reasons": [
+          "other_surface",
+          "rough_track"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          20.546194,
+          52.084367
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "path",
+          "estimated_forest_class": "5",
+          "estimated_noise_class": "3",
+          "estimated_river_class": "5",
+          "foot": "designated",
+          "bicycle": "designated",
+          "segregated": "no",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 207.0,
+        "location": [
+          20.445529,
+          52.028029
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "5",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 120.0,
+        "location": [
+          20.443899,
+          52.0283
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 203.0,
+        "location": [
+          20.441829,
+          52.027049
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 75.0,
+        "location": [
+          20.440983,
+          52.026626
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "5",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1085.0,
+        "location": [
+          20.428902,
+          52.020494
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1",
+          "lanes": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 461.0,
+        "location": [
+          20.423803,
+          52.020392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 731.0,
+        "location": [
+          20.42015,
+          52.014221
+        ],
+        "tags": {
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 225.0,
+        "location": [
+          20.33255,
+          51.957003
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 742.0,
+        "location": [
+          20.334872,
+          51.950487
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 255.0,
+        "location": [
+          20.331208,
+          51.950106
+        ],
+        "tags": {
+          "highway": "track",
+          "estimated_forest_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1342.0,
+        "location": [
+          20.326911,
+          51.938646
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "5"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 150.0,
+        "location": [
+          20.326981,
+          51.937298
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "6",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 195.0,
+        "location": [
+          20.320479,
+          51.916276
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "surface": "gravel",
+          "estimated_forest_class": "6"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          20.320389,
+          51.916212
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "6"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 333.0,
+        "location": [
+          20.316661,
+          51.914294
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 248.0,
+        "location": [
+          20.313203,
+          51.914921
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "unpaved",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "2",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 997.0,
+        "location": [
+          20.299236,
+          51.914995
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "unpaved",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "1"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 31.0,
+        "location": [
+          20.252604,
+          51.9207
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 673.0,
+        "location": [
+          20.224529,
+          51.910489
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "surface": "unpaved"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.204422,
+          51.908388
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "surface": "unpaved",
+          "estimated_noise_class": "2",
+          "tracktype": "grade3"
+        },
+        "reasons": [
+          "other_surface",
+          "rough_track"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          20.058084,
+          51.845428
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          19.96939,
+          51.815289
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.96935,
+          51.814801
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 142.0,
+        "location": [
+          19.968902,
+          51.813556
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.968846,
+          51.813413
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 438.0,
+        "location": [
+          19.905118,
+          51.788419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 622.0,
+        "location": [
+          19.904958,
+          51.776519
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 58.0,
+        "location": [
+          19.904899,
+          51.775999
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_traffic_class": "1",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 86.0,
+        "location": [
+          19.904789,
+          51.77523
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.845336,
+          51.749914
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 34.0,
+        "location": [
+          19.845353,
+          51.746937
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 255.0,
+        "location": [
+          19.842509,
+          51.748392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 619.0,
+        "location": [
+          19.834092,
+          51.758157
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          19.826979,
+          51.757007
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.826854,
+          51.756985
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.826777,
+          51.756975
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 7.0,
+        "location": [
+          19.826679,
+          51.75696
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 19.0,
+        "location": [
+          19.826409,
+          51.756916
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.826354,
+          51.756906
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          19.825986,
+          51.756811
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 65.0,
+        "location": [
+          19.825061,
+          51.75669
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 259.0,
+        "location": [
+          19.821448,
+          51.756053
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 183.0,
+        "location": [
+          19.819979,
+          51.754703
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.819887,
+          51.754592
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 130.0,
+        "location": [
+          19.818031,
+          51.753982
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 283.0,
+        "location": [
+          19.814878,
+          51.752419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "surface": "unpaved",
+          "estimated_forest_class": "1",
+          "tracktype": "grade1"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 38.0,
+        "location": [
+          19.8145,
+          51.752166
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "surface": "unpaved",
+          "estimated_forest_class": "1",
+          "tracktype": "grade1"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.81444,
+          51.752198
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.810056,
+          51.74724
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 26.0,
+        "location": [
+          19.809718,
+          51.747349
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.809638,
+          51.747253
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 272.0,
+        "location": [
+          19.807835,
+          51.745083
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 150.0,
+        "location": [
+          19.80428,
+          51.745001
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          19.804193,
+          51.744915
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 138.0,
+        "location": [
+          19.798233,
+          51.746263
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 311.0,
+        "location": [
+          19.753296,
+          51.733504
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "estimated_forest_class": "2",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 302.0,
+        "location": [
+          19.749312,
+          51.734603
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.749296,
+          51.734548
+        ],
+        "tags": {
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1130.0,
+        "location": [
+          19.73295,
+          51.735225
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 571.0,
+        "location": [
+          19.731514,
+          51.730179
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.730725,
+          51.730126
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "foot": "yes",
+          "motor_vehicle": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.722866,
+          51.72821
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.713266,
+          51.725399
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_forest_class": "3",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.6867,
+          51.725389
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "5"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 262.0,
+        "location": [
+          19.658461,
+          51.724441
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_river_class": "6",
+          "estimated_traffic_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.653814,
+          51.723552
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "parking_aisle"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 95.0,
+        "location": [
+          19.643608,
+          51.722679
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "2",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 2.0,
+        "location": [
+          19.643593,
+          51.722669
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "2",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 15.0,
+        "location": [
+          19.638655,
+          51.725389
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.63848,
+          51.725479
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 45.0,
+        "location": [
+          19.638003,
+          51.725751
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 8.0,
+        "location": [
+          19.637922,
+          51.725703
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "3",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          19.595744,
+          51.749645
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.595709,
+          51.749622
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.595662,
+          51.74959
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595248,
+          51.749814
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595182,
+          51.749851
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.456008,
+          51.759161
+        ],
+        "tags": {
+          "railway": "tram",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      }
+    ],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.0122,
+          52.2297
+        ],
+        "nearest_geometry_m": 3.32
+      },
+      {
+        "requested": [
+          19.456,
+          51.7592
+        ],
+        "nearest_geometry_m": 4.37
+      }
+    ],
+    "snap_start_m": 3.32,
+    "snap_end_m": 4.37,
+    "accounting_ok": true,
+    "accepted": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 0.1668,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "c0a381699ddd9f69a469f143df2a7436f2530b10692a29cb59bfe7c37f9b85e5",
+    "case": "city-cycleway",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.011522,
+        52.23074
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-road-v1.json",
+    "server_cpu_s": 0.34,
+    "server_cpu_pct": 203.8,
+    "distance_m": 3216.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 253,
+    "geometry_sha256": "49b51f4905b71863ad8862484fad3e373c3ce06768326b720b4d7fa5cf9fd2fd",
+    "surface_m": {
+      "asphalt": 2855.0,
+      "paving_stones": 361.0
+    },
+    "highway_m": {
+      "cycleway": 2764.0,
+      "residential": 422.0,
+      "service": 30.0
+    },
+    "unknown_surface_m": 0,
+    "unknown_surface_pct": 0.0,
+    "major_road_proxy_m": 0,
+    "diagnostic_distance_m": 3216.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.011522,
+          52.23074
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.9974,
+          52.2465
+        ],
+        "nearest_geometry_m": 20.24
+      }
+    ],
+    "snap_start_m": 0.0,
+    "snap_end_m": 20.24,
+    "accounting_ok": true,
+    "accepted": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 0.1791,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.011522%2C52.23074%7C20.9974%2C52.2465&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "8239926696a720e3bf556f8072aefb4e9ec7f69276a45fbc91df45d8e59f32c6",
+    "case": "city-cycleway",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.011522,
+        52.23074
+      ],
+      [
+        20.9974,
+        52.2465
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "city-cycleway-gravel-v1.json",
+    "server_cpu_s": 0.35,
+    "server_cpu_pct": 195.4,
+    "distance_m": 3216.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 253,
+    "geometry_sha256": "49b51f4905b71863ad8862484fad3e373c3ce06768326b720b4d7fa5cf9fd2fd",
+    "surface_m": {
+      "asphalt": 2855.0,
+      "paving_stones": 361.0
+    },
+    "highway_m": {
+      "cycleway": 2764.0,
+      "residential": 422.0,
+      "service": 30.0
+    },
+    "unknown_surface_m": 0,
+    "unknown_surface_pct": 0.0,
+    "major_road_proxy_m": 0,
+    "diagnostic_distance_m": 3216.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.011522,
+          52.23074
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.9974,
+          52.2465
+        ],
+        "nearest_geometry_m": 20.24
+      }
+    ],
+    "snap_start_m": 0.0,
+    "snap_end_m": 20.24,
+    "accounting_ok": true,
+    "accepted": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 2.5781,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.012233%2C52.229678%7C20.954541%2C52.227555%7C20.882491%2C52.205131%7C20.823942%2C52.170079%7C20.798203%2C52.124272%7C20.736612%2C52.060609%7C20.563223%2C51.980428%7C20.38962%2C51.892245%7C20.05831%2C51.845763%7C19.784839%2C51.750483%7C19.553681%2C51.757196%7C19.456008%2C51.759161&profile=road-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "f1e19c724a353cc707206da5945421a745ba4d66361b53e7361552610bd3e278",
+    "case": "multi-200km",
+    "profile": "road-v1",
+    "points": [
+      [
+        21.012233,
+        52.229678
+      ],
+      [
+        20.954541,
+        52.227555
+      ],
+      [
+        20.882491,
+        52.205131
+      ],
+      [
+        20.823942,
+        52.170079
+      ],
+      [
+        20.798203,
+        52.124272
+      ],
+      [
+        20.736612,
+        52.060609
+      ],
+      [
+        20.563223,
+        51.980428
+      ],
+      [
+        20.38962,
+        51.892245
+      ],
+      [
+        20.05831,
+        51.845763
+      ],
+      [
+        19.784839,
+        51.750483
+      ],
+      [
+        19.553681,
+        51.757196
+      ],
+      [
+        19.456008,
+        51.759161
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-road-v1.json",
+    "server_cpu_s": 5.12,
+    "server_cpu_pct": 198.6,
+    "distance_m": 160894.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 3799,
+    "geometry_sha256": "66db4c63acd55249e14d973a0eafcc0e44cc80866d4cdb9fc3b0b4d58c35f2db",
+    "surface_m": {
+      "asphalt": 143134.0,
+      "paving_stones": 7551.0,
+      "concrete": 486.0,
+      "paved": 1847.0,
+      "UNKNOWN": 7876.0
+    },
+    "highway_m": {
+      "secondary": 780.0,
+      "residential": 22208.0,
+      "cycleway": 33919.0,
+      "path": 2894.0,
+      "service": 3071.0,
+      "tertiary": 34742.0,
+      "tertiary_link": 12.0,
+      "living_street": 719.0,
+      "unclassified": 62543.0,
+      "UNKNOWN": 6.0
+    },
+    "unknown_surface_m": 7876.0,
+    "unknown_surface_pct": 4.9,
+    "major_road_proxy_m": 780.0,
+    "diagnostic_distance_m": 160894.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012258,
+          52.229694
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "good",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          21.012205,
+          52.229915
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012191,
+          52.22994
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          21.012105,
+          52.230043
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          21.011968,
+          52.230141
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 61.0,
+        "location": [
+          21.011448,
+          52.230595
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "3",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 78.0,
+        "location": [
+          20.833465,
+          52.178439
+        ],
+        "tags": {
+          "highway": "residential",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          20.832089,
+          52.175752
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.832086,
+          52.175724
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 33.0,
+        "location": [
+          20.83204,
+          52.175434
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 8.0,
+        "location": [
+          20.827726,
+          52.174571
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 125.0,
+        "location": [
+          20.825907,
+          52.174457
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          20.825848,
+          52.174453
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "30"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.801201,
+          52.095635
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "4",
+          "estimated_river_class": "1",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          20.801314,
+          52.095579
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "6",
+          "lanes": "2",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 2.0,
+        "location": [
+          20.801336,
+          52.095568
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "6",
+          "lanes": "2",
+          "construction": "minor"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.799541,
+          52.089496
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "lit": "yes",
+          "foot": "yes",
+          "cycleway": "crossing",
+          "segregated": "no",
+          "crossing": "uncontrolled"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.792916,
+          52.083691
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1137.0,
+        "location": [
+          20.604966,
+          51.995518
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 419.0,
+        "location": [
+          20.602985,
+          51.991964
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 106.0,
+        "location": [
+          20.602434,
+          51.99107
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 174.0,
+        "location": [
+          20.527375,
+          51.974247
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          20.527231,
+          51.97404
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 32.0,
+        "location": [
+          20.527144,
+          51.973882
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_traffic_class": "3",
+          "junction": "roundabout"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 238.0,
+        "location": [
+          20.424291,
+          51.891025
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.424257,
+          51.891016
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 41.0,
+        "location": [
+          20.42432,
+          51.890646
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 152.0,
+        "location": [
+          20.424399,
+          51.889278
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1113.0,
+        "location": [
+          20.399612,
+          51.889649
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "5",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          20.300584,
+          51.900103
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "6",
+          "bridge": "yes",
+          "route_bicycle_lcn": "yes",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 95.0,
+        "location": [
+          20.243639,
+          51.885699
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "2",
+          "estimated_noise_class": "5",
+          "estimated_traffic_class": "1",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.243506,
+          51.885639
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 109.0,
+        "location": [
+          20.242535,
+          51.884862
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          20.058084,
+          51.845428
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          19.96939,
+          51.815289
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.96935,
+          51.814801
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 142.0,
+        "location": [
+          19.968902,
+          51.813556
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.968846,
+          51.813413
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 438.0,
+        "location": [
+          19.905118,
+          51.788419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 622.0,
+        "location": [
+          19.904958,
+          51.776519
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 58.0,
+        "location": [
+          19.904899,
+          51.775999
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_traffic_class": "1",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 86.0,
+        "location": [
+          19.904789,
+          51.77523
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.845336,
+          51.749914
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 34.0,
+        "location": [
+          19.845353,
+          51.746937
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 255.0,
+        "location": [
+          19.842509,
+          51.748392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 619.0,
+        "location": [
+          19.834092,
+          51.758157
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          19.826979,
+          51.757007
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.826854,
+          51.756985
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.826777,
+          51.756975
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 7.0,
+        "location": [
+          19.826679,
+          51.75696
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 19.0,
+        "location": [
+          19.826409,
+          51.756916
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.826354,
+          51.756906
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          19.825986,
+          51.756811
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 65.0,
+        "location": [
+          19.825061,
+          51.75669
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 259.0,
+        "location": [
+          19.821448,
+          51.756053
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 183.0,
+        "location": [
+          19.819979,
+          51.754703
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.819887,
+          51.754592
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 410.0,
+        "location": [
+          19.810589,
+          51.754321
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 94.0,
+        "location": [
+          19.811553,
+          51.75372
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 112.0,
+        "location": [
+          19.80676,
+          51.748286
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 47.0,
+        "location": [
+          19.807365,
+          51.748093
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 21.0,
+        "location": [
+          19.807641,
+          51.748005
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 10.0,
+        "location": [
+          19.807556,
+          51.747929
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 398.0,
+        "location": [
+          19.80428,
+          51.745001
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          19.804193,
+          51.744915
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 138.0,
+        "location": [
+          19.798233,
+          51.746263
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 296.0,
+        "location": [
+          19.645039,
+          51.733998
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "3",
+          "sidewalk:left": "separate",
+          "sidewalk:right": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.644999,
+          51.733919
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "3",
+          "sidewalk:left": "separate",
+          "sidewalk:right": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          19.595744,
+          51.749645
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.595709,
+          51.749622
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.595662,
+          51.74959
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595248,
+          51.749814
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595182,
+          51.749851
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.456006,
+          51.759161
+        ],
+        "tags": {
+          "railway": "tram",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      }
+    ],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.012233,
+          52.229678
+        ],
+        "nearest_geometry_m": 0.14
+      },
+      {
+        "requested": [
+          20.954541,
+          52.227555
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.882491,
+          52.205131
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.823942,
+          52.170079
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.798203,
+          52.124272
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.736612,
+          52.060609
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.563223,
+          51.980428
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.38962,
+          51.892245
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.05831,
+          51.845763
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.784839,
+          51.750483
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.553681,
+          51.757196
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.456008,
+          51.759161
+        ],
+        "nearest_geometry_m": 0.14
+      }
+    ],
+    "snap_start_m": 0.14,
+    "snap_end_m": 0.14,
+    "accounting_ok": true,
+    "accepted": true
+  },
+  {
+    "http_status": 200,
+    "error_text": null,
+    "elapsed_s": 2.41,
+    "url": "http://127.0.0.1:17777/brouter?lonlats=21.012233%2C52.229678%7C20.954541%2C52.227555%7C20.882491%2C52.205131%7C20.823942%2C52.170079%7C20.798203%2C52.124272%7C20.736612%2C52.060609%7C20.563223%2C51.980428%7C20.38962%2C51.892245%7C20.05831%2C51.845763%7C19.784839%2C51.750483%7C19.553681%2C51.757196%7C19.456008%2C51.759161&profile=gravel-v1&alternativeidx=0&format=geojson&exportWaypoints=1",
+    "raw_sha256": "a10c659205d1ce6496b0709a6e3973ac6dfe50095c68889739cc269899c69e83",
+    "case": "multi-200km",
+    "profile": "gravel-v1",
+    "points": [
+      [
+        21.012233,
+        52.229678
+      ],
+      [
+        20.954541,
+        52.227555
+      ],
+      [
+        20.882491,
+        52.205131
+      ],
+      [
+        20.823942,
+        52.170079
+      ],
+      [
+        20.798203,
+        52.124272
+      ],
+      [
+        20.736612,
+        52.060609
+      ],
+      [
+        20.563223,
+        51.980428
+      ],
+      [
+        20.38962,
+        51.892245
+      ],
+      [
+        20.05831,
+        51.845763
+      ],
+      [
+        19.784839,
+        51.750483
+      ],
+      [
+        19.553681,
+        51.757196
+      ],
+      [
+        19.456008,
+        51.759161
+      ]
+    ],
+    "expected": "route",
+    "raw_file": "multi-200km-gravel-v1.json",
+    "server_cpu_s": 4.38,
+    "server_cpu_pct": 181.7,
+    "distance_m": 161114.0,
+    "creator": "BRouter-1.7.10",
+    "vertices": 4150,
+    "geometry_sha256": "cca6af8ce9436e780517deda86df23006e0fc433264d39998de5bd1779ab9b21",
+    "surface_m": {
+      "asphalt": 132143.0,
+      "paving_stones": 15375.0,
+      "paved": 2769.0,
+      "concrete": 476.0,
+      "UNKNOWN": 10030.0,
+      "unpaved": 321.0
+    },
+    "highway_m": {
+      "secondary": 693.0,
+      "residential": 20003.0,
+      "cycleway": 41688.0,
+      "path": 5380.0,
+      "service": 1009.0,
+      "tertiary": 27171.0,
+      "tertiary_link": 12.0,
+      "living_street": 168.0,
+      "unclassified": 64533.0,
+      "track": 451.0,
+      "UNKNOWN": 6.0
+    },
+    "unknown_surface_m": 10030.0,
+    "unknown_surface_pct": 6.23,
+    "major_road_proxy_m": 693.0,
+    "diagnostic_distance_m": 161114.0,
+    "diagnostic_delta_m": 0.0,
+    "review_flags": [
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012258,
+          52.229694
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "good",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          21.012205,
+          52.229915
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          21.012191,
+          52.22994
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          21.012105,
+          52.230043
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          21.011968,
+          52.230141
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "4",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "4",
+          "foot": "no",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "junction": "circular",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 61.0,
+        "location": [
+          21.011448,
+          52.230595
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "lit": "yes",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "5",
+          "maxspeed": "50",
+          "estimated_traffic_class": "5",
+          "lanes": "3",
+          "smoothness": "excellent",
+          "cycleway:both": "no",
+          "oneway": "yes",
+          "sidewalk:left": "no",
+          "sidewalk:right": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 2.0,
+        "location": [
+          20.840081,
+          52.186918
+        ],
+        "tags": {
+          "highway": "path",
+          "foot": "designated",
+          "bicycle": "designated",
+          "smoothness": "excellent",
+          "path": "crossing",
+          "segregated": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1.0,
+        "location": [
+          20.840079,
+          52.186905
+        ],
+        "tags": {
+          "highway": "path",
+          "foot": "designated",
+          "bicycle": "designated",
+          "smoothness": "excellent",
+          "path": "crossing",
+          "segregated": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 78.0,
+        "location": [
+          20.833465,
+          52.178439
+        ],
+        "tags": {
+          "highway": "residential",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          20.832089,
+          52.175752
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.832086,
+          52.175724
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 33.0,
+        "location": [
+          20.83204,
+          52.175434
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_town_class": "1",
+          "maxspeed": "50"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          20.792916,
+          52.083691
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1137.0,
+        "location": [
+          20.604966,
+          51.995518
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 419.0,
+        "location": [
+          20.602985,
+          51.991964
+        ],
+        "tags": {
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 106.0,
+        "location": [
+          20.602434,
+          51.99107
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 22.0,
+        "location": [
+          20.531682,
+          51.975434
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 137.0,
+        "location": [
+          20.529712,
+          51.975422
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          20.529553,
+          51.975383
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 174.0,
+        "location": [
+          20.527375,
+          51.974247
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          20.527231,
+          51.97404
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 32.0,
+        "location": [
+          20.527144,
+          51.973882
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_traffic_class": "3",
+          "junction": "roundabout"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 238.0,
+        "location": [
+          20.424291,
+          51.891025
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          20.424257,
+          51.891016
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_forest_class": "4",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 41.0,
+        "location": [
+          20.42432,
+          51.890646
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 152.0,
+        "location": [
+          20.424399,
+          51.889278
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1113.0,
+        "location": [
+          20.399612,
+          51.889649
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "5",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          20.300584,
+          51.900103
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "6",
+          "estimated_river_class": "6",
+          "bridge": "yes",
+          "route_bicycle_lcn": "yes",
+          "route_hiking_rwn": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 95.0,
+        "location": [
+          20.243639,
+          51.885699
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "2",
+          "estimated_noise_class": "5",
+          "estimated_traffic_class": "1",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          20.243506,
+          51.885639
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 109.0,
+        "location": [
+          20.242535,
+          51.884862
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          20.058084,
+          51.845428
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 13.0,
+        "location": [
+          19.96939,
+          51.815289
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.96935,
+          51.814801
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 142.0,
+        "location": [
+          19.968902,
+          51.813556
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.968846,
+          51.813413
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_forest_class": "1",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "1",
+          "lanes": "2",
+          "route_hiking_nwn": "yes"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 438.0,
+        "location": [
+          19.905118,
+          51.788419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified",
+          "estimated_forest_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 622.0,
+        "location": [
+          19.904958,
+          51.776519
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "2",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 58.0,
+        "location": [
+          19.904899,
+          51.775999
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_traffic_class": "1",
+          "bridge": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 86.0,
+        "location": [
+          19.904789,
+          51.77523
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.845336,
+          51.749914
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 34.0,
+        "location": [
+          19.845353,
+          51.746937
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 255.0,
+        "location": [
+          19.842509,
+          51.748392
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 619.0,
+        "location": [
+          19.834092,
+          51.758157
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "unclassified"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 25.0,
+        "location": [
+          19.826979,
+          51.757007
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 9.0,
+        "location": [
+          19.826854,
+          51.756985
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.826777,
+          51.756975
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 7.0,
+        "location": [
+          19.826679,
+          51.75696
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 19.0,
+        "location": [
+          19.826409,
+          51.756916
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.826354,
+          51.756906
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 28.0,
+        "location": [
+          19.825986,
+          51.756811
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 65.0,
+        "location": [
+          19.825061,
+          51.75669
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 259.0,
+        "location": [
+          19.821448,
+          51.756053
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 183.0,
+        "location": [
+          19.819979,
+          51.754703
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.819887,
+          51.754592
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 130.0,
+        "location": [
+          19.818031,
+          51.753982
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 283.0,
+        "location": [
+          19.814878,
+          51.752419
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "surface": "unpaved",
+          "estimated_forest_class": "1",
+          "tracktype": "grade1"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 38.0,
+        "location": [
+          19.8145,
+          51.752166
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "track",
+          "surface": "unpaved",
+          "estimated_forest_class": "1",
+          "tracktype": "grade1"
+        },
+        "reasons": [
+          "other_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.81444,
+          51.752198
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.810056,
+          51.74724
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 26.0,
+        "location": [
+          19.809718,
+          51.747349
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "3",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "2"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 12.0,
+        "location": [
+          19.809638,
+          51.747253
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 272.0,
+        "location": [
+          19.807835,
+          51.745083
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 150.0,
+        "location": [
+          19.80428,
+          51.745001
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 11.0,
+        "location": [
+          19.804193,
+          51.744915
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "estimated_noise_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 138.0,
+        "location": [
+          19.798233,
+          51.746263
+        ],
+        "tags": {
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "3"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 311.0,
+        "location": [
+          19.753296,
+          51.733504
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "estimated_forest_class": "2",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 302.0,
+        "location": [
+          19.749312,
+          51.734603
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "tertiary",
+          "estimated_forest_class": "1",
+          "estimated_traffic_class": "1"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.749296,
+          51.734548
+        ],
+        "tags": {
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 1130.0,
+        "location": [
+          19.73295,
+          51.735225
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 571.0,
+        "location": [
+          19.731514,
+          51.730179
+        ],
+        "tags": {
+          "highway": "residential"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 54.0,
+        "location": [
+          19.730725,
+          51.730126
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "residential",
+          "foot": "yes",
+          "motor_vehicle": "no"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.722866,
+          51.72821
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.713266,
+          51.725399
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_forest_class": "3",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.6867,
+          51.725389
+        ],
+        "tags": {
+          "highway": "residential",
+          "estimated_forest_class": "5"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 262.0,
+        "location": [
+          19.658461,
+          51.724441
+        ],
+        "tags": {
+          "highway": "tertiary",
+          "estimated_forest_class": "5",
+          "estimated_river_class": "6",
+          "estimated_traffic_class": "2"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 14.0,
+        "location": [
+          19.653814,
+          51.723552
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "service",
+          "service": "parking_aisle"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 95.0,
+        "location": [
+          19.643608,
+          51.722679
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "2",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 2.0,
+        "location": [
+          19.643593,
+          51.722669
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "2",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 15.0,
+        "location": [
+          19.638655,
+          51.725389
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 16.0,
+        "location": [
+          19.63848,
+          51.725479
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 45.0,
+        "location": [
+          19.638003,
+          51.725751
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "secondary",
+          "surface": "asphalt",
+          "estimated_noise_class": "4",
+          "maxspeed": "50",
+          "estimated_traffic_class": "4",
+          "lanes": "3",
+          "sidewalk:both": "separate"
+        },
+        "reasons": [
+          "major_road_proxy"
+        ]
+      },
+      {
+        "distance_m": 8.0,
+        "location": [
+          19.637922,
+          51.725703
+        ],
+        "tags": {
+          "highway": "service",
+          "estimated_noise_class": "3",
+          "service": "driveway"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 3.0,
+        "location": [
+          19.595744,
+          51.749645
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 4.0,
+        "location": [
+          19.595709,
+          51.749622
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 5.0,
+        "location": [
+          19.595662,
+          51.74959
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595248,
+          51.749814
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.595182,
+          51.749851
+        ],
+        "tags": {
+          "reversedirection": "yes",
+          "highway": "cycleway",
+          "estimated_noise_class": "5",
+          "estimated_town_class": "4",
+          "cycleway": "crossing",
+          "oneway": "no",
+          "crossing": "marked"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      },
+      {
+        "distance_m": 6.0,
+        "location": [
+          19.456006,
+          51.759161
+        ],
+        "tags": {
+          "railway": "tram",
+          "oneway": "yes"
+        },
+        "reasons": [
+          "unknown_surface"
+        ]
+      }
+    ],
+    "hard_violations": [],
+    "waypoint_nearest_vertex": [
+      {
+        "requested": [
+          21.012233,
+          52.229678
+        ],
+        "nearest_geometry_m": 0.14
+      },
+      {
+        "requested": [
+          20.954541,
+          52.227555
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.882491,
+          52.205131
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.823942,
+          52.170079
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.798203,
+          52.124272
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.736612,
+          52.060609
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.563223,
+          51.980428
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.38962,
+          51.892245
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          20.05831,
+          51.845763
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.784839,
+          51.750483
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.553681,
+          51.757196
+        ],
+        "nearest_geometry_m": 0.0
+      },
+      {
+        "requested": [
+          19.456008,
+          51.759161
+        ],
+        "nearest_geometry_m": 0.14
+      }
+    ],
+    "snap_start_m": 0.14,
+    "snap_end_m": 0.14,
+    "accounting_ok": true,
+    "accepted": true
+  }
+]
