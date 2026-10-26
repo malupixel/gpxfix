@@ -14,7 +14,7 @@ export function gpxExportPath(publicId: string, version: number | null, elevatio
   return `${path}?${query}`;
 }
 export function GpxExportDialog({ route, initialVersion, onClose }: { route: RouteData; initialVersion?: number; onClose: () => void }) {
-  const { t } = useTranslation(); const [version, setVersion] = useState(initialVersion?.toString() ?? "");
+  const { t } = useTranslation(); const [version, setVersion] = useState((initialVersion ?? route.viewedVersion).toString());
   const [filename, setFilename] = useState(""); const [elevation, setElevation] = useState(true);
   const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null), [notice, setNotice] = useState<string | null>(null);
   const versions = useQuery({ queryKey: ["route-versions", route.publicId, route.currentVersion], queryFn: () => getRouteVersions(route.publicId), staleTime: 0 });
@@ -47,5 +47,5 @@ export function GpxExportDialog({ route, initialVersion, onClose }: { route: Rou
 }
 export function RouteDownload({ route }: { route: RouteData }) {
   const { t } = useTranslation(); const [open, setOpen] = useState(false);
-  return <><button onClick={() => setOpen(true)} className="route-button border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800">{t("info.downloadGpx")}</button>{open && <GpxExportDialog route={route} onClose={() => setOpen(false)} />}</>;
+  return <><button onClick={() => setOpen(true)} className="route-button border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800">{t("info.downloadGpx")}</button>{open && <GpxExportDialog key={`${route.publicId}:${route.viewedVersion}`} route={route} onClose={() => setOpen(false)} />}</>;
 }
