@@ -6,6 +6,8 @@ import { Map as MapLibreMap, Marker, NavigationControl, type GeoJSONSource, type
 import { useEffect, useRef, useState } from "react";
 import type { RouteCoordinate } from "@/features/routes/route-geometry";
 import { finalGeometry, previewPointMove, type RouteEditorDocument } from "./model";
+import { GhostMapLayer } from "@/features/ghost-routes/map-layer";
+import { GhostRoutesPanel } from "@/features/ghost-routes/panel";
 import { SquadratsGrid } from "@/components/map/squadrats-grid";
 
 const STYLE = process.env.NEXT_PUBLIC_MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/liberty";
@@ -88,7 +90,7 @@ export function EditorMap(props: Props) {
 
   useEffect(() => { if (loadedMap) localizeMapControls(loadedMap.getContainer(), t, t("editor.mapLabel")); }, [loadedMap, t]);
 
-  return <><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="editor-grid-control absolute left-3 top-16 z-10"><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
+  return <><GhostMapLayer map={loadedMap} beforeLayerId="editor-route-line" /><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="editor-grid-control absolute left-3 top-16 z-10"><div className="flex flex-wrap gap-2"><GhostRoutesPanel align="left" /><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
 }
 
 function updateMap(map: MapLibreMap | null, document: RouteEditorDocument, selectedId: string | null) {

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
+import { useGhostRoutes } from "@/features/ghost-routes/provider";
 import { RouteMap } from "@/components/map/route-map";
 import type { RouteData, RouteSuggestion } from "@/types/route";
 import { ElevationProfile } from "./elevation-profile";
@@ -30,6 +31,7 @@ import { publicRoutePath } from "./route-links";
 
 export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
   const { t } = useTranslation();
+  const { closeComparison } = useGhostRoutes();
   const router=useRouter();
   const params=useSearchParams();
   const linkedSuggestion=params.get("suggestion");
@@ -71,6 +73,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     if (!isOwner || !route.isCurrentVersion || loadingEditor) return;
     if (mode === "suggest" && hasSuggestionWork(geometry, form) && !window.confirm(t("suggestion.discardConfirm"))) return;
     finishSuggestion();
+    closeComparison();
     setLoadingEditor(true); setEditError(false);
     try { setEditing(await getOwnerEditor(route.publicId)); } catch { setEditError(true); } finally { setLoadingEditor(false); }
   }
@@ -106,6 +109,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   function enterSuggestMode(tool: SuggestionTool = null) {
     if(!route.suggestionsEnabled){window.alert(t("routeMetadata.closed"));return;}
     if(!route.isCurrentVersion){window.alert(t("versions.redirect", { version: route.currentVersion }));router.push(publicRoutePath(route.publicId));return;}
+    closeComparison();
     setMode("suggest");
     setSelectedSuggestionId(null);
     setSubmitError(false);

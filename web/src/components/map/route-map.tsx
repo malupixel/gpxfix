@@ -25,6 +25,9 @@ import { ElevationChart } from "@/features/routes/elevation-profile";
 import { elevationProfileModel } from "@/features/routes/elevation-profile-data";
 import type { RoutePageMode, SuggestionGeometry } from "@/features/routes/route-page-state";
 import type { RouteData, RouteSuggestion } from "@/types/route";
+import { GhostMapLayer } from "@/features/ghost-routes/map-layer";
+import { GhostRoutesPanel } from "@/features/ghost-routes/panel";
+import { useGhostRoutes } from "@/features/ghost-routes/provider";
 import { SquadratsGrid } from "./squadrats-grid";
 import { localizeMapControls } from "./map-translations";
 
@@ -62,6 +65,8 @@ type RouteMapProps = {
 };
 
 export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActive, suggestions, selectedSuggestionId, onSuggestionSelect, highlightedCoordinate, onElevationHighlight, onRouteClick, onMapClick, workflowOverlay }: RouteMapProps) {
+  const { state: ghostState, closeComparison } = useGhostRoutes();
+  const comparing = ghostState.comparison !== null;
   const fullscreenContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fallbackFullscreenRef = useRef(false);
@@ -253,16 +258,16 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
 
   useEffect(()=>{
     if(!loadedMap)return;
-    const select=(event:MapMouseEvent)=>{if(mode!=="view")return;const feature=loadedMap.queryRenderedFeatures(event.point,{layers:[PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]})[0];const publicId=feature?.properties?.publicId;if(typeof publicId==="string")onSuggestionSelect(publicId)};
+    const select=(event:MapMouseEvent)=>{if(mode!=="view" || comparing)return;const feature=loadedMap.queryRenderedFeatures(event.point,{layers:[PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]})[0];const publicId=feature?.properties?.publicId;if(typeof publicId==="string")onSuggestionSelect(publicId)};
     const enter=()=>{if(mode==="view")loadedMap.getCanvas().style.cursor="pointer"}; const leave=()=>{loadedMap.getCanvas().style.cursor=""};
     for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.on("click",layer,select);loadedMap.on("mouseenter",layer,enter);loadedMap.on("mouseleave",layer,leave)}
     return()=>{for(const layer of [PERSISTED_LINES_LAYER_ID,PERSISTED_POINTS_LAYER_ID]){loadedMap.off("click",layer,select);loadedMap.off("mouseenter",layer,enter);loadedMap.off("mouseleave",layer,leave)}};
-  },[loadedMap,mode,onSuggestionSelect]);
+  },[loadedMap,mode,onSuggestionSelect,comparing]);
 
   useEffect(() => {
     if (!loadedMap) return;
     const canvas = loadedMap.getCanvas();
-    const suggestionActive = mode === "suggest" && draft.type !== null && drawingActive;
+    const suggestionActive = !comparing && mode === "suggest" && draft.type !== null && drawingActive;
     const onClick = (event: MapMouseEvent) => {
       if (!suggestionActive) return;
       const coordinate: RouteCoordinate = [event.lngLat.lng, event.lngLat.lat];
@@ -273,7 +278,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
       } else if (draft.type === "detour" && draft.start && !draft.end) onMapClick(coordinate);
     };
     const onMouseMove = (event: MapMouseEvent) => {
-      if (draft.type !== "detour" || !draft.start || draft.end || !drawingActive) return;
+      if (comparing || draft.type !== "detour" || !draft.start || draft.end || !drawingActive) return;
       const preview = [...detourCoordinates(draft), [event.lngLat.lng, event.lngLat.lat] as RouteCoordinate];
       setSourceData(loadedMap, DETOUR_PREVIEW_SOURCE_ID, preview.length >= 2 ? featureCollection([lineFeature(preview)]) : emptyFeatureCollection());
     };
@@ -291,10 +296,18 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
       loadedMap.off("mouseleave", ROUTE_INTERACTION_LAYER_ID, onRouteLeave);
       canvas.style.cursor = "";
     };
-  }, [draft, drawingActive, loadedMap, mode, onMapClick, onRouteClick, routeMeasure]);
+  }, [draft, drawingActive, loadedMap, mode, onMapClick, onRouteClick, routeMeasure, comparing]);
 
   useEffect(() => {
-    if (!loadedMap || distanceInterval === 0) return;
+    if (!loadedMap) return;
+    for (const layer of [ROUTE_LAYER_ID, ROUTE_INTERACTION_LAYER_ID, PERSISTED_LINES_LAYER_ID, PERSISTED_POINTS_LAYER_ID, SELECTION_LAYER_ID, DETOUR_LAYER_ID, DETOUR_PREVIEW_LAYER_ID, HANDLES_LAYER_ID]) {
+      loadedMap.setLayoutProperty(layer, "visibility", comparing ? "none" : "visible");
+    }
+    for (const marker of loadedMap.getContainer().querySelectorAll<HTMLElement>(".maplibregl-marker")) marker.style.visibility = comparing ? "hidden" : "";
+  }, [loadedMap, comparing]);
+
+  useEffect(() => {
+    if (!loadedMap || distanceInterval === 0 || comparing) return;
 
     const markers = calculateDistanceMarkers(geometry.coordinates, distanceInterval).map(
       ({ coordinate, distanceMeters }) =>
@@ -304,15 +317,15 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
     );
 
     return () => markers.forEach((marker) => marker.remove());
-  }, [distanceInterval, geometry.coordinates, loadedMap, i18n.language, t]);
+  }, [distanceInterval, geometry.coordinates, loadedMap, i18n.language, t, comparing]);
 
   useEffect(() => {
-    if (!loadedMap || !highlightedCoordinate) return;
+    if (!loadedMap || comparing || !highlightedCoordinate) return;
     const element = document.createElement("div");
     element.className = "size-4 rounded-full border-[3px] border-white bg-violet-600 shadow-lg";
     const marker = new Marker({ element, anchor: "center" }).setLngLat(highlightedCoordinate).addTo(loadedMap);
     return () => { marker.remove(); };
-  }, [highlightedCoordinate, loadedMap]);
+  }, [highlightedCoordinate, loadedMap, comparing]);
 
   useEffect(() => {
     const root = fullscreenContainerRef.current;
@@ -413,6 +426,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
         aria-label={t("route.interactiveMap")}
       />
       <div className="absolute right-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap justify-end gap-2">
+        <GhostRoutesPanel />
         <SquadratsGrid map={loadedMap} beforeLayerId={ROUTE_LAYER_ID} />
         <label className="rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
           <span className="mr-2">{t("route.distanceMarkers")}</span>
@@ -439,7 +453,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
           <FullscreenIcon isFullscreen={isFullscreen} />
         </button>
       </div>
-      {isFullscreen && elevationModel && mode === "view" && (
+      {!comparing && isFullscreen && elevationModel && mode === "view" && (
         <FullscreenElevationDrawer
           model={elevationModel}
           expanded={isElevationExpanded}
@@ -450,7 +464,11 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
           onHighlight={onElevationHighlight}
         />
       )}
-      {workflowOverlay}
+      <GhostMapLayer map={loadedMap} beforeLayerId={ROUTE_LAYER_ID} />
+      {comparing && <div role="status" className="absolute bottom-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white/95 p-3 text-sm shadow">
+        <div className="flex flex-wrap gap-3">{ghostState.comparison?.map(route => <span key={route.id} className="flex items-center gap-2"><span aria-hidden="true" className="size-3 rounded-full" style={{ background: route.color }} />{t(route.role === "A" ? "ghost.primary" : "ghost.secondary")}: {route.name}</span>)}</div><button className="route-button" onClick={closeComparison}>{t("ghost.closeComparison")}</button>
+      </div>}
+      {!comparing && workflowOverlay}
     </div>
   );
 }
