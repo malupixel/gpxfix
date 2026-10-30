@@ -1,0 +1,56 @@
+# Independent project: never merges the application's .env, volumes or containers.
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: e2e
+      POSTGRES_USER: e2e
+      POSTGRES_PASSWORD: e2e
+    tmpfs: /var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U e2e -d e2e]
+      interval: 2s
+      retries: 30
+  fixtures:
+    image: python:3.12-alpine
+    command: [python, /fixtures/server.py]
+    volumes:
+      - ./fixtures:/fixtures:ro
+  api:
+    build: ../api
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      DATABASE_URL: jdbc:postgresql://db:5432/e2e
+      POSTGRES_USER: e2e
+      POSTGRES_PASSWORD: e2e
+      OWNER_COOKIE_SECURE: 'false'
+      GPX_STORAGE_PATH: /tmp/e2e-gpx
+      ADMIN_SECRET: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      CORS_ALLOWED_ORIGINS: http://127.0.0.1:8250
+      ELEVATION_PROVIDER: remote
+      ELEVATION_BASE_URL: http://fixtures:8090
+      ROUTING_BASE_URL: http://fixtures:8090
+    ports: ['127.0.0.1:8251:8080']
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, 'http://localhost:8080/actuator/health']
+      interval: 2s
+      retries: 60
+    depends_on:
+      db: {condition: service_healthy}
+      fixtures: {condition: service_started}
+  web:
+    build:
+      context: ../web
+      args:
+        NEXT_PUBLIC_API_URL: http://127.0.0.1:8251
+        NEXT_PUBLIC_MAP_STYLE_URL: http://127.0.0.1:8250/e2e-map-style.json
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      SITE_URL: http://127.0.0.1:8250
+    ports: ['127.0.0.1:8250:3000']
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, wget, -q, --spider, 'http://127.0.0.1:3000']
+      interval: 2s
+      retries: 40

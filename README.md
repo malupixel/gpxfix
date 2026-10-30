@@ -138,3 +138,12 @@ The map style is provider-independent and configurable with `NEXT_PUBLIC_MAP_STY
 ### Current GPX limitations
 
 Only `trk/trkseg/trkpt` track data is read; routes and waypoints are ignored. Multiple segments are concatenated for the initial public `LineString`, but metrics exclude gaps. Original map geometry stays 2D and unchanged. Complete GPX elevation is preserved; missing profiles use a shared version-processing pipeline, including drawn routes and merges. Profiles and exported `<ele>` belong to each version's GPX. The default elevation provider reads local Copernicus DEM tiles; remote is an explicit development option. See [installation, licensing and VPS configuration](ELEVATION.md) before starting/deploying the backend.
+
+## Browser end-to-end tests
+
+The isolated Playwright environment (separate temporary PostGIS database, API,
+frontend and deterministic external-service fixtures) is documented in
+[e2e/README.md](e2e/README.md). Run it from `e2e/` with `npm ci`,
+`npx playwright install --with-deps chromium`, `npm run env:up` and `npm test`.
+Use `npm run report` for browser diagnostics and failure traces.
+The audit and known regressions are recorded in [e2e/AUDIT.md](e2e/AUDIT.md).

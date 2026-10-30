@@ -1,0 +1,15 @@
+{
+  "name": "boostmytrack-e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "env:up": "docker compose -p boostmytrack-e2e -f compose.yml up -d --build --wait",
+    "env:down": "docker compose -p boostmytrack-e2e -f compose.yml down -v",
+    "test:isolated": "bash run-isolated.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0"
+  }
+}
