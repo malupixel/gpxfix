@@ -1,9 +1,34 @@
 # Audyt serwisu — 30.10.2026
 
-Testowano aktualne źródła w lokalnym, odizolowanym środowisku opisanym w README.
-Zmiany obejmują testy i dokumentację; usterek aplikacji nie naprawiano w tym audycie.
+Testowano źródła w lokalnym, odizolowanym środowisku opisanym w README.
 
-## Wynik E2E
+## Aktualizacja po naprawie
+
+Wszystkie trzy usterki opisane w audycie zostały naprawione:
+
+- **BUG-001:** edytor montuje się po hydratacji. Odczyt szkicu następuje przed
+  inicjalizacją reducera i autosave, bez różnic w pierwszym renderze SSR/klienta.
+- **BUG-002:** Docker przekazuje `API_INTERNAL_URL` do etapu budowania Next.js;
+  Compose używa tej samej wartości przy budowaniu i uruchomieniu. Zmiana tego
+  adresu wymaga przebudowania obrazu web. Regresja sprawdza `/api/health`
+  i pobranie PNG pod rzeczywistym adresem `og:image` z HTML trasy.
+- **BUG-003:** udany zapis sugestii uruchamia ponowne pobranie listy przez
+  endpoint właściciela lub publiczny. Testy potwierdzają natychmiastową
+  widoczność dla właściciela oraz ukrycie oczekującego zgłoszenia odwiedzającego.
+
+Wynik pełnego przebiegu po naprawie: **38/38 E2E zaliczonych**, bez pominiętych,
+oczekiwanych niepowodzeń i powtórzeń. To 19 scenariuszy na desktopie i w emulacji
+Pixel 7. Sprawdzono również wyjątki JS, konsolę, błędy sieci i poziome przepełnienie.
+Środowisko wystartowało z pustą bazą i zostało automatycznie usunięte po testach.
+Ponownie zaliczono 68/68 testów frontendu, ESLint, TypeScript i budowę obrazu web.
+Backend nie wymagał zmian; wcześniejszy wynik 83/83 testów API jest opisany niżej.
+
+Regresje `BUG-001`, `BUG-002` i `BUG-003` są zwykłymi testami bez `test.fail`.
+Aktualny raport HTML: `npm run report` w `e2e/`; JSON: `test-results/results.json`.
+Raporty są nadpisywane przy kolejnym uruchomieniu. Poniżej zachowano historię
+pierwszego audytu i pierwotne kroki odtworzenia — opisują stan przed naprawami.
+
+## Wynik pierwszego audytu (przed naprawami)
 
 18 scenariuszy × desktop i emulacja Pixel 7 = 36 przypadków.
 30 przypadków przeszło bez wykrytych usterek aplikacji. Pozostałe 6 odtwarza
@@ -15,13 +40,9 @@ oczekiwanie na pełny szkic i powtórzono wyłącznie ten test na obu profilach
 w nowym, pustym środowisku: oba odtworzyły dokładnie błąd React #418,
 ze szkicem prawidłowo przywróconym. Pozostałych testów nie zmieniano.
 
-`test.fail` oznacza oczekiwane niepowodzenie aplikacji, a nie naprawioną funkcję.
-Oba przebiegi sprawdziły także automatyczne usuwanie środowiska — po błędzie
-i po przebiegu zgodnym z oczekiwaniami. Raport HTML z ostatniego powtórzenia
-jest dostępny przez `npm run report`; raport pełnego przebiegu audytu
-(zawierający także wcześniejszy błąd synchronizacji testu) zachowano lokalnie
-w `playwright-report/full-audit`: `npm run report -- playwright-report/full-audit`.
-Raporty są generowane lokalnie i nie są dodawane do repozytorium.
+W pierwszym audycie regresje miały znacznik `test.fail` dokumentujący
+potwierdzone błędy. Po naprawie znaczniki usunięto. Obecny raport HTML
+pokazuje pełny przebieg po poprawkach.
 
 ## Pozostałe uruchomione kontrole
 
@@ -30,7 +51,7 @@ Raporty są generowane lokalnie i nie są dodawane do repozytorium.
   uruchomione w Javie 21 z rzeczywistymi bazami PostGIS/Testcontainers.
 - ESLint, TypeScript i budowanie obrazów aplikacji: zaliczone.
 
-## Potwierdzone usterki
+## Usterki potwierdzone w pierwszym audycie (obecnie naprawione)
 
 ### BUG-001 — React hydration przy przywracaniu szkicu (P2)
 

@@ -133,7 +133,7 @@ Open the result at `http://localhost:8150/route/{publicId}`.
 
 Uploaded source files are stored under `GPX_STORAGE_PATH` (`/data/gpx` in Docker) using generated internal names. Compose mounts the persistent `gpx_data` volume. Upload limits are controlled by `GPX_MAX_FILE_SIZE`, `GPX_MAX_REQUEST_SIZE`, and `GPX_MAX_FILE_SIZE_BYTES`.
 
-The map style is provider-independent and configurable with `NEXT_PUBLIC_MAP_STYLE_URL`. Development defaults to OpenFreeMap's public Liberty style, which requires no API key; use your own compatible style URL for deployment if desired. Server-side frontend requests use `API_INTERNAL_URL`.
+The map style is provider-independent and configurable with `NEXT_PUBLIC_MAP_STYLE_URL`. Development defaults to OpenFreeMap's public Liberty style, which requires no API key; use your own compatible style URL for deployment if desired. Server-side frontend requests use `API_INTERNAL_URL`. Docker also passes this address into the build for Next.js API proxy rewrites. Rebuild the web image after changing either API URL; when building the image directly, set `--build-arg API_INTERNAL_URL=...` if your backend is not available at the default `http://api:8080`.
 
 ### Current GPX limitations
 

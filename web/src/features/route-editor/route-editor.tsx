@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePolylineDistance, type RouteCoordinate } from "@/features/routes/route-geometry";
 import { managementRouteUrl } from "@/features/routes/route-links";
@@ -16,10 +16,21 @@ import { apiRoutingService } from "./routing";
 
 const id = () => crypto.randomUUID();
 type Props = { existing?: OwnerEditorData; onClose?: () => void; onSaved?: () => void; onSuggest?: () => void };
-export function RouteEditor({ existing, onClose, onSaved, onSuggest }: Props = {}) {
+const subscribeToHydration = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+
+export function RouteEditor(props: Props = {}) {
+  // The map editor depends on browser storage. Mount it after hydration so its
+  // reducer reads the draft once, before autosaving, without an SSR mismatch.
+  const hydrated = useSyncExternalStore(subscribeToHydration, clientSnapshot, serverSnapshot);
+  return hydrated ? <RouteEditorContent {...props} /> : <main aria-busy="true" className="fixed inset-0 z-40 bg-slate-100" />;
+}
+
+function RouteEditorContent({ existing, onClose, onSaved, onSuggest }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
-  const [state, dispatch] = useReducer(editorReducer, undefined, () => createEditorState(existing ? initializeExistingDocument(existing.route.geometry.coordinates, existing.editorDocument) : typeof window === "undefined" ? undefined : loadDraft() ?? undefined));
+  const [state, dispatch] = useReducer(editorReducer, undefined, () => createEditorState(existing ? initializeExistingDocument(existing.route.geometry.coordinates, existing.editorDocument) : loadDraft() ?? undefined));
   const doc = state.present;
   const [mode, setMode] = useState<SegmentMode>("ROUTED"), [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null), [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [inserting, setInserting] = useState(false), [error, setError] = useState<string | null>(null), [saving, setSaving] = useState(false), [showSave, setShowSave] = useState(false);

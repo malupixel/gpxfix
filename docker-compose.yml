@@ -70,6 +70,7 @@ services:
     build:
       context: ./web
       args:
+        API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8080}
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8151}
         NEXT_PUBLIC_MAP_STYLE_URL: ${NEXT_PUBLIC_MAP_STYLE_URL:-https://tiles.openfreemap.org/styles/liberty}
     environment:

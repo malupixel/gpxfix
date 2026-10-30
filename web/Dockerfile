@@ -5,6 +5,8 @@ RUN npm ci
 
 FROM node:24-alpine AS build
 WORKDIR /app
+ARG API_INTERNAL_URL=http://api:8080
+ENV API_INTERNAL_URL=${API_INTERNAL_URL}
 ARG NEXT_PUBLIC_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ARG NEXT_PUBLIC_MAP_STYLE_URL=https://tiles.openfreemap.org/styles/liberty

@@ -40,9 +40,12 @@ test('original GPX bytes and public social metadata', async ({ request }) => {
 
 test('BUG-002: social preview must be available through the frontend proxy', async ({ request }) => {
   const route = await seed(request);
-  const metadata = await (await request.get(`${API}/api/routes/${route.publicId}/share`)).json();
-  const preview = await request.get(`http://127.0.0.1:8250${metadata.imagePath}`);
-  test.fail(true, 'BUG-002: Next rewrites capture localhost:8080 at build time; runtime API_INTERNAL_URL has no effect');
+  const health = await request.get('http://127.0.0.1:8250/api/health');
+  expect(health.ok()).toBeTruthy();
+  const html = await (await request.get(`http://127.0.0.1:8250/route/${route.publicId}`)).text();
+  const image = html.match(/property="og:image" content="([^"]+)"/);
+  expect(image).toBeTruthy();
+  const preview = await request.get(image![1].replaceAll('&amp;', '&'));
   expect(preview.ok()).toBeTruthy();
   expect(preview.headers()['content-type']).toContain('image/png');
   expect((await preview.body()).subarray(1, 4).toString()).toBe('PNG');

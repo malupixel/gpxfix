@@ -45,8 +45,6 @@ test('owner edits geometry and browses immutable version history', async ({ page
   expect(versions.length).toBe(2);
 });
 
-// Expected failure documents a reproduced application defect; an unexpected pass
-// makes CI fail so this marker must be removed when the defect is fixed.
 test('BUG-001: restoring a saved drawing must hydrate without React errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -56,8 +54,6 @@ test('BUG-001: restoring a saved drawing must hydrate without React errors', asy
   page.on('dialog', dialog => dialog.accept());
   await page.reload();
   await expect(page.getByRole('button', { name: 'Finish & save', exact: true })).toBeEnabled();
-  expect(errors.every(error => error.includes('#418'))).toBe(true);
-  test.fail(true, 'BUG-001: localStorage draft differs from server render (React #418)');
   expect(errors, 'Restoring a draft should not cause hydration errors').toEqual([]);
 });
 

@@ -83,8 +83,14 @@ test('merge detour creates a version and historical geometry stays immutable', a
   await expect(page.getByText('Ghost Routes (2)', { exact: true })).toBeVisible();
 });
 
-test('BUG-003: owner sees the submitted suggestion immediately after Done', async ({ page }) => {
-  await owner(page);
+for (const viewer of ['owner', 'visitor'] as const) {
+test(`BUG-003: ${viewer} suggestion visibility immediately after Done`, async ({ page }) => {
+  const route = await owner(page);
+  if (viewer === 'visitor') {
+    await page.context().clearCookies();
+    await page.reload();
+    await expect(page.getByText('Owner mode', { exact: true })).toHaveCount(0);
+  }
   await page.getByRole('button', { name: 'Suggest changes', exact: true }).click();
   await page.getByRole('button', { name: /Add a note/ }).click();
   await clickRoute(page, .52);
@@ -94,6 +100,12 @@ test('BUG-003: owner sees the submitted suggestion immediately after Done', asyn
   await dialog.getByRole('button', { name: 'Submit suggestion', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Your suggestion was sent' })).toBeVisible();
   await page.getByRole('button', { name: 'Done', exact: true }).click();
-  test.fail(true, 'BUG-003: submission does not refresh suggestions state after success');
-  await expect(page.getByRole('button').filter({ hasText: 'Immediately visible new note' })).toBeVisible();
+  const card = page.getByRole('button').filter({ hasText: 'Immediately visible new note' });
+  if (viewer === 'owner') await expect(card).toBeVisible();
+  else {
+    await expect(page.getByText('This route has no suggestions yet. You can help improve it.', { exact: true })).toBeVisible();
+    await expect(card).toHaveCount(0);
+    expect(await (await page.request.get(`${API}/api/routes/${route.publicId}/suggestions`)).json()).toEqual([]);
+  }
 });
+}

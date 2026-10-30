@@ -69,6 +69,7 @@ z błędami, nieudane żądania). Dla błędów zachowywane są trace, nagranie 
 Oczekiwane 4xx, np. brak dostępu właściciela i odrzucenie GPX, są zapisywane;
 nieoczekiwane wyjątki JS, komunikaty konsoli i błędy 5xx/sieci oblewają test.
 
-Znane błędy mają identyfikator `BUG-…` i znacznik `test.fail`: są wykonywane,
-a nie pomijane. Po naprawie nieoczekiwany sukces obleje test — wtedy usuń znacznik.
-Lista usterek, wynik audytu i ograniczenia znajdują się w `AUDIT.md`.
+Regresje `BUG-001`, `BUG-002` i `BUG-003` są zwykłymi testami, bez znacznika
+`test.fail`. Sprawdzają odtworzenie szkicu, proxy API/obraz udostępniania
+i widoczność nowej sugestii dla właściciela oraz odwiedzającego.
+Historia audytu, napraw i ograniczenia znajdują się w `AUDIT.md`.

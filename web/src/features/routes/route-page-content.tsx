@@ -131,6 +131,10 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
       const body=suggestionRequest(geometry,form),payload=JSON.stringify(body);
       if(requestKey.current?.payload!==payload)requestKey.current={key:crypto.randomUUID(),payload};
       await createRouteSuggestion(route.publicId,body,requestKey.current.key);
+      // Reload through the owner/public endpoint rather than exposing a pending
+      // submission to visitors or treating a failed refresh as a failed upload.
+      setSuggestionsLoading(true);
+      setSuggestionsRetry(value => value + 1);
       setProcessStep("success");
     } catch {
       setSubmitError(true);
