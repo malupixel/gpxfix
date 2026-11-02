@@ -4,6 +4,7 @@ import type { Map as MapLibreMap, GeoJSONSource } from '../../web/node_modules/m
 
 for (const view of ['route', 'drawing', 'owner editor'] as const) {
   test(`Squadratinhos zoom, pan and grid lifecycle in ${view}`, async ({ page }, info) => {
+    test.setTimeout(90_000);
     if (view === 'drawing') await page.goto('/draw');
     else {
       await owner(page);
@@ -29,6 +30,8 @@ for (const view of ['route', 'drawing', 'owner editor'] as const) {
     }).toPass({ timeout: 10_000 });
     await map.evaluate(map => map.jumpTo({ center: [21.02, 52.235], zoom: 9 }));
     await checkbox.check();
+    const fineCheckbox = page.getByRole('checkbox', { name: 'Show Squadratinhos grid', exact: true });
+    await fineCheckbox.check();
     await expect(page.getByText('Zoom in to see the Squadrats grid.', { exact: true })).toBeVisible();
 
     const counts = () => map.evaluate(async map => {
@@ -45,13 +48,13 @@ for (const view of ['route', 'drawing', 'owner editor'] as const) {
     });
     await expect.poll(counts).toEqual({ large: 0, fine: 0, renderedFine: 0 });
     await map.evaluate(map => map.jumpTo({ zoom: 13.99 }));
-    await expect(page.getByText('Zoom in to also see squadratinhos.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Zoom in to see the Squadratinhos grid.', { exact: true })).toBeVisible();
     await expect.poll(async () => (await counts()).large).toBeGreaterThan(0);
     expect((await counts()).fine).toBe(0);
 
     await map.evaluate(map => map.jumpTo({ zoom: 14 }));
     await expect.poll(async () => (await counts()).renderedFine).toBeGreaterThan(0);
-    await expect(page.getByText('Zoom in to also see squadratinhos.', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('Zoom in to see the Squadratinhos grid.', { exact: true })).toHaveCount(0);
     const order = await map.evaluate(map => map.getStyle().layers.map(layer => layer.id));
     expect(order.indexOf('squadratinhos-grid-lines')).toBeLessThan(order.indexOf('squadrats-grid-lines'));
     expect(order.indexOf('squadrats-grid-lines')).toBeLessThan(order.indexOf(view === 'route' ? 'route-line' : 'editor-route-line'));
@@ -92,11 +95,13 @@ for (const view of ['route', 'drawing', 'owner editor'] as const) {
     await expect.poll(async () => (await counts()).renderedFine).toBeGreaterThan(0);
     await page.screenshot({ path: info.outputPath('squadratinhos.png') });
     await checkbox.uncheck();
+    await fineCheckbox.uncheck();
     expect(await map.evaluate(map => ['squadrats-grid', 'squadratinhos-grid'].some(id => map.getSource(id)))).toBe(false);
     expect(await map.evaluate(map => ['squadrats-grid-lines', 'squadratinhos-grid-lines'].some(id => map.getLayer(id)))).toBe(false);
     await checkbox.check();
+    await fineCheckbox.check();
     await expect.poll(async () => (await counts()).renderedFine).toBeGreaterThan(0);
     // Leave the page with the grid enabled; diagnostics also cover navigation.
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 }

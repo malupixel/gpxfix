@@ -427,7 +427,7 @@ export function RouteMap({ geometry, elevationProfile, mode, draft, drawingActiv
       />
       <div className="absolute right-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap justify-end gap-2">
         <GhostRoutesPanel />
-        <SquadratsGrid map={loadedMap} beforeLayerId={ROUTE_LAYER_ID} />
+        <SquadratsGrid map={loadedMap} beforeLayerId={ROUTE_LAYER_ID} coordinates={geometry.coordinates} />
         <label className="rounded-md border border-slate-200 bg-white/95 px-3 py-2 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
           <span className="mr-2">{t("route.distanceMarkers")}</span>
           <select

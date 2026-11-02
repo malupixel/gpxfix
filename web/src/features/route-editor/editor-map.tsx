@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { localizeMapControls } from "@/components/map/map-translations";
 import type * as GeoJSON from "geojson";
 import { Map as MapLibreMap, Marker, NavigationControl, type GeoJSONSource, type MapMouseEvent } from "maplibre-gl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { RouteCoordinate } from "@/features/routes/route-geometry";
 import { finalGeometry, previewPointMove, type RouteEditorDocument } from "./model";
 import { GhostMapLayer } from "@/features/ghost-routes/map-layer";
@@ -28,6 +28,7 @@ export function EditorMap(props: Props) {
   const { document: routeDocument, selectedSegmentId, selectedPointId, inserting } = props;
   const node = useRef<HTMLDivElement>(null), mapRef = useRef<MapLibreMap | null>(null), callbacks = useRef(props);
   const documentRef = useRef(routeDocument), selectedSegmentRef = useRef(selectedSegmentId), insertingRef = useRef(inserting);
+  const coordinates = useMemo(() => finalGeometry(routeDocument), [routeDocument]);
   const [mapError, setMapError] = useState(false);
   const [loadedMap, setLoadedMap] = useState<MapLibreMap | null>(null);
   useEffect(() => { callbacks.current = props; }, [props]);
@@ -90,7 +91,7 @@ export function EditorMap(props: Props) {
 
   useEffect(() => { if (loadedMap) localizeMapControls(loadedMap.getContainer(), t, t("editor.mapLabel")); }, [loadedMap, t]);
 
-  return <><GhostMapLayer map={loadedMap} beforeLayerId="editor-route-line" /><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="editor-grid-control absolute left-3 top-16 z-10"><div className="flex flex-wrap gap-2"><GhostRoutesPanel align="left" /><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" /></div></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
+  return <><GhostMapLayer map={loadedMap} beforeLayerId="editor-route-line" /><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="editor-grid-control absolute left-3 right-16 top-16 z-10"><div className="flex flex-wrap gap-2"><GhostRoutesPanel align="left" /><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" coordinates={coordinates} /></div></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
 }
 
 function updateMap(map: MapLibreMap | null, document: RouteEditorDocument, selectedId: string | null) {

@@ -6,12 +6,18 @@ export const SQUADRATINHOS_ZOOM = 17;
 export type GeographicBounds = { west: number; south: number; east: number; north: number };
 
 const clampLatitude = (latitude: number) => Math.max(-WEB_MERCATOR_MAX_LATITUDE, Math.min(WEB_MERCATOR_MAX_LATITUDE, latitude));
+export const TILE_BOUNDARY_EPSILON = 1e-9;
 // Inverse projection can land a few ulps away from an integer tile boundary.
-const snapBoundary = (value: number) => Math.abs(value - Math.round(value)) < 1e-9 ? Math.round(value) : value;
+export const snapBoundary = (value: number) => Math.abs(value - Math.round(value)) < TILE_BOUNDARY_EPSILON ? Math.round(value) : value;
 const tileX = (longitude: number, zoom: number) => snapBoundary((longitude + 180) / 360 * 2 ** zoom);
 const tileY = (latitude: number, zoom: number) => snapBoundary((1 - Math.asinh(Math.tan(clampLatitude(latitude) * Math.PI / 180)) / Math.PI) / 2 * 2 ** zoom);
 const longitude = (x: number, zoom: number) => x / 2 ** zoom * 360 - 180;
 const latitude = (y: number, zoom: number) => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / 2 ** zoom))) * 180 / Math.PI;
+
+/** Continuous tile coordinates shared by the grid and route intersection traversal. */
+export function lonLatToTilePosition(lon: number, lat: number, zoom: number) {
+  return { x: tileX(lon, zoom), y: tileY(lat, zoom) };
+}
 
 /** XYZ uses half-open cells: west/north belongs to this tile, east/south to the next. */
 export function lonLatToTile(lon: number, lat: number, zoom: number) {
@@ -41,10 +47,11 @@ export function tilesIntersectingBounds(bounds: GeographicBounds, zoom: number) 
 export function createSquadratsGrid(
   bounds: GeographicBounds,
   zoom: typeof SQUADRATS_ZOOM | typeof SQUADRATINHOS_ZOOM = SQUADRATS_ZOOM,
+  includeParentBorders = false,
 ): FeatureCollection<LineString> | null {
   const { minX, maxX, minY, maxY } = tilesIntersectingBounds(bounds, zoom);
   // Fine grid boundaries shared with the large grid are rendered only by the large layer.
-  const parentStride = zoom === SQUADRATINHOS_ZOOM ? 2 ** (zoom - SQUADRATS_ZOOM) : null;
+  const parentStride = zoom === SQUADRATINHOS_ZOOM && !includeParentBorders ? 2 ** (zoom - SQUADRATS_ZOOM) : null;
   const features: FeatureCollection<LineString>["features"] = [];
   if (maxX < minX || maxY < minY) return { type: "FeatureCollection", features };
   // Also bound unusually large/rotated viewports, without substituting a coarser grid.

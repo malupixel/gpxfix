@@ -111,3 +111,9 @@ test("fine grid has an independent allocation limit and handles empty bounds", (
   assert.deepEqual(createSquadratsGrid({ west: 0, east: 0, north: 0, south: 0 }, SQUADRATINHOS_ZOOM)!.features, []);
   assert.equal(createSquadratsGrid({ west: -180, east: 180, north: 90, south: -90 }, SQUADRATINHOS_ZOOM), null);
 });
+
+test("standalone squadratinhos include the parent boundaries when Squadrats are off", () => {
+  const bounds = tileToBounds(8298, 5636, z);
+  assert.equal(createSquadratsGrid(bounds, SQUADRATINHOS_ZOOM, true)!.features.length, 18);
+  assert.equal(createSquadratsGrid(bounds, SQUADRATINHOS_ZOOM, false)!.features.length, 14);
+});
