@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:8150/",
+  "realTimeCycleMs": 15660,
+  "stages": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "errors": [],
+  "apiRequests": []
+}

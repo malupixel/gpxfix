@@ -2,7 +2,7 @@ import { test, expect, API, gpx, seed, owner, more, closeDialog } from './fixtur
 
 test('home, language persistence, licence and missing pages', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'TweakMyRoute', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Plan your route. Let others help make it better.', exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Draw a route', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'PL', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Wgraj trasę' })).toBeVisible();

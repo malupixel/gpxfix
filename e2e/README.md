@@ -73,3 +73,7 @@ Regresje `BUG-001`, `BUG-002` i `BUG-003` są zwykłymi testami, bez znacznika
 `test.fail`. Sprawdzają odtworzenie szkicu, proxy API/obraz udostępniania
 i widoczność nowej sugestii dla właściciela oraz odwiedzającego.
 Historia audytu, napraw i ograniczenia znajdują się w `AUDIT.md`.
+
+Regresje strony głównej (`tests/landing.spec.ts`) sprawdzają demonstrację,
+PL/EN, ograniczone animacje i screenshoty 320/375/768/1440 px. Zachowane
+artefakty i opis są w [artifacts/landing](../artifacts/landing/README.md).

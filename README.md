@@ -147,3 +147,6 @@ frontend and deterministic external-service fixtures) is documented in
 `npx playwright install --with-deps chromium`, `npm run env:up` and `npm test`.
 Use `npm run report` for browser diagnostics and failure traces.
 The audit and known regressions are recorded in [e2e/AUDIT.md](e2e/AUDIT.md).
+
+The home page's offline interactive demonstration, implementation choices and
+visual test artifacts are documented in [docs/LANDING_PAGE.md](docs/LANDING_PAGE.md).
