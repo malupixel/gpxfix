@@ -2,6 +2,7 @@ import type { FeatureCollection, LineString } from "geojson";
 
 export const WEB_MERCATOR_MAX_LATITUDE = 85.0511287798066;
 export const SQUADRATS_ZOOM = 14;
+export const SQUADRATINHOS_ZOOM = 17;
 export type GeographicBounds = { west: number; south: number; east: number; north: number };
 
 const clampLatitude = (latitude: number) => Math.max(-WEB_MERCATOR_MAX_LATITUDE, Math.min(WEB_MERCATOR_MAX_LATITUDE, latitude));
@@ -37,21 +38,28 @@ export function tilesIntersectingBounds(bounds: GeographicBounds, zoom: number) 
 }
 
 /** Shared cell edges need only O(rows + columns) lines, rather than O(rows * columns) polygons. */
-export function createSquadratsGrid(bounds: GeographicBounds): FeatureCollection<LineString> | null {
-  const { minX, maxX, minY, maxY } = tilesIntersectingBounds(bounds, SQUADRATS_ZOOM);
+export function createSquadratsGrid(
+  bounds: GeographicBounds,
+  zoom: typeof SQUADRATS_ZOOM | typeof SQUADRATINHOS_ZOOM = SQUADRATS_ZOOM,
+): FeatureCollection<LineString> | null {
+  const { minX, maxX, minY, maxY } = tilesIntersectingBounds(bounds, zoom);
+  // Fine grid boundaries shared with the large grid are rendered only by the large layer.
+  const parentStride = zoom === SQUADRATINHOS_ZOOM ? 2 ** (zoom - SQUADRATS_ZOOM) : null;
   const features: FeatureCollection<LineString>["features"] = [];
   if (maxX < minX || maxY < minY) return { type: "FeatureCollection", features };
   // Also bound unusually large/rotated viewports, without substituting a coarser grid.
   if (maxX - minX + maxY - minY + 4 > 2048) return null;
-  const nw = tileToBounds(minX, minY, SQUADRATS_ZOOM);
-  const se = tileToBounds(maxX, maxY, SQUADRATS_ZOOM);
+  const nw = tileToBounds(minX, minY, zoom);
+  const se = tileToBounds(maxX, maxY, zoom);
   const addLine = (coordinates: number[][]) => features.push({ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates } });
   for (let x = minX; x <= maxX + 1; x++) {
-    const lon = longitude(x, SQUADRATS_ZOOM);
+    if (parentStride && x % parentStride === 0) continue;
+    const lon = longitude(x, zoom);
     addLine([[lon, se.south], [lon, nw.north]]);
   }
   for (let y = minY; y <= maxY + 1; y++) {
-    const lat = latitude(y, SQUADRATS_ZOOM);
+    if (parentStride && y % parentStride === 0) continue;
+    const lat = latitude(y, zoom);
     addLine([[nw.west, lat], [se.east, lat]]);
   }
   return { type: "FeatureCollection", features };

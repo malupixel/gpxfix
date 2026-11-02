@@ -115,7 +115,7 @@ test("Polish and English resources have the same complete key set", () => {
     return typeof child === "object" && child !== null ? keys(child, path) : [path];
   });
   assert.deepEqual(keys(resources.pl.translation).sort(), keys(resources.en.translation).sort());
-  for (const key of ["upload.submit", "route.suggestChanges", "ownerLink.warning", "suggestion.submit", "route.fullscreen", "map.showSquadratsGrid", "map.squadratsZoomIn"])
+  for (const key of ["upload.submit", "route.suggestChanges", "ownerLink.warning", "suggestion.submit", "route.fullscreen", "map.showSquadratsGrid", "map.squadratsZoomIn", "map.squadratinhosZoomIn"])
     assert.ok(keys(resources.pl.translation).includes(key), `missing important key ${key}`);
 });
 

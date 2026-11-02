@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createSquadratsGrid, lonLatToTile, SQUADRATS_ZOOM, tileToBounds, tilesIntersectingBounds, WEB_MERCATOR_MAX_LATITUDE } from "./xyz-tiles";
+import { createSquadratsGrid, lonLatToTile, SQUADRATS_ZOOM, SQUADRATINHOS_ZOOM, tileToBounds, tilesIntersectingBounds, WEB_MERCATOR_MAX_LATITUDE } from "./xyz-tiles";
 
 const z = SQUADRATS_ZOOM;
 const near = (actual: number, expected: number) => assert.ok(Math.abs(actual - expected) < 1e-10, `${actual} != ${expected}`);
@@ -69,4 +69,45 @@ test("antimeridian viewports stay local and world copies keep identical tile bou
 test("huge viewports do not allocate a global grid and zero-area viewports are empty", () => {
   assert.equal(createSquadratsGrid({ west: -180, east: 180, north: 90, south: -90 }), null);
   assert.deepEqual(createSquadratsGrid({ west: 0, east: 0, north: 0, south: 0 })!.features, []);
+});
+
+
+test("squadratinhos split each squadrat into 8 by 8 without duplicating its borders", () => {
+  assert.equal(SQUADRATINHOS_ZOOM, 17);
+  for (const [x, y] of [[8298, 5636], [4823, 6160], [-1, 8191]]) {
+    const bounds = tileToBounds(x, y, z);
+    assert.deepEqual(tilesIntersectingBounds(bounds, SQUADRATINHOS_ZOOM), {
+      minX: x * 8, maxX: x * 8 + 7, minY: y * 8, maxY: y * 8 + 7,
+    });
+    const fine = createSquadratsGrid(bounds, SQUADRATINHOS_ZOOM)!;
+    assert.equal(fine.features.length, 14);
+    const vertical = fine.features.slice(0, 7);
+    const horizontal = fine.features.slice(7);
+    for (let i = 0; i < 7; i++) {
+      const inner = tileToBounds(x * 8 + i + 1, y * 8 + i + 1, SQUADRATINHOS_ZOOM);
+      assert.deepEqual(vertical[i].geometry.coordinates, [[inner.west, bounds.south], [inner.west, bounds.north]]);
+      assert.deepEqual(horizontal[i].geometry.coordinates, [[bounds.west, inner.north], [bounds.east, inner.north]]);
+    }
+  }
+});
+
+test("fine grid stays local across the antimeridian and works in adjacent world copies", () => {
+  const bounds = { west: 179.99, east: -179.99, north: 0.01, south: -0.01 };
+  const fine = createSquadratsGrid(bounds, SQUADRATINHOS_ZOOM)!;
+  assert.ok(fine.features.length > 0);
+  assert.deepEqual(fine, createSquadratsGrid({ ...bounds, east: 180.01 }, SQUADRATINHOS_ZOOM));
+  for (const feature of fine.features) {
+    const [a, b] = feature.geometry.coordinates;
+    if (a[0] === b[0]) assert.notEqual(a[0], 180);
+    else assert.notEqual(a[1], 0);
+    assert.ok(Math.abs(b[0] - a[0]) < 0.03);
+  }
+});
+
+test("fine grid has an independent allocation limit and handles empty bounds", () => {
+  const large = { west: -5, east: 5, north: 5, south: -5 };
+  assert.ok(createSquadratsGrid(large));
+  assert.equal(createSquadratsGrid(large, SQUADRATINHOS_ZOOM), null);
+  assert.deepEqual(createSquadratsGrid({ west: 0, east: 0, north: 0, south: 0 }, SQUADRATINHOS_ZOOM)!.features, []);
+  assert.equal(createSquadratsGrid({ west: -180, east: 180, north: 90, south: -90 }, SQUADRATINHOS_ZOOM), null);
 });
