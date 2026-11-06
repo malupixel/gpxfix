@@ -24,7 +24,7 @@ class RoutePreviewMigrationTest {
             sql.executeUpdate("INSERT INTO route_share_previews(version_id,name,revision,ready,attempts) SELECT id,'Previous name',repeat('b',64),false,4 FROM route_versions");
             c.commit();before=snapshot(sql);
         }
-        Flyway.configure().dataSource(POSTGRES.getJdbcUrl(),POSTGRES.getUsername(),POSTGRES.getPassword()).load().migrate();
+        Flyway.configure().dataSource(POSTGRES.getJdbcUrl(),POSTGRES.getUsername(),POSTGRES.getPassword()).target(MigrationVersion.fromVersion("10")).load().migrate();
         try(var c=DriverManager.getConnection(POSTGRES.getJdbcUrl(),POSTGRES.getUsername(),POSTGRES.getPassword());var sql=c.createStatement()) {
             assertThat(snapshot(sql)).isEqualTo(before);
             try(var rows=sql.executeQuery("SELECT count(*) FROM route_share_previews")){rows.next();assertThat(rows.getInt(1)).isZero();}

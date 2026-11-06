@@ -10,16 +10,22 @@ export function RouteDialog({ title, onClose, children, busy = false }: { title:
     const previous = document.activeElement as HTMLElement | null; const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden"; panel.current?.focus();
     const key = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !current.current.busy) current.current.onClose();
+      const popover = panel.current?.querySelector<HTMLElement>(":popover-open");
+      if (event.key === "Escape" && popover) {
+        event.preventDefault(); event.stopImmediatePropagation(); popover.hidePopover();
+        panel.current?.querySelector<HTMLButtonElement>(`[aria-controls="${CSS.escape(popover.id)}"]`)?.focus();
+        return;
+      }
+      if (event.key === "Escape" && !panel.current?.querySelector(":popover-open") && !current.current.busy) current.current.onClose();
       if (event.key !== "Tab") return;
-      const controls = Array.from(panel.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex="0"]') ?? []);
+      const controls = Array.from(panel.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex="0"]') ?? []).filter(element => element.getClientRects().length > 0);
       const first = controls[0], last = controls.at(-1);
       if (!first) { event.preventDefault(); return; }
       if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && (document.activeElement === last || document.activeElement === panel.current)) { event.preventDefault(); first.focus(); }
     };
-    document.addEventListener("keydown", key);
-    return () => { document.removeEventListener("keydown", key); document.body.style.overflow = overflow; previous?.focus(); };
+    document.addEventListener("keydown", key, true);
+    return () => { document.removeEventListener("keydown", key, true); document.body.style.overflow = overflow; previous?.focus(); };
   }, []);
   return <div className="fixed inset-0 z-[10020] grid place-items-center bg-slate-950/50 p-4" onClick={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
     <section ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-busy={busy} className="max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl sm:p-6">

@@ -100,7 +100,7 @@ test('suggestion and comment moderation with independent visitor', async ({ page
   const route = await owner(page);
   const visitor = await playwright.request.newContext();
   try {
-    const created = await visitor.post(`${API}/api/routes/${route.publicId}/suggestions`, { data: { type: 'NOTE', authorName: 'Visitor', description: 'Water fountain E2E', category: 'water', tags: [], start: { longitude: 21.0122, latitude: 52.2297, distanceMeters: 0 } } });
+    const created = await visitor.post(`${API}/api/routes/${route.publicId}/suggestions`, { data: { baseVersionNumber: 1, type: 'NOTE', authorName: 'Visitor', description: 'Water fountain E2E', category: 'water', tags: [], start: { longitude: 21.0122, latitude: 52.2297, distanceMeters: 0 } } });
     expect(created.status()).toBe(201);
     const suggestion = await created.json();
     expect(await (await visitor.get(`${API}/api/routes/${route.publicId}/suggestions`)).json()).toEqual([]);

@@ -7,12 +7,14 @@ import type { ModerationStatus, RouteSuggestion, SuggestionComment, SuggestionTy
 import { addSuggestionComment, getOwnerRouteSuggestions, mergeSuggestion, moderateSuggestion, moderateSuggestionComment } from "./api";
 import { canModerateSuggestion } from "./suggestion-lifecycle";
 import { apiErrorKey } from "@/i18n/api-errors";
+import { useSearchParams } from "next/navigation";
 import { routeVersionPath } from "./route-links";
 import type { FeedbackProps } from "./route-feedback";
 
 const typeKeys: Record<SuggestionType, string> = { PROBLEM: "suggestion.typeIssue", DETOUR: "suggestion.typeDetour", NOTE: "suggestion.typeNote" };
 
 export function SuggestionDetail(p: FeedbackProps & { suggestion: RouteSuggestion; onBack: () => void }) {
+  const branch = useSearchParams().get("branch") ?? undefined;
   const { t } = useTranslation();
   const router = useRouter(), queries = useQueryClient();
   const [name, setName] = useState(""), [content, setContent] = useState("");
@@ -63,7 +65,7 @@ export function SuggestionDetail(p: FeedbackProps & { suggestion: RouteSuggestio
     {p.isOwner && canModerateSuggestion(s) && <div className="mt-4 grid grid-cols-2 gap-2"><button disabled={busy} onClick={() => void moderate("REJECTED")} className="route-button">{t("moderation.reject")}</button><button disabled={busy} onClick={() => void moderate(s.moderationStatus === "PUBLISHED" ? "PENDING" : "PUBLISHED")} className="route-button bg-blue-700 text-white">{t(s.moderationStatus === "PUBLISHED" ? "lifecycle.unpublish" : "moderation.publish")}</button></div>}
     {p.isOwner && !p.readOnly && s.type === "DETOUR" && s.moderationStatus === "PUBLISHED" && s.integrationStatus === "NOT_MERGED" && <button disabled={busy} onClick={() => void merge()} className="route-button mt-4 w-full bg-emerald-700 text-white">{t("lifecycle.merge")}</button>}
     {error && <p role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-800">{t(error)}</p>}
-    {s.baseVersionNumber !== p.currentVersion && s.integrationStatus !== "MERGED" && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t("lifecycle.earlierVersion", { version: s.baseVersionNumber, current: p.currentVersion })}<Link className="mt-2 block font-semibold underline" href={routeVersionPath(p.routeId, s.baseVersionNumber)}>{t("lifecycle.proposedOn", { version: s.baseVersionNumber })} →</Link></p>}
+    {s.baseVersionNumber !== p.currentVersion && s.integrationStatus !== "MERGED" && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{t("lifecycle.earlierVersion", { version: s.baseVersionNumber, current: p.currentVersion })}<Link className="mt-2 block font-semibold underline" href={routeVersionPath(p.routeId, s.baseVersionNumber, branch)}>{t("lifecycle.proposedOn", { version: s.baseVersionNumber })} →</Link></p>}
     <h3 className="mt-6 font-semibold">{t("comments.title")} ({s.commentCount})</h3>
     <div className="mt-3 space-y-2">{s.comments.map(comment => <div key={comment.publicId} id={`comment-${comment.publicId}`} className="rounded-lg bg-slate-50 p-3 text-sm">
       <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{comment.authorName}</strong>{p.isOwner && <Status value={comment.moderationStatus} />}</div>

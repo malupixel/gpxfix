@@ -30,6 +30,8 @@ class RouteSuggestion {
     @Column(name="created_at",nullable=false) private Instant createdAt;
     @Column(name="updated_at",nullable=false) private Instant updatedAt;
 
+    @ManyToOne(fetch=FetchType.LAZY,optional=false) @JoinColumn(name="branch_id") private RouteBranch branch;
+    void branch(RouteBranch value){branch=value;} RouteBranch getBranch(){return branch;}
     protected RouteSuggestion() { }
     RouteSuggestion(String publicId,Route route,RouteVersion baseVersion,SuggestionType type,String authorName,String description,String category,String tags,
             Point startPoint,Point endPoint,LineString proposedGeometry,double startDistanceMeters,Double endDistanceMeters,Instant now) {

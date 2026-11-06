@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
+import { ApiError } from "@/lib/api-client";
 import { useGhostRoutes } from "@/features/ghost-routes/provider";
 import { RouteMap } from "@/components/map/route-map";
 import type { RouteData, RouteSuggestion } from "@/types/route";
@@ -46,6 +47,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   const [geometry, setGeometry] = useState<SuggestionGeometry>(EMPTY_SUGGESTION_GEOMETRY);
   const [form, setForm] = useState<SuggestionFormData>(EMPTY_SUGGESTION_FORM);
   const [processStep, setProcessStep] = useState<SuggestionProcessStep>("chooseType");
+  const [submitConflict, setSubmitConflict] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [profileHighlight, setProfileHighlight] = useState<RouteCoordinate | null>(null);
   const [suggestions, setSuggestions] = useState<RouteSuggestion[]>([]);
@@ -53,6 +55,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   const [suggestionsError, setSuggestionsError] = useState(false);
   const [suggestionsRetry, setSuggestionsRetry] = useState(0);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
+  const autoEdit = useRef(false);
   const [editing, setEditing] = useState<OwnerEditorData | null>(null);
   const [editError, setEditError] = useState(false);
   const [loadingEditor, setLoadingEditor] = useState(false);
@@ -77,6 +80,13 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     setLoadingEditor(true); setEditError(false);
     try { setEditing(await getOwnerEditor(route.publicId)); } catch { setEditError(true); } finally { setLoadingEditor(false); }
   }
+
+  useEffect(() => {
+    if (params.get("edit") !== "1" || !isOwner || autoEdit.current || !route.isCurrentVersion) return;
+    autoEdit.current = true;
+    router.replace(publicRoutePath(route.publicId, route.branchId), { scroll: false });
+    getOwnerEditor(route.publicId).then(setEditing).catch(() => setEditError(true));
+  }, [isOwner, params, route.publicId, route.branchId, route.isCurrentVersion, router]);
 
   const clearSuggestion = useCallback(() => {
     setGeometry(EMPTY_SUGGESTION_GEOMETRY);
@@ -108,7 +118,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
 
   function enterSuggestMode(tool: SuggestionTool = null) {
     if(!route.suggestionsEnabled){window.alert(t("routeMetadata.closed"));return;}
-    if(!route.isCurrentVersion){window.alert(t("versions.redirect", { version: route.currentVersion }));router.push(publicRoutePath(route.publicId));return;}
+    if(!route.isCurrentVersion){window.alert(t("versions.redirect", { version: route.currentVersion }));router.push(publicRoutePath(route.publicId, route.branchId));return;}
     closeComparison();
     setMode("suggest");
     setSelectedSuggestionId(null);
@@ -127,8 +137,9 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
     if (geometry.type === null || processStep === "submitting") return;
     setSubmitError(false);
     setProcessStep("submitting");
+    setSubmitConflict(false);
     try {
-      const body=suggestionRequest(geometry,form),payload=JSON.stringify(body);
+      const body={...suggestionRequest(geometry,form),baseVersionNumber:route.viewedVersion},payload=JSON.stringify(body);
       if(requestKey.current?.payload!==payload)requestKey.current={key:crypto.randomUUID(),payload};
       await createRouteSuggestion(route.publicId,body,requestKey.current.key);
       // Reload through the owner/public endpoint rather than exposing a pending
@@ -136,7 +147,8 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
       setSuggestionsLoading(true);
       setSuggestionsRetry(value => value + 1);
       setProcessStep("success");
-    } catch {
+    } catch (error) {
+      setSubmitConflict(error instanceof ApiError && error.status === 409);
       setSubmitError(true);
       setProcessStep("describe");
     }
@@ -197,7 +209,7 @@ export function RoutePageContent({ route, isOwner }: { route: RouteData; isOwner
   if (mode === "suggest" && processStep === "drawing" && geometry.type !== null) workflowOverlay = <DrawingControls geometry={geometry} onUndo={undo} onRedraw={redraw} onCancel={cancelSuggestion} onContinue={() => setProcessStep("describe")} />;
   if (mode === "suggest" && geometry.type !== null && (processStep === "describe" || processStep === "submitting" || processStep === "success")) workflowOverlay = <>
     <SuggestionDetailsDialog geometry={geometry} form={form} setForm={setForm} step={processStep} onBack={() => setProcessStep("drawing")} onClose={() => setProcessStep("drawing")} onSubmit={submitSuggestion} onDone={finishSuggestion} />
-    {submitError && <div role="alert" className="fixed inset-x-4 top-4 z-[10030] mx-auto max-w-md rounded-lg bg-red-700 p-3 text-center text-sm font-bold text-white shadow-xl">{t("persistence.saveFailed")}</div>}
+    {submitError && <div role="alert" className="fixed inset-x-4 top-4 z-[10030] mx-auto max-w-md rounded-lg bg-red-700 p-3 text-center text-sm font-bold text-white shadow-xl">{t(submitConflict ? "branches.conflict" : "persistence.saveFailed")}</div>}
   </>;
 
   if (editing && isOwner) return <RouteEditor key={`${editing.route.publicId}-${editing.route.viewedVersion}`} existing={editing} onClose={() => setEditing(null)} onSaved={() => setEditing(null)} onSuggest={() => { setEditing(null); enterSuggestMode(); }} />;

@@ -11,9 +11,9 @@ export interface RouteShareData {
   imagePath: string;
 }
 
-export function routeMetadata(route: RouteShareData, locale: string, historical = false): Metadata {
+export function routeMetadata(route: RouteShareData, locale: string, historical = false, branch?: string): Metadata {
   const origin = publicSiteUrl();
-  const url = new URL(`/route/${encodeURIComponent(route.publicId)}${historical ? `/v/${route.versionNumber}` : ""}`, origin).href;
+  const url = new URL(`/route/${encodeURIComponent(route.publicId)}${historical ? `/v/${route.versionNumber}` : ""}${branch && branch !== "main" ? `?branch=${encodeURIComponent(branch)}` : ""}`, origin).href;
   const distance = `${(route.distanceMeters / 1000).toFixed(1)} km`;
   const elevation = route.elevationGainMeters === null ? "" : ` · ↑ ${Math.round(route.elevationGainMeters)} m`;
   const description = `${distance}${elevation}${route.description ? ` — ${route.description.replace(/\s+/g, " ").slice(0, 160)}` : locale === "pl" ? " — Zobacz trasę na TweakMyRoute" : " — Explore this route on TweakMyRoute"}`;

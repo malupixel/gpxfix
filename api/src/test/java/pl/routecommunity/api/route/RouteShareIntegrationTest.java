@@ -89,10 +89,15 @@ class RouteShareIntegrationTest {
         assertThat(jdbc.queryForObject("SELECT attempts FROM route_share_previews p JOIN route_versions v ON v.id=p.version_id JOIN routes r ON r.id=v.route_id WHERE r.public_id=?",Integer.class,route.id())).isEqualTo(4);
     }
     @Test void noElevationDoesNotBlockMetadataAndMissingRoutesCannotReadImages() throws Exception {
-        var route=upload();jdbc.update("UPDATE route_versions SET elevation_gain_meters=null WHERE route_id=(SELECT id FROM routes WHERE public_id=?)",route.id());
+        var route=upload();legacyVersionFixture(() -> jdbc.update("UPDATE route_versions SET elevation_gain_meters=null WHERE route_id=(SELECT id FROM routes WHERE public_id=?)",route.id()));
         mvc.perform(get("/api/routes/{id}/share",route.id())).andExpect(jsonPath("$.elevationGainMeters").isEmpty());
         worker.generateNext();mvc.perform(get(share(route).get("imagePath").asText())).andExpect(header().string("Cache-Control","no-cache"));
         mvc.perform(get("/api/routes/missing/versions/1/preview/"+"a".repeat(64)+".png")).andExpect(status().isNotFound());
 
+    }
+    // Simulate pre-migration legacy records only in this disposable test database.
+    private void legacyVersionFixture(Runnable seed) {
+        jdbc.execute("ALTER TABLE route_versions DISABLE TRIGGER route_versions_immutable");
+        try { seed.run(); } finally { jdbc.execute("ALTER TABLE route_versions ENABLE TRIGGER route_versions_immutable"); }
     }
 }

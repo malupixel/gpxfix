@@ -23,12 +23,12 @@ export function OwnershipGate({ route }: { route: RouteData }) {
           await establishRouteOwnership(publicId, token);
           if (active) setOwner(true);
         } catch { if (active) setOwner(false); }
-        finally { if (active) router.replace(publicRoutePath(publicId), { scroll: false }); }
+        finally { if (active) router.replace(publicRoutePath(publicId, route.branchId) + (params.get("edit") === "1" ? (route.branchId && route.branchId !== "main" ? "&edit=1" : "?edit=1") : ""), { scroll: false }); }
       } else if (active) setOwner(await getRouteOwnerStatus(publicId));
     }
     void resolve();
     return () => { active = false; };
-  }, [params, publicId, router]);
+  }, [params, publicId, router, route.branchId]);
 
-  return <><RouteHeader route={route} isOwner={isOwner} /><RoutePageContent route={route} isOwner={isOwner} /></>;
+  return <><RouteHeader key={`${publicId}:${route.branchId}`} route={route} isOwner={isOwner} /><RoutePageContent key={`${publicId}:${route.branchId}:${route.viewedVersion}`} route={route} isOwner={isOwner} /></>;
 }

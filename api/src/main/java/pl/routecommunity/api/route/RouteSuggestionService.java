@@ -11,23 +11,26 @@ import pl.routecommunity.api.common.error.ApiException;
 
 @Service
 public class RouteSuggestionService {
+    private final RouteBranches branches;
     private static final double ANCHOR_TOLERANCE_DEGREES=0.00002;
     private static final Set<String> NOTE_CATEGORIES=Set.of("water","food","surface","view","services","other");
     private static final Set<String> PROBLEM_CATEGORIES=Set.of("highTraffic","badSurface","roadClosed","construction","dangerous","unpaved","other");
     private static final Set<String> DETOUR_TAGS=Set.of("betterSurface","lessTraffic","safer","scenic","avoidsClosure","other");
     private final RouteRepository routes; private final RouteSuggestionRepository suggestions; private final SuggestionCommentRepository comments; private final PublicIdGenerator ids; private final RouteActivityService activity;
     private final GeometryFactory geometries=new GeometryFactory(new PrecisionModel(),4326);
-    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,SuggestionCommentRepository comments,PublicIdGenerator ids,RouteActivityService activity){this.routes=routes;this.suggestions=suggestions;this.comments=comments;this.ids=ids;this.activity=activity;}
+    RouteSuggestionService(RouteRepository routes,RouteSuggestionRepository suggestions,SuggestionCommentRepository comments,PublicIdGenerator ids,RouteActivityService activity, RouteBranches branches){this.branches=branches;this.routes=routes;this.suggestions=suggestions;this.comments=comments;this.ids=ids;this.activity=activity;}
 
     @Transactional
     public SuggestionDto create(String routePublicId,CreateSuggestionRequest request,String requestKey){
         Route route=routes.findLockedByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
-        var command=activity.command(route,RouteActivityType.SUGGESTION_CREATED,requestKey,request);
+        var command=activity.command(route,RouteActivityType.SUGGESTION_CREATED,requestKey,new Object[]{RouteBranches.selectedKey(),request});
         if(command!=null&&command.replayPublicId()!=null)return dto(suggestions.findByRoute_PublicIdAndPublicId(routePublicId,command.replayPublicId()).orElseThrow(),false);
         if(!route.isSuggestionsEnabled())throw new ApiException(HttpStatus.CONFLICT,"Suggestions are closed for this route");
         validateFinite(request.start());
         Point start=point(request.start());
-        RouteVersion baseVersion=route.getCurrentVersion();
+        RouteVersion baseVersion=branches.current(route);
+        if(request.baseVersionNumber()==null || request.baseVersionNumber()!=baseVersion.getVersionNumber())
+            throw new ApiException(HttpStatus.CONFLICT,"The variant changed while you were preparing this suggestion. Reload its current version.");
         requireOnRoute(baseVersion,start,"Start anchor");
         if(request.start().distanceMeters()>baseVersion.getDistanceMeters()+1) throw bad("Start distance exceeds route length");
         Point end=null; LineString proposed=null; Double endDistance=null;
@@ -54,6 +57,7 @@ public class RouteSuggestionService {
         String publicId=uniquePublicId(); Instant now=Instant.now();
         RouteSuggestion entity=new RouteSuggestion(publicId,route,baseVersion,request.type(),request.authorName().trim(),request.description().trim(),optional(request.category()),
                 request.tags()==null?null:String.join(",",request.tags()),start,end,proposed,request.start().distanceMeters(),endDistance,now);
+        entity.branch(branches.selected(route));
         suggestions.saveAndFlush(entity);
         activity.record(route,RouteActivityType.SUGGESTION_CREATED,now,baseVersion,entity,null,entity.getAuthorName(),false,"suggestion:"+entity.getId(),command);
         return dto(entity,false);
@@ -62,21 +66,23 @@ public class RouteSuggestionService {
     @Transactional(readOnly=true)
     public List<SuggestionDto> listPublic(String routePublicId,Integer versionNumber,boolean includeArchived){
         Route route=routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
-        int viewed=versionNumber==null?route.getCurrentVersion().getVersionNumber():versionNumber;
-        return suggestions.findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(routePublicId,ModerationStatus.PUBLISHED).stream()
+        int viewed=versionNumber==null?branches.current(route).getVersionNumber():versionNumber;
+        return suggestions.findByBranch_IdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(branches.selected(route).getId(),ModerationStatus.PUBLISHED).stream()
+                .filter(value->value.getBranch().getPublicId().equals(RouteBranches.selectedKey()))
                 .filter(value->includeArchived || (value.getBaseVersion().getVersionNumber()==viewed && value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED))
                 .map(value->dto(value,false)).toList();
     }
     @Transactional(readOnly=true)
     public SuggestionDto getPublic(String routePublicId,String suggestionPublicId){routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));return dto(suggestions.findByRoute_PublicIdAndPublicIdAndModerationStatus(routePublicId,suggestionPublicId,ModerationStatus.PUBLISHED).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found")),false);}
     @Transactional(readOnly=true)
-    public List<SuggestionDto> listOwner(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().map(value->dto(value,true)).toList();}
+    public List<SuggestionDto> listOwner(String routePublicId){return suggestions.findByBranch_IdOrderByCreatedAtAsc(branches.selected(routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"))).getId()).stream().filter(value->value.getBranch().getPublicId().equals(RouteBranches.selectedKey())).map(value->dto(value,true)).toList();}
     @Transactional(readOnly=true)
-    List<RouteSuggestion> pendingForRoute(String routePublicId){return suggestions.findByRoute_PublicIdOrderByCreatedAtAsc(routePublicId).stream().filter(s->s.getModerationStatus()==ModerationStatus.PENDING).toList();}
+    List<RouteSuggestion> pendingForRoute(String routePublicId){return suggestions.findByBranch_IdOrderByCreatedAtAsc(branches.selected(routes.findByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"))).getId()).stream().filter(s->s.getBranch().getPublicId().equals(RouteBranches.selectedKey())).filter(s->s.getModerationStatus()==ModerationStatus.PENDING).toList();}
     @Transactional
     public SuggestionDto moderate(String routePublicId,String suggestionPublicId,ModerationStatus target){
         routes.findLockedByPublicId(routePublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route not found"));
         RouteSuggestion value=suggestions.findByRoute_PublicIdAndPublicId(routePublicId,suggestionPublicId).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Suggestion not found"));
+        branches.requireSuggestion(value);
         ModerationStatus previous=value.getModerationStatus();
         if(previous==target&&previous!=ModerationStatus.REJECTED&&value.getIntegrationStatus()!=SuggestionIntegrationStatus.MERGED)return dto(value,true);
         try{value.moderate(target,Instant.now());}catch(IllegalArgumentException|IllegalStateException e){throw bad(e.getMessage());}
@@ -100,6 +106,7 @@ public class RouteSuggestionService {
     private String uniquePublicId(){for(int i=0;i<5;i++){String id=ids.next();if(!suggestions.existsByPublicId(id))return id;}throw new DataIntegrityViolationException("Could not allocate suggestion public ID");}
     private ApiException bad(String message){return new ApiException(HttpStatus.BAD_REQUEST,message);}
     SuggestionDto dto(RouteSuggestion value,boolean owner){
+        branches.requireSuggestion(value);
         SuggestionDto.Anchor start=new SuggestionDto.Anchor(value.getStartPoint().getX(),value.getStartPoint().getY(),value.getStartDistanceMeters());
         SuggestionDto.Anchor end=value.getEndPoint()==null?null:new SuggestionDto.Anchor(value.getEndPoint().getX(),value.getEndPoint().getY(),value.getEndDistanceMeters());
         SuggestionDto.GeoJsonLineString geometry=value.getProposedGeometry()==null?null:new SuggestionDto.GeoJsonLineString("LineString",Arrays.stream(value.getProposedGeometry().getCoordinates()).map(c->List.of(c.x,c.y)).toList());

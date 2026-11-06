@@ -4,8 +4,8 @@ import type { RouteEditorDocument } from "@/features/route-editor/model";
 import type { CreateSuggestionRequest, ModerationStatus, RouteSuggestion, SuggestionComment } from "@/types/route";
 export function uploadRoute(form: FormData): Promise<CreateRouteResponse> { return apiClient("/api/routes", { method: "POST", body: form }); }
 export function createDrawnRoute(request:{name:string;description:string|null;editorDocument:RouteEditorDocument}):Promise<CreateRouteResponse>{return apiClient("/api/routes/drawn",{method:"POST",body:JSON.stringify(request)});}
-export function getRoute(publicId: string): Promise<RouteData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}`, { cache: "no-store" }); }
-export function getRouteVersion(publicId:string,version:number):Promise<RouteData>{return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions/${version}`,{cache:"no-store"});}
+export function getRoute(publicId: string, branch?: string): Promise<RouteData> { return apiClient(`/api/routes/${encodeURIComponent(publicId)}${branch ? `?branch=${encodeURIComponent(branch)}` : ""}`, { cache: "no-store" }); }
+export function getRouteVersion(publicId:string,version:number,branch?:string):Promise<RouteData>{return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions/${version}${branch ? `?branch=${encodeURIComponent(branch)}` : ""}`,{cache:"no-store"});}
 export function getRouteVersions(publicId:string):Promise<RouteVersionSummary[]>{return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions`,{cache:"no-store"});}
 export function establishRouteOwnership(publicId: string, token: string): Promise<void> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/ownership`, { method: "POST", body: JSON.stringify({ token }) });
@@ -52,4 +52,13 @@ export function deleteRoute(publicId: string, confirmationName: string): Promise
 }
 export function getPublicSuggestion(publicId: string, suggestionId: string): Promise<RouteSuggestion> {
   return apiClient(`/api/routes/${encodeURIComponent(publicId)}/suggestions/${encodeURIComponent(suggestionId)}`, { cache: "no-store" });
+}
+export function createRouteBranch(publicId: string, versionNumber: number, name: string, description: string | null): Promise<import("@/types/route").RouteBranch> {
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/branches`, { method: "POST", body: JSON.stringify({ versionNumber, name, description }) });
+}
+export function copyRouteVersion(publicId: string, versionNumber: number, name: string, description: string | null): Promise<CreateRouteResponse> {
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/versions/${versionNumber}/copy`, { method: "POST", body: JSON.stringify({ name, description }) });
+}
+export function labelRouteVersion(publicId: string, versionNumber: number, label: string): Promise<void> {
+  return apiClient(`/api/routes/${encodeURIComponent(publicId)}/owner/versions/${versionNumber}/label`, { method: "PATCH", body: JSON.stringify({ label }) });
 }

@@ -9,11 +9,13 @@ import { RouteDownload } from "./gpx-export";
 import { RouteShareDialog } from "./route-share-dialog";
 import { elevationSummary } from "./elevation-profile-data";
 import { routeVersionPath, publicRoutePath } from "./route-links";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Props = { route: RouteData; isOwner: boolean };
 
 export function RouteHeader({ route, isOwner }: Props) {
+  const router = useRouter();
   const [historyOpen, setHistoryOpen] = useState(false), [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false), [copyError, setCopyError] = useState(false);
   const { t, i18n } = useTranslation();
@@ -21,7 +23,7 @@ export function RouteHeader({ route, isOwner }: Props) {
   const format = (value: number, digits = 0) => new Intl.NumberFormat(i18n.language, { maximumFractionDigits: digits }).format(value);
   async function copyVersion() {
     setCopyError(false);
-    try { await navigator.clipboard.writeText(new URL(routeVersionPath(route.publicId, route.viewedVersion), window.location.origin).toString()); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
+    try { await navigator.clipboard.writeText(new URL(routeVersionPath(route.publicId, route.viewedVersion, route.branchId), window.location.origin).toString()); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
     catch { setCopyError(true); setShareOpen(true); }
   }
   return <header className="mb-5">
@@ -35,6 +37,11 @@ export function RouteHeader({ route, isOwner }: Props) {
           <h1 className="min-w-0 break-words text-2xl font-bold leading-tight tracking-tight text-slate-950 [overflow-wrap:anywhere] sm:text-3xl lg:text-4xl">{route.name}</h1>
           <button onClick={() => setHistoryOpen(true)} aria-label={t("routeUi.versionLabel", { version: route.viewedVersion })} className="route-button mt-0.5 shrink-0 bg-white text-slate-700">v{route.viewedVersion} <span aria-hidden="true">▾</span></button>
         </div>
+        {route.branches && <label className="mt-3 block text-sm font-semibold">{t("branches.variant")}
+          <select aria-label={t("branches.variant")} className="ml-2 max-w-full rounded-lg border bg-white p-2" value={route.branchId ?? "main"} onChange={e => router.push(publicRoutePath(route.publicId, e.target.value))}>
+            {route.branches.map(branch => <option key={branch.publicId} value={branch.publicId}>{branch.publicId === "main" ? t("branches.main") : branch.name} — {format(branch.distanceMeters / 1000, 1)} km</option>)}
+          </select></label>}
+        {route.branches?.find(branch => branch.publicId === route.branchId)?.description && <p className="mt-2 whitespace-pre-wrap break-words text-sm text-slate-600">{route.branches.find(branch => branch.publicId === route.branchId)?.description}</p>}
         <dl className="mt-4 flex flex-wrap gap-x-7 gap-y-3">
           <Metric label={t("route.distance")} value={`${format(route.distanceMeters / 1000, 1)} km`} />
           {elevation && <Metric label={t("routeMetadata.gain")} value={`${format(elevation.gainMeters)} m`} />}
@@ -46,10 +53,11 @@ export function RouteHeader({ route, isOwner }: Props) {
         <RouteMoreMenu route={route} isOwner={isOwner} onHistory={() => setHistoryOpen(true)} onCopy={() => void copyVersion()} />
       </div>
     </div>
-    {!route.isCurrentVersion && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"><span>{t("versions.historical")}</span><Link className="font-semibold underline" href={publicRoutePath(route.publicId)}>{t("versions.goCurrent", { version: route.currentVersion })}</Link></div>}
+    {!route.isCurrentVersion && <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"><span>{t("versions.historical")}</span><Link className="font-semibold underline" href={publicRoutePath(route.publicId, route.branchId)}>{t("versions.goCurrent", { version: route.currentVersion })}</Link></div>}
+    {route.sourceRoutePublicId && <p className="mt-3 text-sm text-slate-600">{t("branches.provenance", { name: route.sourceRouteName, version: route.sourceVersionNumber })}</p>}
     {copied && <p role="status" className="mt-2 text-sm text-emerald-800">{t("common.copied")}</p>}
     {copyError && <p role="alert" className="mt-2 text-sm text-red-700">{t("management.copyFailed")}</p>}
-    <RouteVersionNavigation route={route} open={historyOpen} onToggle={() => setHistoryOpen(false)} />
+    <RouteVersionNavigation route={route} isOwner={isOwner} open={historyOpen} onToggle={() => setHistoryOpen(false)} />
     {shareOpen && <RouteShareDialog route={route} onClose={() => setShareOpen(false)} />}
   </header>;
 }

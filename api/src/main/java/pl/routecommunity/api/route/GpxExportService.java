@@ -19,15 +19,16 @@ import pl.routecommunity.api.storage.FileStorage;
 /** Exports persisted version bytes. Downloads never invoke an elevation provider. */
 @Service
 class GpxExportService {
+    private final RouteBranches branches;
     private final RouteRepository routes;
     private final RouteVersionRepository versions;
     private final FileStorage storage;
-    GpxExportService(RouteRepository routes,RouteVersionRepository versions,FileStorage storage){this.routes=routes;this.versions=versions;this.storage=storage;}
+    GpxExportService(RouteRepository routes,RouteVersionRepository versions,FileStorage storage, RouteBranches branches){this.branches=branches;this.routes=routes;this.versions=versions;this.storage=storage;}
     record Export(byte[] bytes,String filename,boolean elevationAvailable) { }
     @Transactional(readOnly=true)
     Export export(String publicId,Integer versionNumber,boolean elevation,String filename) {
         Route route=active(publicId);
-        RouteVersion version=versionNumber==null?route.getCurrentVersion():versions.findByRoute_PublicIdAndVersionNumber(publicId,versionNumber)
+        RouteVersion version=versionNumber==null?branches.current(route):versions.findByRoute_PublicIdAndVersionNumber(publicId,versionNumber)
                 .orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"Route version not found"));
         byte[] saved=storage.load(version.getStorageKey());
         try {

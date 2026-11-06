@@ -17,6 +17,12 @@ class Route {
     @Column(name="deleted_at") private Instant deletedAt;
     @Column(name="original_upload_storage_key",length=255) private String originalUploadStorageKey;
     @Column(name="original_upload_filename",length=255) private String originalUploadFilename;
+    @Column(name="source_route_public_id") private String sourceRoutePublicId;
+    @Column(name="source_version_number") private Integer sourceVersionNumber;
+    @Column(name="source_version_id") private Long sourceVersionId;
+    @Column(name="source_route_name") private String sourceRouteName;
+    void provenance(Route source,RouteVersion version){sourceRoutePublicId=source.getPublicId();sourceVersionNumber=version.getVersionNumber();sourceVersionId=version.getId();sourceRouteName=source.getName();}
+    String getSourceRoutePublicId(){return sourceRoutePublicId;} Integer getSourceVersionNumber(){return sourceVersionNumber;} String getSourceRouteName(){return sourceRouteName;}
     protected Route() { }
     Route(String publicId,byte[] ownerTokenHash,Instant now){this.publicId=publicId;this.ownerTokenHash=ownerTokenHash;this.createdAt=now;this.updatedAt=now;}
     void publish(RouteVersion version){if(version.getRoute()!=this)throw new IllegalArgumentException("Version belongs to another route");this.currentVersion=version;this.updatedAt=version.getCreatedAt().truncatedTo(java.time.temporal.ChronoUnit.MICROS);}

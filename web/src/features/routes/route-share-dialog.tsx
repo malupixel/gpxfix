@@ -9,9 +9,9 @@ import { publicRoutePath, routeVersionPath } from "./route-links";
 export function RouteShareDialog({ route, onClose }: { route: RouteData; onClose: () => void }) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false), [error, setError] = useState(false);
-  const path = routeVersionPath(route.publicId, route.viewedVersion);
+  const path = routeVersionPath(route.publicId, route.viewedVersion, route.branchId);
   const url = typeof window === "undefined" ? path : new URL(path, window.location.origin).toString();
-  const latest = typeof window === "undefined" ? publicRoutePath(route.publicId) : new URL(publicRoutePath(route.publicId), window.location.origin).toString();
+  const latest = typeof window === "undefined" ? publicRoutePath(route.publicId, route.branchId) : new URL(publicRoutePath(route.publicId, route.branchId), window.location.origin).toString();
   async function copy(value: string) {
     setError(false);
     try { await navigator.clipboard.writeText(value); setCopied(true); } catch { setError(true); }

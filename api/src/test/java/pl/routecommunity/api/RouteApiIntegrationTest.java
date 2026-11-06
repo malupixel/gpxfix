@@ -257,7 +257,10 @@ class RouteApiIntegrationTest {
         try(ExecutorService executor=Executors.newFixedThreadPool(2)){Callable<Integer> mergeFirst=()->mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,first).cookie(owner)).andReturn().getResponse().getStatus();Callable<Integer> mergeSecond=()->mvc.perform(post("/api/routes/{id}/suggestions/owner/{sid}/merge",routeId,second).cookie(owner)).andReturn().getResponse().getStatus();Future<Integer> a=executor.submit(mergeFirst),b=executor.submit(mergeSecond);assertThat(List.of(a.get(),b.get())).containsOnly(200);}
         assertThat(jdbc.queryForList("select v.version_number from route_versions v join routes r on r.id=v.route_id where r.public_id=? order by v.version_number",Integer.class,routeId)).containsExactly(1,2,3);
     }
-    private String createSuggestion(String routeId,String body)throws Exception{return json.readTree(mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("publicId").asText();}
+    private String createSuggestion(String routeId,String body)throws Exception{
+        var request=(com.fasterxml.jackson.databind.node.ObjectNode)json.readTree(body);
+        request.put("baseVersionNumber",jdbc.queryForObject("select v.version_number from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Integer.class,routeId));
+        body=json.writeValueAsString(request);return json.readTree(mvc.perform(post("/api/routes/{id}/suggestions",routeId).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("publicId").asText();}
     @Test void publishedSuggestionsCanBeUnpublishedRepublishedOrRejectedWithoutLosingDiscussion() throws Exception {
         JsonNode route=upload("lifecycle.gpx");String routeId=route.get("publicId").asText();Cookie owner=ownerCookie(routeId,route.get("managementToken").asText());
         String sid=createSuggestion(routeId,detourJson());publish(routeId,sid,owner);
@@ -291,7 +294,7 @@ class RouteApiIntegrationTest {
         mvc.perform(post(path,routeId).cookie(wrongOwner).contentType(MediaType.APPLICATION_JSON).content(editJson(1,21.03))).andExpect(status().isForbidden());
         for(int version=1;version<6;version++)mvc.perform(post(path,routeId).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(version,21.03)))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.currentVersion").value(version+1));
-        String sid=createSuggestion(routeId,noteJsonWithCoordinates(21.0122,52.2299));publish(routeId,sid,owner);
+        String sid=createSuggestion(routeId,noteJsonWithCoordinates(21.0122,52.2299).replace("\"baseVersionNumber\":1", "\"baseVersionNumber\":6"));publish(routeId,sid,owner);
         byte[] originalGpx=mvc.perform(get("/api/routes/{id}/versions/6/gpx",routeId)).andReturn().getResponse().getContentAsByteArray();
         var original=jdbc.queryForMap("select v.storage_key,v.distance_meters,v.elevation_gain_meters,ST_AsText(v.track_geometry) as geometry from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=6",routeId);
         mvc.perform(get("/api/routes/{id}/owner/editor",routeId).cookie(owner)).andExpect(status().isOk())
@@ -374,26 +377,26 @@ class RouteApiIntegrationTest {
         return json.readTree(mvc.perform(multipart("/api/routes").file(file)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
     }
     private String noteJson(String description,String attemptedStatus){return """
-            {"type":"NOTE","authorName":"Kasia","description":"%s","category":"water","tags":[],
+            {"baseVersionNumber":1,"type":"NOTE","authorName":"Kasia","description":"%s","category":"water","tags":[],
              "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},"end":null,"proposedGeometry":null%s}
             """.formatted(description,attemptedStatus==null?"":",\"status\":\""+attemptedStatus+"\"");}
     private String noteJsonWithCoordinates(double longitude,double latitude){return """
-            {"type":"NOTE","authorName":"Kasia","description":"Water","category":"water","tags":[],
+            {"baseVersionNumber":1,"type":"NOTE","authorName":"Kasia","description":"Water","category":"water","tags":[],
              "start":{"longitude":%s,"latitude":%s,"distanceMeters":0},"end":null,"proposedGeometry":null}
             """.formatted(longitude,latitude);}
     private String problemJson(){return """
-            {"type":"PROBLEM","authorName":"Adam","description":"Heavy traffic","category":"highTraffic","tags":[],
+            {"baseVersionNumber":1,"type":"PROBLEM","authorName":"Adam","description":"Heavy traffic","category":"highTraffic","tags":[],
              "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},
              "end":{"longitude":21.0200,"latitude":52.2350,"distanceMeters":800},"proposedGeometry":null}
             """;}
     private String detourJson(){return """
-            {"type":"DETOUR","authorName":"Marek","description":"Safer road","category":null,"tags":["safer"],
+            {"baseVersionNumber":1,"type":"DETOUR","authorName":"Marek","description":"Safer road","category":null,"tags":["safer"],
              "start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0},
              "end":{"longitude":21.0200,"latitude":52.2350,"distanceMeters":800},
              "proposedGeometry":{"type":"LineString","coordinates":[[21.0122,52.2297],[21.016,52.231],[21.0200,52.2350]]}}
             """;}
     private String detourJson(double startLng,double startLat,double startDistance,double endLng,double endLat,double endDistance,double middleLng,double middleLat){return """
-            {"type":"DETOUR","authorName":"Marek","description":"Independent safer road","category":null,"tags":["safer"],
+            {"baseVersionNumber":1,"type":"DETOUR","authorName":"Marek","description":"Independent safer road","category":null,"tags":["safer"],
              "start":{"longitude":%s,"latitude":%s,"distanceMeters":%s},
              "end":{"longitude":%s,"latitude":%s,"distanceMeters":%s},
              "proposedGeometry":{"type":"LineString","coordinates":[[%s,%s],[%s,%s],[%s,%s]]}}

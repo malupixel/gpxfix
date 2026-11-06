@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { ApiError } from "@/lib/api-client";
+import { ApiError, withCurrentBranch } from "@/lib/api-client";
 import { apiErrorKey } from "@/i18n/api-errors";
 import type { RouteData } from "@/types/route";
 import { getRouteVersions } from "./api";
@@ -17,13 +17,13 @@ export function GpxExportDialog({ route, initialVersion, onClose }: { route: Rou
   const { t } = useTranslation(); const [version, setVersion] = useState((initialVersion ?? route.viewedVersion).toString());
   const [filename, setFilename] = useState(""); const [elevation, setElevation] = useState(true);
   const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null), [notice, setNotice] = useState<string | null>(null);
-  const versions = useQuery({ queryKey: ["route-versions", route.publicId, route.currentVersion], queryFn: () => getRouteVersions(route.publicId), staleTime: 0 });
+  const versions = useQuery({ queryKey: ["route-versions", route.publicId, route.branchId, route.currentVersion], queryFn: () => getRouteVersions(route.publicId), staleTime: 0 });
   async function download(original = false) {
     setBusy(true); setError(null); setNotice(null);
     try {
       const base = process.env.NEXT_PUBLIC_API_URL ?? "";
       const path = original ? `/api/routes/${encodeURIComponent(route.publicId)}/gpx/original` : gpxExportPath(route.publicId, version ? Number(version) : null, elevation, filename);
-      const response = await fetch(`${base}${path}`, { credentials: "include", cache: "no-store" });
+      const response = await fetch(`${base}${withCurrentBranch(path)}`, { credentials: "include", cache: "no-store" });
       if (!response.ok) throw new ApiError(response.status, "GPX export failed");
       const bytes = await response.blob(); const url = URL.createObjectURL(bytes); const link = document.createElement("a");
       const disposition = response.headers.get("Content-Disposition") ?? "";

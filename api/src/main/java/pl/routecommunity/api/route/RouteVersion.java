@@ -25,6 +25,10 @@ class RouteVersion {
     @Column(name="track_geometry",nullable=false,columnDefinition="geometry(LineString,4326)") private LineString trackGeometry;
     @Column(name="source_type",nullable=false,length=20) private String sourceType;
     @JdbcTypeCode(SqlTypes.JSON) @Column(name="editor_definition",columnDefinition="jsonb") private String editorDefinition;
+    @ManyToOne(fetch=FetchType.LAZY,optional=false) @JoinColumn(name="branch_id") private RouteBranch branch;
+    @Column(length=80) private String label;
+    void branch(RouteBranch value){branch=value;} RouteBranch getBranch(){return branch;}
+    void label(String value){label=value;} String getLabel(){return label;}
     protected RouteVersion() { }
     RouteVersion(Route route,int versionNumber,Instant createdAt,RouteVersionSource source,RouteVersion basedOnVersion,RouteSuggestion mergedSuggestion,
             String name,String description,String originalFilename,String storageKey,double distanceMeters,Double elevationGainMeters,LineString trackGeometry,String sourceType,String editorDefinition) {

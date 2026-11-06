@@ -7,7 +7,7 @@ import { RouteActivityCard } from "./route-activity";
 import { RouteManagementDialog } from "./route-management-dialogs";
 
 export function RouteInformation({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
-  return <div className="grid items-start gap-5 lg:grid-cols-[1.2fr_1fr]"><RouteDetails route={route} isOwner={isOwner} /><RouteActivityCard routeId={route.publicId} isOwner={isOwner} /></div>;
+  return <div className="grid items-start gap-5 lg:grid-cols-[1.2fr_1fr]"><RouteDetails route={route} isOwner={isOwner} /><RouteActivityCard branch={route.branchId} routeId={route.publicId} isOwner={isOwner} /></div>;
 }
 function RouteDetails({ route, isOwner }: { route: RouteData; isOwner: boolean }) {
   const { t, i18n } = useTranslation();
@@ -22,7 +22,7 @@ function RouteDetails({ route, isOwner }: { route: RouteData; isOwner: boolean }
       <Detail label={t("versions.current")} value={`v${route.currentVersion}`} />
       <Detail label={t("routeMetadata.versionCount")} value={String(route.versionCount)} />
       <Detail label={t("routeMetadata.type")} value={t(areRouteEndpointsClose(route.geometry.coordinates) ? "routeMetadata.loop" : "routeMetadata.pointToPoint")} />
-      <Detail label={t("routeMetadata.source")} value={t(route.creationSource === "INITIAL_UPLOAD" ? "versionOrigin.initialUpload" : "versionOrigin.initialDrawn")} />
+      <Detail label={t("routeMetadata.source")} value={t(route.creationSource === "INITIAL_COPY" ? "branches.copiedOrigin" : route.creationSource === "INITIAL_UPLOAD" ? "versionOrigin.initialUpload" : "versionOrigin.initialDrawn")} />
       <Detail label={t("routeMetadata.suggestions")} value={t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")} />
       {route.creationSource === "INITIAL_UPLOAD" && route.originalFilename && <Detail label={t("route.uploadedFile")} value={route.originalFilename} />}
     </dl>

@@ -48,7 +48,7 @@ async function exportDialogMarkup(route: RouteData, initialVersion?: number) {
   const client = new QueryClient();
   const i18n = createInstance();
   await i18n.init({ resources, lng: "pl", initAsync: false });
-  client.setQueryData(["route-versions", route.publicId, route.currentVersion],
+  client.setQueryData(["route-versions", route.publicId, route.branchId, route.currentVersion],
     [3, 2, 1].map(versionNumber => ({ versionNumber })));
   try {
     return renderToStaticMarkup(createElement(QueryClientProvider, { client },

@@ -1,4 +1,10 @@
 export interface RouteData {
+  branchId?: string;
+  branchName?: string;
+  branches?: RouteBranch[];
+  sourceRoutePublicId?: string | null;
+  sourceVersionNumber?: number | null;
+  sourceRouteName?: string | null;
   publicId: string;
   name: string;
   description: string | null;
@@ -14,11 +20,12 @@ export interface RouteData {
   updatedAt: string;
   versionCreatedAt: string;
   versionCount: number;
-  creationSource: "INITIAL_UPLOAD" | "INITIAL_DRAWN";
+  creationSource: "INITIAL_UPLOAD" | "INITIAL_DRAWN" | "INITIAL_COPY";
   suggestionsEnabled: boolean;
   originalAvailable: boolean;
 }
-export interface RouteVersionSummary { versionNumber:number;createdAt:string;source:"INITIAL_UPLOAD"|"INITIAL_DRAWN"|"SUGGESTION_MERGE"|"OWNER_EDIT";basedOnVersionNumber:number|null;mergedSuggestionPublicId:string|null;current:boolean }
+export interface RouteBranch { publicId: string; name: string; description: string | null; currentVersion: number; forkVersion: number | null; distanceMeters: number }
+export interface RouteVersionSummary { label?: string | null; branchId?: string; versionNumber:number;createdAt:string;source:"INITIAL_COPY"|"INITIAL_UPLOAD"|"INITIAL_DRAWN"|"SUGGESTION_MERGE"|"OWNER_EDIT";basedOnVersionNumber:number|null;mergedSuggestionPublicId:string|null;current:boolean }
 export interface ElevationSample { distanceMeters: number; elevationMeters: number | null; longitude: number; latitude: number }
 export interface CreateRouteResponse { publicId: string; managementToken: string }
 
@@ -49,4 +56,4 @@ export interface RouteSuggestion {
   commentCount: number;
   comments: SuggestionComment[];
 }
-export type CreateSuggestionRequest = Omit<RouteSuggestion, "publicId" | "moderationStatus" | "integrationStatus" | "applicability" | "baseVersionNumber" | "mergedIntoVersionNumber" | "mergedAt" | "createdAt" | "updatedAt" | "commentCount" | "comments">;
+export type CreateSuggestionRequest = { baseVersionNumber?: number } & Omit<RouteSuggestion, "publicId" | "moderationStatus" | "integrationStatus" | "applicability" | "baseVersionNumber" | "mergedIntoVersionNumber" | "mergedAt" | "createdAt" | "updatedAt" | "commentCount" | "comments">;

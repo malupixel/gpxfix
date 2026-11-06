@@ -4,6 +4,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 interface RouteSuggestionRepository extends JpaRepository<RouteSuggestion,Long> {
+    List<RouteSuggestion> findByBranch_IdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(Long branchId,ModerationStatus status);
+    List<RouteSuggestion> findByBranch_IdOrderByCreatedAtAsc(Long branchId);
     boolean existsByPublicId(String publicId);
     List<RouteSuggestion> findByRoute_PublicIdAndModerationStatusOrderByStartDistanceMetersAscCreatedAtAsc(String publicId,ModerationStatus status);
     List<RouteSuggestion> findByRoute_PublicIdOrderByCreatedAtAsc(String publicId);

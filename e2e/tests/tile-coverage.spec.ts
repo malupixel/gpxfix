@@ -51,7 +51,7 @@ test('uploaded sparse GPX: independent fills, whole-route counts, ghosts and sug
   expect(expected.large.features.length).toBe(13);
   const official = await (await page.request.get(`${API}/api/routes/${route.publicId}`)).json();
   const suggestion = await page.request.post(`${API}/api/routes/${route.publicId}/suggestions`, { data: {
-    type: 'DETOUR', authorName: 'Rider', description: 'Excluded detour',
+    baseVersionNumber: 1, type: 'DETOUR', authorName: 'Rider', description: 'Excluded detour',
     start: { longitude: sparse[0][0], latitude: sparse[0][1], distanceMeters: 0 },
     end: { longitude: sparse[1][0], latitude: sparse[1][1], distanceMeters: official.distanceMeters },
     proposedGeometry: { type: 'LineString', coordinates: [sparse[0], xy(9150, 5410), sparse[1]] },

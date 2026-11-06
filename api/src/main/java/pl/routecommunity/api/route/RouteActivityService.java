@@ -15,10 +15,11 @@ import pl.routecommunity.api.common.error.ApiException;
 
 @Service
 class RouteActivityService {
+    private final RouteBranches branches;
     private final JdbcTemplate jdbc;
     private final RouteRepository routes;
     private final ObjectMapper json;
-    RouteActivityService(JdbcTemplate jdbc, RouteRepository routes, ObjectMapper json) {
+    RouteActivityService(JdbcTemplate jdbc, RouteRepository routes, ObjectMapper json, RouteBranches branches) {this.branches=branches;
         this.jdbc=jdbc; this.routes=routes; this.json=json;
     }
     // JDBC participates in the same transaction as the business entities.
@@ -70,6 +71,8 @@ class RouteActivityService {
                 before=" AND (a.occurred_at,a.id)<(?,?)";
             } catch(Exception e) { throw new ApiException(HttpStatus.BAD_REQUEST,"Invalid activity cursor"); }
         }
+        String branchFilter=" AND (CASE WHEN s.id IS NOT NULL THEN s.branch_id WHEN v.id IS NOT NULL THEN v.branch_id ELSE NULL END IS NULL OR CASE WHEN s.id IS NOT NULL THEN s.branch_id ELSE v.branch_id END=?)";
+        params.add(branches.selected(route).getId());
         String visibility=owner?"":"""
              AND NOT a.owner_only AND (a.suggestion_id IS NULL OR s.moderation_status='PUBLISHED')
              AND (a.comment_id IS NULL OR c.moderation_status='PUBLISHED')
@@ -81,7 +84,7 @@ class RouteActivityService {
             FROM route_activity a LEFT JOIN route_versions v ON v.id=a.version_id
             LEFT JOIN route_suggestions s ON s.id=a.suggestion_id LEFT JOIN suggestion_comments c ON c.id=a.comment_id
             WHERE a.route_id=? AND a.actor_kind<>'ADMIN'
-            """+before+visibility+" ORDER BY a.occurred_at DESC,a.id DESC LIMIT ?",(rs,n)->new RouteActivityDto(
+            """+before+branchFilter+visibility+" ORDER BY a.occurred_at DESC,a.id DESC LIMIT ?",(rs,n)->new RouteActivityDto(
                 rs.getObject("id",UUID.class),rs.getString("event_type"),rs.getTimestamp("occurred_at").toInstant(),
                 rs.getObject("version_number",Integer.class),rs.getString("suggestion_public_id"),rs.getString("comment_public_id"),
                 rs.getString("actor_kind"),rs.getString("actor_name"),Map.of()),params.toArray());

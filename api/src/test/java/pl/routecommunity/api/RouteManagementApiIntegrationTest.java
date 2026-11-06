@@ -53,9 +53,12 @@ class RouteManagementApiIntegrationTest {
     }
     int count(Owned route){return jdbc.queryForObject("select count(*) from route_activity a join routes r on r.id=a.route_id where r.public_id=?",Integer.class,route.id());}
     String note="""
-        {"type":"NOTE","authorName":"Private author","description":"Private text","category":"water","tags":[],"start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0}}
+        {"baseVersionNumber":1,"type":"NOTE","authorName":"Private author","description":"Private text","category":"water","tags":[],"start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0}}
         """;
-    String suggestion(Owned route,String key) throws Exception{return read(mvc.perform(post("/api/routes/{id}/suggestions",route.id()).header("Idempotency-Key",key).contentType(MediaType.APPLICATION_JSON).content(note)).andExpect(status().isCreated())).get("publicId").asText();}
+    String suggestion(Owned route,String key) throws Exception{
+        var request=(com.fasterxml.jackson.databind.node.ObjectNode)json.readTree(note);
+        request.put("baseVersionNumber",jdbc.queryForObject("select v.version_number from routes r join route_versions v on v.id=r.current_version_id where r.public_id=?",Integer.class,route.id()));
+        String body=json.writeValueAsString(request);return read(mvc.perform(post("/api/routes/{id}/suggestions",route.id()).header("Idempotency-Key",key).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated())).get("publicId").asText();}
     void moderate(Owned route,String id,String state) throws Exception {mvc.perform(patch("/api/routes/{id}/suggestions/owner/{sid}/moderation",route.id(),id).cookie(route.cookie()).contentType(MediaType.APPLICATION_JSON).content("{\"moderationStatus\":\""+state+"\"}")).andExpect(status().isOk());}
 
     @Test void activityUsesRealEventsAndHidesCurrentPrivateSubjectsWithStablePagination() throws Exception {
@@ -131,7 +134,7 @@ class RouteManagementApiIntegrationTest {
     }
     @Test void failedMergeHasNoEventAndRepeatedMergeCreatesNeitherVersionNorEvent() throws Exception {
         Owned route=upload();double distance=route(route).get("distanceMeters").asDouble();
-        String body=json.writeValueAsString(Map.of("type","DETOUR","authorName","Rider","description","Real detour","tags",List.of("safer"),
+        String body=json.writeValueAsString(Map.of("baseVersionNumber",1,"type","DETOUR","authorName","Rider","description","Real detour","tags",List.of("safer"),
             "start",Map.of("longitude",21.0122,"latitude",52.2297,"distanceMeters",0),
             "end",Map.of("longitude",21.03,"latitude",52.24,"distanceMeters",distance),
             "proposedGeometry",Map.of("type","LineString","coordinates",List.of(List.of(21.0122,52.2297),List.of(21.025,52.235),List.of(21.03,52.24)))));

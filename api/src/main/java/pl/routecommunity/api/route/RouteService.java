@@ -16,10 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class RouteService {
+    private final RouteBranches branches;
     private final RouteRepository routes;private final RouteVersionRepository versions;private final GpxParser parser;private final FileStorage storage;
     private final PublicIdGenerator ids;private final RouteMapper mapper;private final RouteOwnershipService ownership;private final long maxBytes;private final ObjectMapper json;private final RouteVersionPipeline pipeline;
     private final RouteVersionCreationService creation;
-    public RouteService(RouteRepository routes,RouteVersionRepository versions,GpxParser parser,FileStorage storage,PublicIdGenerator ids,RouteMapper mapper,RouteOwnershipService ownership,@Value("${app.gpx.max-file-size-bytes}") long maxBytes,ObjectMapper json,RouteVersionPipeline pipeline,RouteVersionCreationService creation){this.routes=routes;this.versions=versions;this.parser=parser;this.storage=storage;this.ids=ids;this.mapper=mapper;this.ownership=ownership;this.maxBytes=maxBytes;this.json=json;this.pipeline=pipeline;this.creation=creation;}
+    public RouteService(RouteRepository routes,RouteVersionRepository versions,GpxParser parser,FileStorage storage,PublicIdGenerator ids,RouteMapper mapper,RouteOwnershipService ownership,@Value("${app.gpx.max-file-size-bytes}") long maxBytes,ObjectMapper json,RouteVersionPipeline pipeline,RouteVersionCreationService creation, RouteBranches branches){this.branches=branches;this.routes=routes;this.versions=versions;this.parser=parser;this.storage=storage;this.ids=ids;this.mapper=mapper;this.ownership=ownership;this.maxBytes=maxBytes;this.json=json;this.pipeline=pipeline;this.creation=creation;}
 
     @Transactional public CreatedRoute createDrawn(CreateDrawnRouteRequest request){
         var document=request==null?null:request.editorDocument();
@@ -34,8 +35,9 @@ public class RouteService {
     }
     @Transactional public RouteDto ownerEdit(String publicId,OwnerEditRouteRequest request){
         Route route=routes.findLockedByPublicId(publicId).orElseThrow(()->notFound("Route not found"));
-        RouteVersion current=route.getCurrentVersion();
-        if(request.baseVersionNumber()!=current.getVersionNumber() || request.expectedUpdatedAt()!=null&&!request.expectedUpdatedAt().equals(route.getUpdatedAt()))throw new ApiException(HttpStatus.CONFLICT,"The route changed while you were editing. Reload the latest version before saving.");
+        RouteVersion current=branches.current(route);
+        boolean changesSharedMetadata=!Objects.equals(RouteMetadataText.name(request.name()),route.getName()) || !Objects.equals(RouteMetadataText.description(request.description()),route.getDescription());
+        if(request.baseVersionNumber()!=current.getVersionNumber() || changesSharedMetadata && request.expectedUpdatedAt()!=null&&!request.expectedUpdatedAt().equals(route.getUpdatedAt()))throw new ApiException(HttpStatus.CONFLICT,"The route changed while you were editing. Reload the latest version before saving.");
         if(request.name().isBlank())throw new ApiException(HttpStatus.BAD_REQUEST,"Route name is required");
         String name=routeName(request.name(),current.getOriginalFilename()),description=RouteMetadataText.description(request.description());
         if(!Objects.equals(route.getName(),name)||!Objects.equals(route.getDescription(),description))route.metadata(name,description,Instant.now());
@@ -54,6 +56,17 @@ public class RouteService {
         byte[] content;try{content=file.getBytes();}catch(IOException e){throw new ApiException(HttpStatus.BAD_REQUEST,"The uploaded GPX file could not be read");}GpxTrack track;try{track=parser.parse(content);}catch(InvalidGpxException e){throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,e.getMessage());}
         String name=routeName(requestedName,file.getOriginalFilename());return persistNew(name,RouteMetadataText.description(description),safeFilename(file.getOriginalFilename()),content,track,"GPX",null,RouteVersionSource.INITIAL_UPLOAD);
     }
+    @Transactional public CreatedRoute copy(String publicId,int number,String name,String description) {
+        Resolved source=resolve(publicId,number);
+        RouteVersion version=source.version();
+        byte[] bytes=storage.load(version.getStorageKey());
+        String newId=uniquePublicId(),token=ownership.newSecret();
+        Route route=new Route(newId,ownership.hash(token),Instant.now());
+        route.metadata(RouteMetadataText.name(name),RouteMetadataText.description(description),route.getCreatedAt());
+        route.provenance(source.route(),version);routes.saveAndFlush(route);
+        creation.create(route,null,RouteVersionSource.INITIAL_COPY,null,route.getName(),route.getDescription(),version.getOriginalFilename(),parser.parse(bytes),bytes,version.getSourceType(),version.getEditorDefinition(),version);
+        return new CreatedRoute(newId,token,ownership.establish(newId,token));
+    }
     private CreatedRoute persistNew(String name,String description,String filename,byte[] content,GpxTrack sourceTrack,String sourceType,String definition,RouteVersionSource source){
         String publicId=uniquePublicId(),token=ownership.newSecret();
         Route route=new Route(publicId,ownership.hash(token),Instant.now());route.metadata(name,description,route.getCreatedAt());routes.saveAndFlush(route);
@@ -61,12 +74,12 @@ public class RouteService {
         return new CreatedRoute(publicId,token,ownership.establish(publicId,token));
     }
     @Transactional(readOnly=true) public RouteDto get(String publicId,Integer versionNumber){Resolved resolved=resolve(publicId,versionNumber);return mapper.toDto(resolved.route(),resolved.version(),prepared(resolved.version()).track());}
-    @Transactional(readOnly=true) public List<RouteVersionSummaryDto> history(String publicId){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));return versions.findByRoute_PublicIdOrderByVersionNumberDesc(publicId).stream().map(version->mapper.summary(route,version)).toList();}
-    private Resolved resolve(String publicId,Integer versionNumber){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));RouteVersion version=versionNumber==null?route.getCurrentVersion():versions.findByRoute_PublicIdAndVersionNumber(publicId,versionNumber).orElseThrow(()->notFound("Route version not found"));return new Resolved(route,version);}
+    @Transactional(readOnly=true) public List<RouteVersionSummaryDto> history(String publicId){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));return branches.history(route);}
+    private Resolved resolve(String publicId,Integer versionNumber){Route route=routes.findByPublicId(publicId).orElseThrow(()->notFound("Route not found"));RouteVersion version=versionNumber==null?branches.current(route):versions.findByRoute_PublicIdAndVersionNumber(publicId,versionNumber).orElseThrow(()->notFound("Route version not found"));return new Resolved(route,version);}
     // Legacy GPX files without elevations are enriched for the response only: version rows and files stay immutable.
     private RouteVersionPipeline.Prepared prepared(RouteVersion version){
         byte[] original=storage.load(version.getStorageKey());GpxTrack track=parser.parse(original);
-        if(track.points().stream().allMatch(point->point.elevationMeters()!=null))return new RouteVersionPipeline.Prepared(track,original);
+        if(version.getSource()==RouteVersionSource.INITIAL_COPY || track.points().stream().allMatch(point->point.elevationMeters()!=null))return new RouteVersionPipeline.Prepared(track,original);
         return pipeline.prepare(version.getName(),track,original);
     }
     private record Resolved(Route route,RouteVersion version){}

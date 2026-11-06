@@ -133,7 +133,7 @@ class AdminApiIntegrationTest {
     @Test void suggestionsRemainReadOnlyAndDryRunIncludesAllDependencies() throws Exception {
         Uploaded r=upload("AdminSuggestionScope");
         String note="""
-            {"type":"NOTE","authorName":"Contributor","description":"Admin read-only note","category":"water","tags":[],"start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0}}
+            {"baseVersionNumber":1,"type":"NOTE","authorName":"Contributor","description":"Admin read-only note","category":"water","tags":[],"start":{"longitude":21.0122,"latitude":52.2297,"distanceMeters":0}}
             """;
         var suggestion=read(mvc.perform(post("/api/routes/{id}/suggestions",r.publicId()).contentType(MediaType.APPLICATION_JSON).content(note)).andExpect(status().isCreated()));
         String sid=suggestion.get("publicId").asText();
@@ -158,16 +158,21 @@ class AdminApiIntegrationTest {
 
     @Test void candidateFiltersReviewUnusualRoutesWithoutChangingThem() throws Exception {
         Uploaded r=upload("CandidateUnique");
-        jdbc.update("UPDATE route_versions SET distance_meters=900 WHERE route_id=?",r.id());
+        legacyVersionFixture(() -> jdbc.update("UPDATE route_versions SET distance_meters=900 WHERE route_id=?",r.id()));
         mvc.perform(admin(get("/api/admin/routes")).param("search",r.publicId()).param("candidate","SHORT")).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1));
         jdbc.update("UPDATE routes SET name='' WHERE id=?",r.id());
         mvc.perform(admin(get("/api/admin/routes")).param("search",r.publicId()).param("candidate","UNNAMED")).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1));
         jdbc.update("UPDATE routes SET created_at=now()-interval '200 days' WHERE id=?",r.id());
         mvc.perform(admin(get("/api/admin/routes")).param("search",r.publicId()).param("candidate","OLD_WITHOUT_SUGGESTIONS")).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1));
-        jdbc.update("UPDATE route_versions SET distance_meters=0 WHERE route_id=?",r.id());
+        legacyVersionFixture(() -> jdbc.update("UPDATE route_versions SET distance_meters=0 WHERE route_id=?",r.id()));
         mvc.perform(admin(get("/api/admin/routes")).param("search",r.publicId()).param("candidate","INCOMPLETE")).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1));
         assertThat(jdbc.queryForObject("SELECT deleted_at IS NULL FROM routes WHERE id=?",Boolean.class,r.id())).isTrue();
         // Empty legacy names can still be reviewed and deleted with explicit UI confirmation.
         mvc.perform(admin(patch("/api/admin/routes/{id}/status",r.id())).contentType(MediaType.APPLICATION_JSON).content("{\"deleted\":true,\"expectedDeleted\":false,\"confirmationName\":\"\"}")).andExpect(status().isOk());
+    }
+    // Simulate pre-migration legacy records only in this disposable test database.
+    private void legacyVersionFixture(Runnable seed) {
+        jdbc.execute("ALTER TABLE route_versions DISABLE TRIGGER route_versions_immutable");
+        try { seed.run(); } finally { jdbc.execute("ALTER TABLE route_versions ENABLE TRIGGER route_versions_immutable"); }
     }
 }

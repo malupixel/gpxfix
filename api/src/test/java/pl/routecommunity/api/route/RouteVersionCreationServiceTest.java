@@ -29,7 +29,11 @@ class RouteVersionCreationServiceTest {
             when(versions.saveAndFlush(any())).thenAnswer(call -> call.getArgument(0));
             TransactionSynchronizationManager.initSynchronization();
             var route = new Route("route", new byte[32], Instant.now());
-            var result = new RouteVersionCreationService(versions, routes, pipeline, storage,mock(RouteActivityService.class)).create(route, null, RouteVersionSource.INITIAL_DRAWN, null, "Route", null, "route.gpx", source, null, "DRAWN", null);
+            var branches=mock(RouteBranches.class);
+            when(branches.initial(route)).thenReturn(new RouteBranch(route,"main","Main",null,null));
+            when(versions.nextNumber(any())).thenReturn(1);
+            doAnswer(call->{route.publish(call.getArgument(2));return null;}).when(branches).publish(same(route),any(),any());
+            var result = new RouteVersionCreationService(versions, routes, pipeline, storage,mock(RouteActivityService.class),branches).create(route, null, RouteVersionSource.INITIAL_DRAWN, null, "Route", null, "route.gpx", source, null, "DRAWN", null);
             assertThat(result.version().getDistanceMeters()).isEqualTo(source.distanceMeters());
             assertThat(result.version().getElevationGainMeters()).isEqualTo(10.0);
             assertThat(route.getCurrentVersion()).isSameAs(result.version());

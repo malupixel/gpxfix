@@ -62,7 +62,7 @@ test('merge detour creates a version and historical geometry stays immutable', a
   const route = await owner(page);
   const original = await (await page.request.get(`${API}/api/routes/${route.publicId}`)).json();
   const response = await page.request.post(`${API}/api/routes/${route.publicId}/suggestions`, { data: {
-    type: 'DETOUR', authorName: 'Rider', description: 'Safer E2E detour', tags: ['safer'],
+    baseVersionNumber: 1, type: 'DETOUR', authorName: 'Rider', description: 'Safer E2E detour', tags: ['safer'],
     start: { longitude: 21.0122, latitude: 52.2297, distanceMeters: 0 },
     end: { longitude: 21.03, latitude: 52.24, distanceMeters: original.distanceMeters },
     proposedGeometry: { type: 'LineString', coordinates: [[21.0122, 52.2297], [21.025, 52.235], [21.03, 52.24]] },
