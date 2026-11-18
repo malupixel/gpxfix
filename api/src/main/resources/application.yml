@@ -48,6 +48,11 @@ app:
     session-days: ${OWNER_SESSION_DAYS:30}
   routing:
     base-url: ${ROUTING_BASE_URL:https://router.project-osrm.org}
+    profile: ${ROUTING_PROFILE:cycling}
+    max-snap-meters: ${ROUTING_MAX_SNAP_METERS:50}
+    loop-threshold-meters: ${ROUTE_LOOP_THRESHOLD_METERS:150}
+    max-closure-ratio: ${ROUTE_MAX_CLOSURE_RATIO:5}
+    closure-endpoint-tolerance-meters: ${ROUTE_CLOSURE_ENDPOINT_TOLERANCE_METERS:1}
   elevation:
     provider: ${ELEVATION_PROVIDER:local-dem}
     data-path: ${ELEVATION_DATA_PATH:/home/malupixel/data/elevation}

@@ -21,7 +21,7 @@ function RouteDetails({ route, isOwner }: { route: RouteData; isOwner: boolean }
       <Detail label={t("routeMetadata.viewedVersion")} value={`v${route.viewedVersion}`} />
       <Detail label={t("versions.current")} value={`v${route.currentVersion}`} />
       <Detail label={t("routeMetadata.versionCount")} value={String(route.versionCount)} />
-      <Detail label={t("routeMetadata.type")} value={t(areRouteEndpointsClose(route.geometry.coordinates) ? "routeMetadata.loop" : "routeMetadata.pointToPoint")} />
+      <Detail label={t("routeMetadata.type")} value={t((route.loop??areRouteEndpointsClose(route.geometry.coordinates)) ? "routeMetadata.loop" : "routeMetadata.pointToPoint")} />
       <Detail label={t("routeMetadata.source")} value={t(route.creationSource === "INITIAL_COPY" ? "branches.copiedOrigin" : route.creationSource === "INITIAL_UPLOAD" ? "versionOrigin.initialUpload" : "versionOrigin.initialDrawn")} />
       <Detail label={t("routeMetadata.suggestions")} value={t(route.suggestionsEnabled ? "route.openSuggestions" : "routeMetadata.closed")} />
       {route.creationSource === "INITIAL_UPLOAD" && route.originalFilename && <Detail label={t("route.uploadedFile")} value={route.originalFilename} />}

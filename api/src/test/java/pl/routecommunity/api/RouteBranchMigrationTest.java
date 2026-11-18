@@ -27,12 +27,13 @@ class RouteBranchMigrationTest {
         var flyway=Flyway.configure().dataSource(DB.getJdbcUrl(),DB.getUsername(),DB.getPassword()).load();flyway.migrate();flyway.validate();assertThat(flyway.migrate().migrationsExecuted).isZero();
         try(var c=DriverManager.getConnection(DB.getJdbcUrl(),DB.getUsername(),DB.getPassword());var q=c.createStatement()) {
             assertThat(snapshot(q)).isEqualTo(before);
+            try(var rows=q.executeQuery("SELECT count(*) FROM route_versions WHERE loop_declared")){rows.next();assertThat(rows.getInt(1)).isZero();}
             try(var rows=q.executeQuery("SELECT b.public_id,b.current_version_id=r.current_version_id,(SELECT count(*) FROM route_versions WHERE branch_id=b.id),(SELECT count(*) FROM route_suggestions WHERE branch_id=b.id) FROM route_branches b JOIN routes r ON r.id=b.route_id")) {
                 assertThat(rows.next()).isTrue();assertThat(rows.getString(1)).isEqualTo("main");assertThat(rows.getBoolean(2)).isTrue();assertThat(rows.getInt(3)).isEqualTo(2);assertThat(rows.getInt(4)).isEqualTo(1);assertThat(rows.next()).isFalse();
             }
         }
     }
     String snapshot(Statement q)throws Exception {
-        try(var rows=q.executeQuery("SELECT jsonb_build_object('routes',(SELECT jsonb_agg(to_jsonb(r)-'source_route_public_id'-'source_version_number'-'source_version_id'-'source_route_name') FROM routes r),'versions',(SELECT jsonb_agg(to_jsonb(v)-'branch_id'-'label' ORDER BY id) FROM route_versions v),'suggestions',(SELECT jsonb_agg(to_jsonb(s)-'branch_id') FROM route_suggestions s),'comments',(SELECT jsonb_agg(to_jsonb(c)) FROM suggestion_comments c),'activity',(SELECT jsonb_agg(to_jsonb(a)) FROM route_activity a))::text")){rows.next();return rows.getString(1);}
+        try(var rows=q.executeQuery("SELECT jsonb_build_object('routes',(SELECT jsonb_agg(to_jsonb(r)-'source_route_public_id'-'source_version_number'-'source_version_id'-'source_route_name') FROM routes r),'versions',(SELECT jsonb_agg(to_jsonb(v)-'branch_id'-'label'-'loop_declared' ORDER BY id) FROM route_versions v),'suggestions',(SELECT jsonb_agg(to_jsonb(s)-'branch_id') FROM route_suggestions s),'comments',(SELECT jsonb_agg(to_jsonb(c)) FROM suggestion_comments c),'activity',(SELECT jsonb_agg(to_jsonb(a)) FROM route_activity a))::text")){rows.next();return rows.getString(1);}
     }
 }

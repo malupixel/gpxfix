@@ -13,6 +13,9 @@ import { SquadratsGrid } from "@/components/map/squadrats-grid";
 const STYLE = process.env.NEXT_PUBLIC_MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/liberty";
 type Props = {
   document: RouteEditorDocument;
+  readOnly?: boolean;
+  onPick?: (coordinate: RouteCoordinate) => void;
+  closure?: RouteCoordinate[];
   selectedSegmentId: string | null;
   selectedPointId: string | null;
   inserting: boolean;
@@ -44,11 +47,13 @@ export function EditorMap(props: Props) {
       map.addSource("editor-segments", { type: "geojson", data: segmentData(documentRef.current, selectedSegmentRef.current) });
       map.addLayer({ id: "editor-segments-hit", type: "line", source: "editor-segments", paint: { "line-width": 28, "line-opacity": 0 } });
       map.addLayer({ id: "editor-selected", type: "line", source: "editor-segments", filter: ["==", ["get", "selected"], true], layout: { "line-cap": "round" }, paint: { "line-color": "#f59e0b", "line-width": 9, "line-opacity": .75 } });
+      map.addSource("editor-closure", {type:"geojson",data:collection([])});
+      map.addLayer({id:"editor-closure-line",type:"line",source:"editor-closure",paint:{"line-color":"#ea580c","line-width":8,"line-dasharray":[2,1]}});
       map.resize();
       const coordinates = finalGeometry(documentRef.current);
       if (coordinates.length > 1) {
         const bounds = coordinates.reduce((b, c) => ({ west: Math.min(b.west, c[0]), south: Math.min(b.south, c[1]), east: Math.max(b.east, c[0]), north: Math.max(b.north, c[1]) }), { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity });
-        map.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], { padding: { top: 110, bottom: 170, left: 60, right: 60 }, maxZoom: 16, duration: 0 });
+        map.fitBounds([[bounds.west, bounds.south], [bounds.east, bounds.north]], { padding: { top: 110, bottom: callbacks.current.readOnly ? Math.min(map.getContainer().clientHeight*.48+20,440) : 170, left: 60, right: 60 }, maxZoom: 16, duration: 0 });
       }
       setLoadedMap(map);
     });
@@ -56,6 +61,8 @@ export function EditorMap(props: Props) {
     map.on("mouseenter", "editor-segments-hit", () => { map.getCanvas().style.cursor = insertingRef.current ? "crosshair" : "pointer"; });
     map.on("mouseleave", "editor-segments-hit", () => { map.getCanvas().style.cursor = ""; });
     const click = (event: MapMouseEvent) => {
+      if(callbacks.current.onPick){callbacks.current.onPick([event.lngLat.lng,event.lngLat.lat]);return;}
+      if(callbacks.current.readOnly)return;
       const hit = map.queryRenderedFeatures(event.point, { layers: ["editor-segments-hit"] })[0];
       const segmentId = hit?.properties?.id as string | undefined;
       if (insertingRef.current && selectedSegmentRef.current && segmentId === selectedSegmentRef.current) {
@@ -72,14 +79,15 @@ export function EditorMap(props: Props) {
   useEffect(() => { updateMap(mapRef.current, routeDocument, selectedSegmentId); }, [routeDocument, selectedSegmentId]);
   useEffect(() => {
     const map = mapRef.current; if (!map) return;
-    const markers = routeDocument.points.map((controlPoint, index) => {
+    const markers = routeDocument.points.filter((_,index)=>!props.readOnly||index===0||index===routeDocument.points.length-1).map((controlPoint, index) => {
+      index = routeDocument.points.findIndex(p=>p.id===controlPoint.id);
       const element = window.document.createElement("button"); element.type = "button";
       element.className = `route-control-point ${controlPoint.id === selectedPointId ? "route-control-point-selected" : ""}`;
       element.dataset.kind = index === 0 ? "start" : index === routeDocument.points.length - 1 ? "end" : "control";
-      element.title = t(index === 0 ? "editor.startPoint" : index === routeDocument.points.length - 1 ? "editor.endPoint" : "editor.controlPoint");
+      element.title = props.readOnly ? t(index===0?"route.start":"route.finish") : t(index === 0 ? "editor.startPoint" : index === routeDocument.points.length - 1 ? "editor.endPoint" : "editor.controlPoint");
       element.setAttribute("aria-label", element.title);
-      element.addEventListener("click", (event) => { event.stopPropagation(); callbacks.current.onSelectSegment(null); callbacks.current.onSelectPoint(controlPoint.id); });
-      const marker = new Marker({ element, draggable: true }).setLngLat(controlPoint.coordinate).addTo(map);
+      element.addEventListener("click", (event) => { event.stopPropagation(); if(callbacks.current.readOnly){callbacks.current.onPick?.(controlPoint.coordinate);return;} callbacks.current.onSelectSegment(null); callbacks.current.onSelectPoint(controlPoint.id); });
+      const marker = new Marker({ element, draggable: !props.readOnly }).setLngLat(controlPoint.coordinate).addTo(map);
       let dragSource = documentRef.current;
       marker.on("dragstart", () => { dragSource = documentRef.current; map.dragPan.disable(); element.classList.add("route-control-point-dragging"); });
       marker.on("drag", () => { const value = marker.getLngLat(); updateMap(map, previewPointMove(dragSource, controlPoint.id, [value.lng, value.lat]), selectedSegmentRef.current); });
@@ -87,11 +95,12 @@ export function EditorMap(props: Props) {
       return marker;
     });
     return () => markers.forEach((marker) => marker.remove());
-  }, [routeDocument.points, selectedPointId, t]);
+  }, [routeDocument.points, selectedPointId, t, props.readOnly]);
+  useEffect(()=>{if(loadedMap)(loadedMap.getSource("editor-closure") as GeoJSONSource).setData(collection(props.closure?.length ? [line(props.closure)] : []));},[loadedMap,props.closure]);
 
   useEffect(() => { if (loadedMap) localizeMapControls(loadedMap.getContainer(), t, t("editor.mapLabel")); }, [loadedMap, t]);
 
-  return <><GhostMapLayer map={loadedMap} beforeLayerId="editor-route-line" /><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} /><div className="editor-grid-control absolute left-3 right-16 top-16 z-10"><div className="flex flex-wrap gap-2"><GhostRoutesPanel align="left" /><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" coordinates={coordinates} /></div></div>{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
+  return <><GhostMapLayer map={loadedMap} beforeLayerId="editor-route-line" /><div ref={node} className="absolute inset-0 size-full bg-slate-200" aria-label={t("editor.mapLabel")} />{!props.readOnly && <div className="editor-grid-control absolute left-3 right-16 top-16 z-10"><div className="flex flex-wrap gap-2"><GhostRoutesPanel align="left" /><SquadratsGrid map={loadedMap} beforeLayerId="editor-route-line" coordinates={coordinates} /></div></div>}{mapError && <div role="alert" className="absolute left-1/2 top-20 z-10 -translate-x-1/2 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-800 shadow">{t("map.loadFailed")}</div>}</>;
 }
 
 function updateMap(map: MapLibreMap | null, document: RouteEditorDocument, selectedId: string | null) {

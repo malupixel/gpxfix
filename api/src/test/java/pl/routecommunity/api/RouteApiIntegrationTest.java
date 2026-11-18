@@ -37,6 +37,7 @@ class RouteApiIntegrationTest {
     @Container static final PostgreSQLContainer<?> POSTGRES=new PostgreSQLContainer<>(DockerImageName.parse("postgis/postgis:17-3.5").asCompatibleSubstituteFor("postgres"));
     @DynamicPropertySource static void properties(DynamicPropertyRegistry r){r.add("spring.datasource.url",POSTGRES::getJdbcUrl);r.add("spring.datasource.username",POSTGRES::getUsername);r.add("spring.datasource.password",POSTGRES::getPassword);r.add("app.storage.gpx-path",STORAGE::toString);}
     @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json; @MockitoBean ElevationProvider elevationProvider;
+    @MockitoBean pl.routecommunity.api.routing.RoutingService routing;
     @BeforeEach void elevation(){when(elevationProvider.elevations(anyList())).thenAnswer(invocation->{List<ElevationProvider.Coordinate> points=invocation.getArgument(0);return points.stream().map(point->100.0+(point.latitude()-52.0)*100).toList();});}
     @Test void uploadThenGetRoute() throws Exception {
         byte[] bytes=new ClassPathResource("gpx/valid.gpx").getInputStream().readAllBytes();
@@ -362,6 +363,92 @@ class RouteApiIntegrationTest {
         assertThat(jdbc.queryForMap("select v.* from route_versions v join routes r on r.id=v.route_id where r.public_id=? and v.version_number=1",routeId)).isEqualTo(row);
         assertThat(Files.readString(file)).isEqualTo(raw);
     }
+
+    @Test void reverseUsesImmutableVersionsPreservesElevationsSuggestionsAndRoundTrips() throws Exception {
+        JsonNode created=upload("reverse.gpx");String id=created.path("publicId").asText();Cookie owner=ownerCookie(id,created.path("managementToken").asText());
+        var original=json.readTree(mvc.perform(get("/api/routes/{id}",id)).andReturn().getResponse().getContentAsString());
+        var suggestion=json.readTree(mvc.perform(post("/api/routes/{id}/suggestions",id).contentType(MediaType.APPLICATION_JSON).content(noteJson("Keep this note",null))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        publish(id,suggestion.path("publicId").asText(),owner);
+        mvc.perform(post("/api/routes/{id}/suggestions/{sid}/comments",id,suggestion.path("publicId").asText()).contentType(MediaType.APPLICATION_JSON).content("{\"authorName\":\"Tester\",\"content\":\"Keep this comment\"}")).andExpect(status().isCreated());
+        String body="{\"baseVersionNumber\":1,\"operation\":\"REVERSE\"}";
+        mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+        mvc.perform(post("/api/routes/{id}/owner/geometry/versions",id).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+        var preview=transformPreview(id,owner,body);
+        mvc.perform(post("/api/routes/{id}/owner/geometry/versions",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isConflict());
+        var reversed=transformApply(id,owner,body,preview.path("previewHash").asText());
+        assertThat(reversed.path("viewedVersion").asInt()).isEqualTo(2);
+        var expected=new java.util.ArrayList<JsonNode>();original.path("geometry").path("coordinates").forEach(expected::add);java.util.Collections.reverse(expected);
+        assertThat(reversed.path("geometry").path("coordinates")).isEqualTo(json.valueToTree(expected));
+        assertThat(reversed.path("distanceMeters").asDouble()).isCloseTo(original.path("distanceMeters").asDouble(),org.assertj.core.data.Offset.offset(1e-7));
+        assertThat(reversed.path("elevationProfile").get(0).path("elevationMeters")).isEqualTo(original.path("elevationProfile").get(original.path("elevationProfile").size()-1).path("elevationMeters"));
+        String again="{\"baseVersionNumber\":2,\"operation\":\"REVERSE\"}";
+        var restored=transformApply(id,owner,again,transformPreview(id,owner,again).path("previewHash").asText());
+        assertThat(restored.path("geometry")).isEqualTo(original.path("geometry"));assertThat(restored.path("elevationProfile")).isEqualTo(original.path("elevationProfile"));
+        mvc.perform(get("/api/routes/{id}/versions/1",id)).andExpect(jsonPath("$.geometry").value(json.convertValue(original.path("geometry"),java.util.Map.class)));
+        mvc.perform(get("/api/routes/{id}/suggestions/owner",id).cookie(owner)).andExpect(jsonPath("$[0].publicId").value(suggestion.path("publicId").asText())).andExpect(jsonPath("$[0].baseVersionNumber").value(1)).andExpect(jsonPath("$[0].comments[0].content").value("Keep this comment"));
+        mvc.perform(get("/api/routes/{id}/versions",id)).andExpect(jsonPath("$.length()").value(3));
+        mvc.perform(get("/api/routes/{id}/gpx",id)).andExpect(status().isOk()).andExpect(content().string(org.hamcrest.Matchers.containsString("<ele>")));
+        verifyNoInteractions(routing);
+    }
+    @Test void relocateRequiresDeclarationAndApprovalAndRejectsUnsafeClosures() throws Exception {
+        JsonNode created=upload("open-loop.gpx");String id=created.path("publicId").asText();Cookie owner=ownerCookie(id,created.path("managementToken").asText());
+        mvc.perform(get("/api/routes/{id}/owner/geometry/options",id)).andExpect(status().isForbidden());
+        mvc.perform(get("/api/routes/{id}/owner/geometry/options",id).cookie(owner)).andExpect(jsonPath("$.automaticLoop").value(false)).andExpect(jsonPath("$.declaredLoop").value(false)).andExpect(jsonPath("$.thresholdMeters").value(150));
+        String base="{\"baseVersionNumber\":1,\"operation\":\"RELOCATE\",\"segmentIndex\":0,\"segmentFraction\":0.5";
+        mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(base+"}")).andExpect(status().isBadRequest());
+        when(routing.route(anyList(),anyList())).thenAnswer(inv->{List<Double> end=inv.getArgument(0),start=inv.getArgument(1);return List.of(end,List.of(0.0,0.0),start);});
+        mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(base+",\"declareLoop\":true}")).andExpect(status().isUnprocessableEntity());
+        when(routing.route(anyList(),anyList())).thenAnswer(inv->{List<Double> end=inv.getArgument(0),start=inv.getArgument(1);return List.of(List.of(end.get(0),end.get(1)+.0001),start);});
+        mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(base+",\"declareLoop\":true}")).andExpect(status().isUnprocessableEntity());
+        doThrow(new pl.routecommunity.api.common.error.ApiException(org.springframework.http.HttpStatus.BAD_GATEWAY,"No routing")).when(routing).route(anyList(),anyList());
+        mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(base+",\"declareLoop\":true}")).andExpect(status().isBadGateway());
+        String body=base+",\"declareLoop\":true,\"directClosure\":true,\"reverse\":true}";
+        var preview=transformPreview(id,owner,body);assertThat(preview.path("addedDistanceMeters").asDouble()).isPositive();
+        // Preview cannot create a version; wrong approval hash leaves the route untouched.
+        mvc.perform(get("/api/routes/{id}/versions",id)).andExpect(jsonPath("$.length()").value(1));
+        mvc.perform(post("/api/routes/{id}/owner/geometry/versions",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(body.substring(0,body.length()-1)+",\"previewHash\":\"wrong\"}")).andExpect(status().isConflict());
+        var result=transformApply(id,owner,body,preview.path("previewHash").asText());var coordinates=result.path("geometry").path("coordinates");
+        assertThat(coordinates.get(0)).isEqualTo(coordinates.get(coordinates.size()-1));assertThat(result.path("viewedVersion").asInt()).isEqualTo(2);
+        mvc.perform(get("/api/routes/{id}/owner/geometry/options",id).cookie(owner)).andExpect(jsonPath("$.declaredLoop").value(true));
+        mvc.perform(get("/api/routes/{id}/versions",id)).andExpect(jsonPath("$.length()").value(2));
+        String exported=mvc.perform(get("/api/routes/{id}/gpx",id)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertThat(exported).contains("<trkpt").contains("<ele>");
+    }
+    @Test void automaticLoopAndSmallRoutedGapPreserveProfileAndRevalidateAfterEditing() throws Exception {
+        for(boolean closed:List.of(true,false)) {
+            String xml="<gpx><trk><trkseg><trkpt lat='52' lon='21'><ele>100</ele></trkpt><trkpt lat='52.001' lon='21.001'><ele>120</ele></trkpt><trkpt lat='52.001' lon='21'><ele>110</ele></trkpt><trkpt lat='52' lon='"+(closed?"21":"21.0002")+"'><ele>100</ele></trkpt></trkseg></trk></gpx>";
+            var uploaded=mvc.perform(multipart("/api/routes").file(new MockMultipartFile("file","loop.gpx","application/gpx+xml",xml.getBytes(java.nio.charset.StandardCharsets.UTF_8)))).andExpect(status().isCreated()).andReturn();
+            JsonNode created=json.readTree(uploaded.getResponse().getContentAsString());String id=created.path("publicId").asText();Cookie owner=uploaded.getResponse().getCookie("route_owner");
+            mvc.perform(get("/api/routes/{id}/owner/geometry/options",id).cookie(owner)).andExpect(jsonPath("$.automaticLoop").value(true));
+            when(routing.route(anyList(),anyList())).thenAnswer(inv->List.of(inv.getArgument(0),inv.getArgument(1)));
+            String body="{\"baseVersionNumber\":1,\"operation\":\"RELOCATE\",\"segmentIndex\":0,\"segmentFraction\":0.5}";
+            var preview=transformPreview(id,owner,body);
+            if(closed)assertThat(preview.path("addedDistanceMeters").asDouble()).isZero();
+            if(!closed)assertThat(preview.path("addedDistanceMeters").asDouble()).isBetween(10.0,30.0);
+            var result=transformApply(id,owner,body,preview.path("previewHash").asText());
+            var coordinates=result.path("geometry").path("coordinates");assertThat(coordinates.get(0)).isEqualTo(coordinates.get(coordinates.size()-1));
+            assertThat(result.path("elevationProfile").get(0).path("elevationMeters").asDouble()).isCloseTo(110,org.assertj.core.data.Offset.offset(1e-6));
+            mvc.perform(post("/api/routes/{id}/owner/geometry/versions",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(body.substring(0,body.length()-1)+",\"previewHash\":\""+preview.path("previewHash").asText()+"\"}")).andExpect(status().isConflict());
+            mvc.perform(post("/api/routes/{id}/owner/versions",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(editJson(2,21.04))).andExpect(status().isCreated());
+            mvc.perform(get("/api/routes/{id}/owner/geometry/options",id).cookie(owner)).andExpect(jsonPath("$.declaredLoop").value(false)).andExpect(jsonPath("$.automaticLoop").value(false));
+        }
+    }
+
+    @Test void reverseMultiSegmentGpxDoesNotCountTheGapAsTravelDistance() throws Exception {
+        String xml="<gpx><trk><trkseg><trkpt lat='52' lon='21'><ele>100</ele></trkpt><trkpt lat='52.001' lon='21.001'><ele>120</ele></trkpt></trkseg><trkseg><trkpt lat='53' lon='22'><ele>140</ele></trkpt><trkpt lat='53.001' lon='22.001'><ele>110</ele></trkpt></trkseg></trk></gpx>";
+        var upload=mvc.perform(multipart("/api/routes").file(new MockMultipartFile("file","segments.gpx","application/gpx+xml",xml.getBytes(java.nio.charset.StandardCharsets.UTF_8)))).andExpect(status().isCreated()).andReturn();
+        String id=json.readTree(upload.getResponse().getContentAsString()).path("publicId").asText();Cookie owner=upload.getResponse().getCookie("route_owner");
+        var original=json.readTree(mvc.perform(get("/api/routes/{id}",id)).andReturn().getResponse().getContentAsString());
+        String body="{\"baseVersionNumber\":1,\"operation\":\"REVERSE\"}";var preview=transformPreview(id,owner,body);
+        assertThat(preview.path("distanceMeters")).isEqualTo(original.path("distanceMeters"));
+        var result=transformApply(id,owner,body,preview.path("previewHash").asText());assertThat(result.path("distanceMeters")).isEqualTo(original.path("distanceMeters"));
+        assertThat(result.path("elevationProfile").get(2).path("distanceMeters")).isEqualTo(result.path("elevationProfile").get(1).path("distanceMeters"));
+        String exported=mvc.perform(get("/api/routes/{id}/gpx",id)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertThat(exported.split("<trkseg>",-1)).hasSize(3);
+    }
+
+    private JsonNode transformPreview(String id,Cookie owner,String body)throws Exception{return json.readTree(mvc.perform(post("/api/routes/{id}/owner/geometry/preview",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());}
+    private JsonNode transformApply(String id,Cookie owner,String body,String hash)throws Exception{return json.readTree(mvc.perform(post("/api/routes/{id}/owner/geometry/versions",id).cookie(owner).contentType(MediaType.APPLICATION_JSON).content(body.substring(0,body.length()-1)+",\"previewHash\":\""+hash+"\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());}
 
     private String editJson(int base,double endLongitude){return """
         {"baseVersionNumber":%d,"name":"Owner edit","description":"New geometry","editorDocument":{"version":1,

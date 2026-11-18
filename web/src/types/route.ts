@@ -1,4 +1,5 @@
 export interface RouteData {
+  loop?: boolean;
   branchId?: string;
   branchName?: string;
   branches?: RouteBranch[];

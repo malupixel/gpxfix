@@ -6,8 +6,15 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/routes")
 public class RouteController {
+    private final RouteTransformService transforms;
     private final RouteService service; private final RouteOwnershipService ownership; private final GpxExportService exports;
-    public RouteController(RouteService service,RouteOwnershipService ownership,GpxExportService exports){this.service=service;this.ownership=ownership;this.exports=exports;}
+    public RouteController(RouteService service,RouteOwnershipService ownership,GpxExportService exports,RouteTransformService transforms){this.transforms=transforms;this.service=service;this.ownership=ownership;this.exports=exports;}
+    @GetMapping("/{publicId}/owner/geometry/options")
+    public RouteTransformService.Options transformOptions(@PathVariable String publicId,HttpServletRequest request){ownership.requireOwner(publicId,request);return transforms.options(publicId);}
+    @PostMapping("/{publicId}/owner/geometry/preview")
+    public RouteTransformService.Preview transformPreview(@PathVariable String publicId,@RequestBody RouteTransformService.Request body,HttpServletRequest request){ownership.requireOwner(publicId,request);return transforms.preview(publicId,body);}
+    @PostMapping("/{publicId}/owner/geometry/versions")
+    public ResponseEntity<RouteDto> transform(@PathVariable String publicId,@RequestBody RouteTransformService.Request body,HttpServletRequest request){ownership.requireOwner(publicId,request);return ResponseEntity.status(HttpStatus.CREATED).body(transforms.apply(publicId,body));}
     @PostMapping(consumes=MediaType.MULTIPART_FORM_DATA_VALUE) @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CreateRouteResponse> create(@RequestParam("file") MultipartFile file,@RequestParam(required=false) String name,@RequestParam(required=false) String description){
         CreatedRoute created=service.create(file,name,description);

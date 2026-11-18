@@ -10,6 +10,9 @@ for (const view of ['route', 'drawing', 'owner editor'] as const) {
       await owner(page);
       if (view === 'owner editor') await page.getByRole('button', { name: 'Edit route', exact: true }).click();
     }
+    // Loading the owner document is asynchronous; the viewing map stays visible
+    // until it finishes. Do not capture that previous map during the transition.
+    if (view !== 'route') await expect(page.locator(view === 'drawing' ? '.route-editor-drawing' : '.route-editor-owner')).toBeVisible();
     const checkbox = page.getByRole('checkbox', { name: 'Show Squadrats grid', exact: true });
     await expect(checkbox).toBeVisible();
     // Inspect the actual MapLibre instance passed to the shared grid component.
@@ -21,8 +24,13 @@ for (const view of ['route', 'drawing', 'owner editor'] as const) {
         const key = Object.keys(element).find(key => key.startsWith('__reactFiber$'))!;
         let fiber = (element as unknown as Record<string, Fiber>)[key];
         while (fiber) {
-          const instance = fiber.memoizedProps?.map ?? fiber.alternate?.memoizedProps?.map;
-          if (instance && typeof instance.jumpTo === "function") return instance;
+          // A mode switch can leave the unmounted view map in the alternate fiber.
+          // Only control the map mounted beside this checkbox, after its sources load.
+          const instance = [fiber.memoizedProps?.map, fiber.alternate?.memoizedProps?.map].find(map =>
+            map && typeof map.jumpTo === "function" && map.getContainer().isConnected &&
+            map.getContainer().closest('main') === element.closest('main') &&
+            map.getStyle()?.layers.some(layer => layer.id === 'route-line' || layer.id === 'editor-route-line'));
+          if (instance) return instance;
           fiber = fiber.return!;
         }
         throw new Error('Grid has no loaded MapLibre instance');

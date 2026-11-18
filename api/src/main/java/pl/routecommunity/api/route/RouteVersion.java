@@ -26,6 +26,9 @@ class RouteVersion {
     @Column(name="source_type",nullable=false,length=20) private String sourceType;
     @JdbcTypeCode(SqlTypes.JSON) @Column(name="editor_definition",columnDefinition="jsonb") private String editorDefinition;
     @ManyToOne(fetch=FetchType.LAZY,optional=false) @JoinColumn(name="branch_id") private RouteBranch branch;
+    @Column(name="loop_declared",nullable=false) private boolean loopDeclared;
+    boolean isLoopDeclared(){return loopDeclared;}
+    void declareLoop(boolean value){loopDeclared=value;}
     @Column(length=80) private String label;
     void branch(RouteBranch value){branch=value;} RouteBranch getBranch(){return branch;}
     void label(String value){label=value;} String getLabel(){return label;}

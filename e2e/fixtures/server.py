@@ -14,7 +14,7 @@ class Handler(BaseHTTPRequestHandler):
             body = {'elevation': [100.0 + i for i in range(count)]}
         elif url.path.startswith('/route/v1/cycling/'):
             points = [[float(n) for n in p.split(',')] for p in unquote(url.path.rsplit('/', 1)[1]).split(';')]
-            body = {'code': 'Ok', 'routes': [{'geometry': {'coordinates': points}}]}
+            body = {'code': 'Ok', 'waypoints': [{'location': p} for p in points], 'routes': [{'geometry': {'coordinates': points}, 'legs': [{'steps': [{'geometry': {'coordinates': [a, b]}}]} for a, b in zip(points, points[1:])]}]}
         else:
             self.send_error(404)
             return

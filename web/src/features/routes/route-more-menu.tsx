@@ -2,9 +2,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { RouteData } from "@/types/route";
+import { RouteTransform, type GeometryOperation } from "./route-transform";
 import { RouteManagementDialog, type ManagementAction } from "./route-management-dialogs";
 
 export function RouteMoreMenu({ route, isOwner, onHistory, onCopy }: { route: RouteData; isOwner: boolean; onHistory: () => void; onCopy: () => void }) {
+  const [operation,setOperation]=useState<GeometryOperation|null>(null);
   const { t } = useTranslation(); const [open, setOpen] = useState(false), [action, setAction] = useState<ManagementAction | null>(null); const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -21,12 +23,14 @@ export function RouteMoreMenu({ route, isOwner, onHistory, onCopy }: { route: Ro
       <button onClick={() => { setOpen(false); onCopy(); }} className="route-menu-action">{t("management.copyVersion")}</button>
       <button onClick={details} className="route-menu-action">{t("route.details")}</button>
       {isOwner && <div className="mt-2 border-t pt-2"><p className="px-3 py-1 text-xs font-bold text-slate-500">{t("management.title")}</p>
+        {route.isCurrentVersion && <><button onClick={()=>{setOpen(false);setOperation("REVERSE");}} className="route-menu-action">{t("geometryActions.reverse")}</button><button onClick={()=>{setOpen(false);setOperation("RELOCATE");}} className="route-menu-action">{t("geometryActions.relocate")}</button></>}
         <button onClick={() => manage("information")} className="route-menu-action">{t("management.editInformation")}</button>
         <button onClick={() => manage("ownerLink")} className="route-menu-action">{t("ownerAccess.copy")}</button>
         <button onClick={() => manage("suggestions")} className="route-menu-action">{t("management.suggestions")}</button>
         <button onClick={() => manage("delete")} className="route-menu-action text-red-700">{t("management.delete")}</button>
       </div>}
     </div>}
+    {isOwner && operation && <RouteTransform route={route} operation={operation} onClose={()=>setOperation(null)} />}
     {isOwner && action && <RouteManagementDialog route={route} action={action} onClose={() => setAction(null)} />}
   </div>;
 }

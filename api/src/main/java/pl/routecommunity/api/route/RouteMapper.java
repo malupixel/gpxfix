@@ -5,14 +5,15 @@ import org.springframework.stereotype.Component;
 import pl.routecommunity.api.gpx.*;
 @Component
 class RouteMapper {
+    private final double loopThreshold;
     private final RouteBranches branches;
     private final RouteVersionRepository versions;
-    RouteMapper(RouteVersionRepository versions, RouteBranches branches){this.branches=branches;this.versions=versions;}
+    RouteMapper(RouteVersionRepository versions, RouteBranches branches, @org.springframework.beans.factory.annotation.Value("${app.routing.loop-threshold-meters}") double loopThreshold){this.loopThreshold=loopThreshold;this.branches=branches;this.versions=versions;}
     RouteDto toDto(Route route,RouteVersion version,GpxTrack track) {
         List<List<Double>> coordinates=Arrays.stream(version.getTrackGeometry().getCoordinates()).map(this::coordinate).toList();
         RouteVersion initial=versions.findByRoute_PublicIdAndVersionNumber(route.getPublicId(),1).orElseThrow();
         return new RouteDto(route.getPublicId(),route.getName(),route.getDescription(),initial.getOriginalFilename(),version.getDistanceMeters(),track.elevationGainMeters(),
-                new RouteDto.GeoJsonLineString("LineString",coordinates),elevationProfile(track),route.getCreatedAt(),branches.current(route).getVersionNumber(),version.getVersionNumber(),version.getId().equals(branches.current(route).getId()),route.getUpdatedAt(),version.getCreatedAt(),branches.historyCount(route),initial.getSource(),route.isSuggestionsEnabled(),route.getOriginalUploadStorageKey()!=null,branches.selected(route).getPublicId(),branches.selected(route).getName(),branches.list(route),route.getSourceRoutePublicId(),route.getSourceVersionNumber(),route.getSourceRouteName());
+                new RouteDto.GeoJsonLineString("LineString",coordinates),elevationProfile(track),route.getCreatedAt(),branches.current(route).getVersionNumber(),version.getVersionNumber(),version.getId().equals(branches.current(route).getId()),route.getUpdatedAt(),version.getCreatedAt(),branches.historyCount(route),initial.getSource(),route.isSuggestionsEnabled(),route.getOriginalUploadStorageKey()!=null,branches.selected(route).getPublicId(),branches.selected(route).getName(),branches.list(route),route.getSourceRoutePublicId(),route.getSourceVersionNumber(),route.getSourceRouteName(),version.isLoopDeclared()||RouteGeometryTransform.gap(track)<=loopThreshold);
     }
     RouteVersionSummaryDto summary(Route route,RouteVersion version){return new RouteVersionSummaryDto(version.getVersionNumber(),version.getCreatedAt(),version.getSource(),
             version.getBasedOnVersion()==null?null:version.getBasedOnVersion().getVersionNumber(),version.getMergedSuggestion()==null?null:version.getMergedSuggestion().getPublicId(),version.getId().equals(branches.current(route).getId()),version.getLabel(),version.getBranch().getPublicId());}

@@ -36,8 +36,21 @@ class RouteVersionCreationService {
     @Transactional(propagation = Propagation.MANDATORY)
     Created create(Route route, RouteVersion base, RouteVersionSource origin, RouteSuggestion suggestion,
             String name,String description,String filename,GpxTrack source,byte[] originalGpx,String sourceType,String editorDefinition,RouteVersion exactFrom) {
+        return create(route,base,origin,suggestion,name,description,filename,source,originalGpx,sourceType,editorDefinition,exactFrom,null,null,false);
+    }
+    @Transactional(propagation = Propagation.MANDATORY)
+    Created transform(Route route, RouteVersion base, GpxTrack track, LineString geometry, String definition, boolean loopDeclared, double distanceMeters) {
+        var mapTrack=GpxParser.calculateMetrics(java.util.List.of(java.util.Arrays.stream(geometry.getCoordinates())
+                .map(p->new GpxPoint(p.y,p.x,null)).toList()));
+        mapTrack=new GpxTrack(mapTrack.segments(),distanceMeters,null);
+        return create(route,base,RouteVersionSource.OWNER_EDIT,null,route.getName(),route.getDescription(),base.getOriginalFilename(),mapTrack,null,
+                base.getSourceType(),definition,null,new RouteVersionPipeline.Prepared(track,new GpxWriter().write(route.getName(),track)),geometry,loopDeclared);
+    }
+    private Created create(Route route, RouteVersion base, RouteVersionSource origin, RouteSuggestion suggestion,
+            String name,String description,String filename,GpxTrack source,byte[] originalGpx,String sourceType,String editorDefinition,RouteVersion exactFrom,
+            RouteVersionPipeline.Prepared override, LineString geometryOverride, boolean loopDeclared) {
         RouteBranch branch=base==null?branches.initial(route):branches.selected(route);
-        var prepared = exactFrom!=null ? new RouteVersionPipeline.Prepared(source,originalGpx) : pipeline.prepare(name, source, originalGpx);
+        var prepared = override!=null ? override : exactFrom!=null ? new RouteVersionPipeline.Prepared(source,originalGpx) : pipeline.prepare(name, source, originalGpx);
         String key = storage.store(prepared.gpx());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override public void afterCompletion(int status) {
@@ -58,8 +71,9 @@ class RouteVersionCreationService {
         }
         RouteVersion version = new RouteVersion(route, versions.nextNumber(route.getId()),
                 Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS), origin, base, suggestion, name, description, filename, key,
-                exactFrom==null?source.distanceMeters():exactFrom.getDistanceMeters(), exactFrom==null?prepared.track().elevationGainMeters():exactFrom.getElevationGainMeters(), exactFrom==null?geometry:exactFrom.getTrackGeometry(), sourceType, editorDefinition);
+                exactFrom==null?source.distanceMeters():exactFrom.getDistanceMeters(), exactFrom==null?prepared.track().elevationGainMeters():exactFrom.getElevationGainMeters(), geometryOverride!=null?geometryOverride:exactFrom==null?geometry:exactFrom.getTrackGeometry(), sourceType, editorDefinition);
         version.branch(branch);
+        version.declareLoop(exactFrom!=null?exactFrom.isLoopDeclared():loopDeclared);
         versions.saveAndFlush(version);
         branches.publish(route,branch,version);
         routes.saveAndFlush(route);

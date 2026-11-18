@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePolylineDistance, type RouteCoordinate } from "@/features/routes/route-geometry";
 import { managementRouteUrl } from "@/features/routes/route-links";
@@ -35,41 +35,59 @@ function RouteEditorContent({ existing, onClose, onSaved, onSuggest }: Props) {
   const [mode, setMode] = useState<SegmentMode>("ROUTED"), [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null), [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [inserting, setInserting] = useState(false), [error, setError] = useState<string | null>(null), [saving, setSaving] = useState(false), [showSave, setShowSave] = useState(false);
   const [extendStart, setExtendStart] = useState(false), [conflicted, setConflicted] = useState(false);
-  const request = useRef(0), latestRequests = useRef(new Map<string, number>());
+  const request = useRef(0), abort = useRef<AbortController | null>(null);
+  const [routingBusy, setRoutingBusy] = useState(false);
+  useEffect(() => () => abort.current?.abort(), []);
 
+  const history = useCallback((type:"undo"|"redo") => { abort.current?.abort();request.current++;setRoutingBusy(false);setError(null);dispatch({type}); },[]);
   useEffect(() => { if (existing) return; const timer = setTimeout(() => doc.points.length ? saveDraft(doc) : clearDraft(), 250); return () => clearTimeout(timer); }, [doc, existing]);
   useEffect(() => { const warn = (event: BeforeUnloadEvent) => { if (doc.points.length) { event.preventDefault(); event.returnValue = ""; } }; addEventListener("beforeunload", warn); return () => removeEventListener("beforeunload", warn); }, [doc.points.length]);
-  useEffect(() => { const key = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); dispatch({ type: event.shiftKey ? "redo" : "undo" }); } }; addEventListener("keydown", key); return () => removeEventListener("keydown", key); }, []);
+  useEffect(() => { const key = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") { event.preventDefault(); history(event.shiftKey ? "redo" : "undo"); } }; addEventListener("keydown", key); return () => removeEventListener("keydown", key); }, [history]);
 
-  async function routeSegment(segment: RouteSegment, source: RouteEditorDocument = doc) {
-    const version = ++request.current; latestRequests.current.set(segment.id, version);
-    dispatch({ type: "routing-start", segmentId: segment.id, version });
+  async function routeSegments(segments: RouteSegment[], input: RouteEditorDocument = doc, isolatedPointId?: string) {
+    abort.current?.abort(); const controller = new AbortController(); abort.current=controller;
+    const version = ++request.current; setRoutingBusy(true); setError(null);
+    // Include requests interrupted by this edit, so none stay pending forever.
+    const ids=new Set([...segments.map(s=>s.id),...input.segments.filter(s=>s.routingStatus==="routing").map(s=>s.id)]);
+    const selected=input.segments.filter(s=>ids.has(s.id)&&s.mode==="ROUTED");
+    let source=input;
+    for(const segment of selected){const action:EditorAction={type:"routing-start",segmentId:segment.id,version};source=editorReducer(createEditorState(source),action).present;dispatch(action);}
     try {
-      const from = source.points.find((point) => point.id === segment.fromId)!.coordinate;
-      const to = source.points.find((point) => point.id === segment.toId)!.coordinate;
-      const geometry = await apiRoutingService.route(from, to);
-      dispatch({ type: "routing-success", segmentId: segment.id, version, geometry });
+      const groups:RouteSegment[][]=[];
+      for(const segment of selected){const last=groups.at(-1);if(last?.at(-1)?.toId===segment.fromId)last.push(segment);else groups.push([segment]);}
+      const results=await Promise.all(groups.map(async group=>{
+        const pointIds=[group[0].fromId,...group.map(s=>s.toId)];
+        const result=await apiRoutingService.matched(pointIds.map(id=>source.points.find(p=>p.id===id)!.coordinate),controller.signal);
+        return {pointIds,segmentIds:group.map(s=>s.id),result};
+      }));
+      if(isolatedPointId&&!selected.length){const coordinate=source.points.find(p=>p.id===isolatedPointId)!.coordinate;const result=await apiRoutingService.matched([coordinate,coordinate],controller.signal);results.push({pointIds:[isolatedPointId],segmentIds:[],result:{...result,waypoints:result.waypoints.slice(0,1),segments:[]}});}
+      if(version!==request.current)return;
+      dispatch({type:"matched",source,pointIds:results.flatMap(r=>r.pointIds),segmentIds:results.flatMap(r=>r.segmentIds),result:{coordinates:[],waypoints:results.flatMap(r=>r.result.waypoints),segments:results.flatMap(r=>r.result.segments)}});
     } catch {
-      dispatch({ type: "routing-failure", segmentId: segment.id, version });
-      if (latestRequests.current.get(segment.id) === version) setError("editor.routingError");
-    }
+      if(version!==request.current||controller.signal.aborted)return;
+      for(const segment of selected)dispatch({type:"routing-failure",segmentId:segment.id,version});
+      setError("editor.routingError");
+    } finally {if(version===request.current)setRoutingBusy(false);}
   }
+  function routeSegment(segment: RouteSegment, source:RouteEditorDocument=doc){return routeSegments([segment],source);}
   function nextDocument(action: EditorAction) { return editorReducer(createEditorState(doc), action).present; }
   function add(coordinate: RouteCoordinate) {
     if (inserting) return;
     const segmentId = doc.points.length ? id() : undefined, pointId = id();
     const action: EditorAction = { type: "add", coordinate, mode, id: pointId, segmentId, atStart: extendStart };
     const next = nextDocument(action); dispatch(action);
-    if (segmentId && mode === "ROUTED") void routeSegment(extendStart ? next.segments[0] : next.segments.at(-1)!, next);
+    if (mode === "ROUTED") void routeSegments(segmentId ? [extendStart ? next.segments[0] : next.segments.at(-1)!] : [], next, segmentId ? undefined : pointId);
+    else if(doc.segments.some(s=>s.routingStatus==="routing"))void routeSegments([],next);
   }
   function insert(segmentId: string, coordinate: RouteCoordinate) {
     const action: EditorAction = { type: "insert", segmentId, coordinate, id: id(), leftId: id(), rightId: id() };
-    dispatch(action); setInserting(false); setSelectedSegmentId(null);
+    const next=nextDocument(action);dispatch(action); setInserting(false); setSelectedSegmentId(null);
+    if(doc.segments.some(s=>s.routingStatus==="routing"))void routeSegments(next.segments.filter(s=>s.id===action.leftId||s.id===action.rightId),next);
   }
   function move(pointId: string, coordinate: RouteCoordinate) {
     const action: EditorAction = { type: "move", pointId, coordinate }, next = nextDocument(action);
     dispatch(action); setSelectedPointId(pointId); setError(null);
-    affectedRoutedSegments(next, pointId).forEach((segment) => void routeSegment(segment, next));
+    void routeSegments(affectedRoutedSegments(next, pointId), next);
   }
   const segment = doc.segments.find((item) => item.id === selectedSegmentId) ?? null;
   const selectedPoint = doc.points.find((item) => item.id === selectedPointId) ?? null;
@@ -79,6 +97,7 @@ function RouteEditorContent({ existing, onClose, onSaved, onSuggest }: Props) {
     const action: EditorAction = { type: "mode", segmentId: segment.id, mode: value }, next = nextDocument(action);
     dispatch(action); setError(null);
     if (value === "ROUTED") void routeSegment(next.segments.find((item) => item.id === segment.id)!, next);
+    else void routeSegments([],next);
   }
   function removePoint() {
     if (!selectedPoint) return;
@@ -86,9 +105,11 @@ function RouteEditorContent({ existing, onClose, onSaved, onSuggest }: Props) {
     dispatch(action); setSelectedPointId(null); setError(null);
     const replacement = next.segments.find((item) => item.id === replacementId);
     if (replacement?.mode === "ROUTED") void routeSegment(replacement, next);
+    else void routeSegments([],next);
   }
   async function save(form: FormData) {
-    if (saving || conflicted || doc.segments.some(s => s.routingStatus === "routing")) return;
+    if (saving || conflicted || routingBusy || doc.segments.some(s => s.routingStatus === "routing")) return;
+    if(doc.segments.some(s=>s.routingStatus==="failed")&&!confirm(t("editor.unsnappedConfirm")))return;
     setSaving(true); setError(null);
     try {
       if (existing) {
@@ -106,8 +127,8 @@ function RouteEditorContent({ existing, onClose, onSaved, onSuggest }: Props) {
   return <main className={`fixed inset-0 z-40 bg-slate-100 ${existing ? "route-editor-owner" : "route-editor-drawing"}`}>
     {existing && <div className="absolute inset-x-0 top-0 z-20"><RouteMapToolbar mode="edit" selectedTool={null} onView={cancel} onEdit={() => {}} suggestionsEnabled={existing.route.suggestionsEnabled} onSuggest={() => { if (!state.past.length || confirm(t("ownerEdit.discard"))) onSuggest?.(); }} /></div>}
     <EditorMap document={doc} selectedSegmentId={selectedSegmentId} selectedPointId={selectedPointId} inserting={inserting} onMapClick={add} onInsert={insert} onMove={move} onSelectSegment={(value) => { setSelectedSegmentId(value); setSelectedPointId(null); setInserting(false); }} onSelectPoint={(value) => { setSelectedPointId(value); if (value) { setSelectedSegmentId(null); setInserting(false); } }} />
-    <header className={`pointer-events-none absolute inset-x-0 ${existing ? "top-[72px]" : "top-0"} z-10 grid grid-cols-2 items-start gap-2 p-3 sm:flex sm:justify-between`}><button onClick={cancel} className="pointer-events-auto justify-self-start rounded-lg bg-white px-3 py-2 text-sm font-bold shadow">← {t("common.cancel")}</button><div className="pointer-events-auto order-3 col-span-2 rounded-xl bg-white/95 p-2 shadow-xl sm:order-none"><div className="flex gap-1" role="group" aria-label={t("editor.drawingMode")}><Mode active={mode === "ROUTED"} onClick={() => setMode("ROUTED")}>🧲 {t("editor.followRoads")}</Mode><Mode active={mode === "DIRECT"} onClick={() => setMode("DIRECT")}>✏ {t("editor.direct")}</Mode></div></div><button disabled={doc.points.length < 2 || doc.segments.some(s => s.routingStatus === "routing")} onClick={() => setShowSave(true)} className="pointer-events-auto order-2 justify-self-end rounded-lg bg-emerald-700 sm:order-none px-4 py-2 text-sm font-bold text-white shadow disabled:opacity-50">{existing ? t("ownerEdit.save") : t("editor.finishSave")}</button></header>
-    <section className="absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 rounded-xl bg-white/95 p-3 shadow-xl backdrop-blur"><p className="text-sm font-semibold">{t(inserting ? "editor.insertHelp" : doc.points.length ? "editor.extendHelp" : "editor.startHelp")}</p><div className="mt-2 flex flex-wrap items-center gap-2"><button disabled={!state.past.length} onClick={() => dispatch({ type: "undo" })} className="route-button">↶ {t("editor.undo")}</button><button disabled={!state.future.length} onClick={() => dispatch({ type: "redo" })} className="route-button">↷ {t("editor.redo")}</button><button onClick={() => setExtendStart(value => !value)} aria-pressed={extendStart} className="route-button">{t(extendStart ? "ownerEdit.extendStart" : "ownerEdit.extendEnd")}</button><span className="ml-auto text-sm font-bold">{(distance / 1000).toFixed(1)} km · {t("editor.points", { count: doc.points.length })}</span></div>
+    <header className={`pointer-events-none absolute inset-x-0 ${existing ? "top-[72px]" : "top-0"} z-10 grid grid-cols-2 items-start gap-2 p-3 sm:flex sm:justify-between`}><button onClick={cancel} className="pointer-events-auto justify-self-start rounded-lg bg-white px-3 py-2 text-sm font-bold shadow">← {t("common.cancel")}</button><div className="pointer-events-auto order-3 col-span-2 rounded-xl bg-white/95 p-2 shadow-xl sm:order-none"><div className="flex gap-1" role="group" aria-label={t("editor.drawingMode")}><Mode active={mode === "ROUTED"} onClick={() => setMode("ROUTED")}>🧲 {t("editor.followRoads")}</Mode><Mode active={mode === "DIRECT"} onClick={() => setMode("DIRECT")}>✏ {t("editor.direct")}</Mode></div></div><button disabled={doc.points.length < 2 || routingBusy || doc.segments.some(s => s.routingStatus === "routing")} onClick={() => setShowSave(true)} className="pointer-events-auto order-2 justify-self-end rounded-lg bg-emerald-700 sm:order-none px-4 py-2 text-sm font-bold text-white shadow disabled:opacity-50">{existing ? t("ownerEdit.save") : t("editor.finishSave")}</button></header>
+    <section className="absolute bottom-3 left-1/2 z-10 w-[calc(100%-1.5rem)] max-w-xl -translate-x-1/2 rounded-xl bg-white/95 p-3 shadow-xl backdrop-blur"><p className="text-sm font-semibold">{t(inserting ? "editor.insertHelp" : doc.points.length ? "editor.extendHelp" : "editor.startHelp")}</p><div className="mt-2 flex flex-wrap items-center gap-2"><button disabled={!state.past.length} onClick={() => history("undo")} className="route-button">↶ {t("editor.undo")}</button><button disabled={!state.future.length} onClick={() => history("redo")} className="route-button">↷ {t("editor.redo")}</button><button onClick={() => setExtendStart(value => !value)} aria-pressed={extendStart} className="route-button">{t(extendStart ? "ownerEdit.extendStart" : "ownerEdit.extendEnd")}</button><span className="ml-auto text-sm font-bold">{(distance / 1000).toFixed(1)} km · {t("editor.points", { count: doc.points.length })}</span></div>
       {segment && <div className="mt-3 flex flex-wrap gap-2 border-t pt-3"><span className="py-2 text-xs font-bold uppercase text-slate-500">{t("editor.selectedSegment")}</span><button onClick={() => setInserting((value) => !value)} aria-pressed={inserting} className="route-button">{t(inserting ? "editor.cancelInsert" : "editor.addPoint")}</button><button onClick={() => changeMode(segment.mode === "ROUTED" ? "DIRECT" : "ROUTED")} className="route-button">{t(segment.mode === "ROUTED" ? "editor.convertDirect" : "editor.convertRouted")}</button>{segment.mode === "ROUTED" && <button onClick={() => routeSegment(segment)} className="route-button">{t("editor.retry")}</button>}{segment.routingStatus === "routing" && <span className="py-2 text-sm">{t("editor.routing")}</span>}{segment.routingStatus === "failed" && <span className="py-2 text-sm font-semibold text-red-700">{t("editor.routingFailed")}</span>}</div>}
       {selectedPoint && <div className="mt-3 flex flex-wrap gap-2 border-t pt-3"><span className="py-2 text-xs font-bold uppercase text-slate-500">{t("editor.selectedPoint")}</span><button onClick={removePoint} className="route-button text-red-700">{t("editor.deletePoint")}</button></div>}
       {error && !showSave && <p role="alert" className="mt-2 text-sm text-red-700">{t(error)}</p>}

@@ -1,0 +1,652 @@
+{
+  "backend": {
+    "tests": 107,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runtime": "Java 21 / PostGIS Testcontainers",
+    "suites": [
+      {
+        "name": "pl.routecommunity.api.RouteBranchIntegrationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.GpxExportServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.RouteApiIntegrationTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RoutePreviewMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.LocalElevationPipelineTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RouteMetadataTextTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.elevation.RouteElevationEnricherTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.RouteManagementApiIntegrationTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.RouteVersionMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RouteSuggestionLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RouteVersionCreationServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RouteGeometryTransformTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.routing.OsrmRoutingServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.RouteBranchMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.AdminApiIntegrationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RouteShareIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.HealthApiIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.elevation.ElevationProviderConfigurationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.admin.AdminAuthenticationFilterTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.elevation.dem.DemElevationProviderTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.route.RoutePreviewRendererTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "pl.routecommunity.api.gpx.GpxParserTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "frontend": {
+    "tests": 99,
+    "failures": 0,
+    "runtime": "Node 24"
+  },
+  "checks": [
+    "TypeScript passed",
+    "ESLint passed",
+    "API build passed",
+    "Next.js build passed",
+    "Compose validation passed"
+  ],
+  "browser": {
+    "uniquePassed": 88,
+    "cases": [
+      {
+        "project": "desktop",
+        "file": "tests/api.spec.ts",
+        "name": "API health, admin authorization, search and restore only test data"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/api.spec.ts",
+        "name": "original GPX bytes and public social metadata"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/api.spec.ts",
+        "name": "BUG-002: social preview must be available through the frontend proxy"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/branches.spec.ts",
+        "name": "new variant can be edited and saved immediately without a prior merge or reload (drawn)"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/branches.spec.ts",
+        "name": "new variant can be edited and saved immediately without a prior merge or reload (gpx)"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/branches.spec.ts",
+        "name": "public copy returns independent links; menu supports Escape, outside click, keyboard, PL/EN and retry"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "submit note using real map interactions"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "submit issue using real map interactions"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/branches.spec.ts",
+        "name": "historical variant: map suggestion, merge, owner edit, ghost and GPX remain isolated"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "submit detour using real map interactions"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "ghost GPX visibility, grid and fullscreen controls"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "BUG-003: owner suggestion visibility immediately after Done"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "merge detour creates a version and historical geometry stays immutable"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/editor.spec.ts",
+        "name": "draw route, undo/redo and save"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/community.spec.ts",
+        "name": "BUG-003: visitor suggestion visibility immediately after Done"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/editor.spec.ts",
+        "name": "BUG-001: restoring a saved drawing must hydrate without React errors"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/editor.spec.ts",
+        "name": "owner edits geometry and browses immutable version history"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/editor.spec.ts",
+        "name": "follow-roads drawing resolves routing and persists a complete route"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "move start on open track requires declaration and previews routed closure"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "reverse preview cancel save round trip and immutable history"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "closed loop automatically detected Polish preview and save"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "visitors cannot transform geometry through menu or direct API"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "road matching failure preserves points and requires explicit unsnapped save approval"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "snapped add drag insertion save and reload use matching road coordinates"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "a newer drawing edit wins over a delayed route response"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "demo manual navigation, pause, acceptance, replay and language switch never mutate the API"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "automatic demo finishes in one short cycle; pause freezes advancement; offscreen stops playback"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "reduced motion is manual, static and supports keyboard acceptance"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 320px"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 375px"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 768px"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 1440px"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/service.spec.ts",
+        "name": "home, language persistence, licence and missing pages"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/service.spec.ts",
+        "name": "invalid GPX, empty GPX and successful upload with clipboard fallback"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/service.spec.ts",
+        "name": "owner metadata, settings, share and GPX download"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/service.spec.ts",
+        "name": "visitor cannot manage; private link restores ownership; deletion removes public route"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/service.spec.ts",
+        "name": "suggestion and comment moderation with independent visitor"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in route"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in drawing"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "uploaded sparse GPX: independent fills, whole-route counts, ghosts and suggestions excluded"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in owner editor"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "500 km GPX uses a worker, keeps full counts offscreen and does not recompute on pan"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "editing updates after add, undo, redo and drag; saved versions have their own coverage"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/api.spec.ts",
+        "name": "API health, admin authorization, search and restore only test data"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/api.spec.ts",
+        "name": "original GPX bytes and public social metadata"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/api.spec.ts",
+        "name": "BUG-002: social preview must be available through the frontend proxy"
+      },
+      {
+        "project": "desktop",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "new drawing and rapid undo/redo keep only the latest geometry and survive saving"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/branches.spec.ts",
+        "name": "new variant can be edited and saved immediately without a prior merge or reload (gpx)"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/branches.spec.ts",
+        "name": "new variant can be edited and saved immediately without a prior merge or reload (drawn)"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/branches.spec.ts",
+        "name": "public copy returns independent links; menu supports Escape, outside click, keyboard, PL/EN and retry"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/branches.spec.ts",
+        "name": "historical variant: map suggestion, merge, owner edit, ghost and GPX remain isolated"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "submit note using real map interactions"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "submit issue using real map interactions"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "submit detour using real map interactions"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "ghost GPX visibility, grid and fullscreen controls"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "merge detour creates a version and historical geometry stays immutable"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "BUG-003: owner suggestion visibility immediately after Done"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/community.spec.ts",
+        "name": "BUG-003: visitor suggestion visibility immediately after Done"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/editor.spec.ts",
+        "name": "draw route, undo/redo and save"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/editor.spec.ts",
+        "name": "BUG-001: restoring a saved drawing must hydrate without React errors"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/editor.spec.ts",
+        "name": "owner edits geometry and browses immutable version history"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/editor.spec.ts",
+        "name": "follow-roads drawing resolves routing and persists a complete route"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "reverse preview cancel save round trip and immutable history"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "move start on open track requires declaration and previews routed closure"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "visitors cannot transform geometry through menu or direct API"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "closed loop automatically detected Polish preview and save"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "road matching failure preserves points and requires explicit unsnapped save approval"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "snapped add drag insertion save and reload use matching road coordinates"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/geometry-actions.spec.ts",
+        "name": "a newer drawing edit wins over a delayed route response"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "demo manual navigation, pause, acceptance, replay and language switch never mutate the API"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "automatic demo finishes in one short cycle; pause freezes advancement; offscreen stops playback"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "reduced motion is manual, static and supports keyboard acceptance"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 375px"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 320px"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 768px"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/landing.spec.ts",
+        "name": "home screenshot and layout at 1440px"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/service.spec.ts",
+        "name": "home, language persistence, licence and missing pages"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/service.spec.ts",
+        "name": "invalid GPX, empty GPX and successful upload with clipboard fallback"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/service.spec.ts",
+        "name": "owner metadata, settings, share and GPX download"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/service.spec.ts",
+        "name": "visitor cannot manage; private link restores ownership; deletion removes public route"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/service.spec.ts",
+        "name": "suggestion and comment moderation with independent visitor"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in route"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in drawing"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "uploaded sparse GPX: independent fills, whole-route counts, ghosts and suggestions excluded"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "editing updates after add, undo, redo and drag; saved versions have their own coverage"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "500 km GPX uses a worker, keeps full counts offscreen and does not recompute on pan"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/tile-coverage.spec.ts",
+        "name": "new drawing and rapid undo/redo keep only the latest geometry and survive saving"
+      },
+      {
+        "project": "mobile",
+        "file": "tests/squadrats.spec.ts",
+        "name": "Squadratinhos zoom, pan and grid lifecycle in owner editor"
+      }
+    ],
+    "fullAttempt": {
+      "passed": 83,
+      "timedOut": 2,
+      "terminatedBySignal": "SIGTERM",
+      "completedReport": false
+    },
+    "mapRerun": {
+      "passed": 4,
+      "failed": 1
+    },
+    "ownerMapAfterHarnessFix": {
+      "passed": 1
+    },
+    "finalFocusedRerun": {
+      "startTime": "2026-11-18T13:02:29.349Z",
+      "duration": 272395.32,
+      "expected": 12,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "workers": 2,
+      "scope": "All route transformation previews/saves and all three grid modes, desktop + mobile, on final API image"
+    },
+    "limitations": [
+      "88 distinct cases passed across multiple runs; the initial full run was terminated with SIGTERM before producing a complete report.",
+      "Two initial map timeouts were investigated: coverage cases passed when run separately; the owner grid test now waits for the asynchronous editor transition and selects the mounted map.",
+      "No single uninterrupted 88-case run was repeated after the final fixes; the final targeted run passed all 12 affected cases.",
+      "Playwright MCP unavailable; existing Playwright CLI used with real Chromium and console/network diagnostics.",
+      "External OSRM/map quality and physical devices were not tested; deterministic fixtures and Pixel 7 emulation were used."
+    ]
+  }
+}

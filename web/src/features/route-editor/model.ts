@@ -1,3 +1,4 @@
+import type { MatchedRoute } from "./routing";
 import { createRouteMeasure, findNearestPositionOnRoute, type RouteCoordinate } from "@/features/routes/route-geometry";
 
 export type SegmentMode = "ROUTED" | "DIRECT";
@@ -26,6 +27,7 @@ export function initializeExistingDocument(coordinates: RouteCoordinate[], saved
   return { ...document, segments: document.segments.map(segment => ({ ...segment, routingStatus: "idle", requestVersion: 0 })) };
 }
 const copy = (value: RouteEditorDocument): RouteEditorDocument => structuredClone(value);
+export const recoverInterruptedRouting = (source:RouteEditorDocument):RouteEditorDocument => ({...copy(source),segments:source.segments.map(segment=>segment.routingStatus==="routing"?{...structuredClone(segment),routingStatus:"failed",requestVersion:segment.requestVersion+1}:structuredClone(segment))});
 const commit = (state: EditorState, next: RouteEditorDocument): EditorState => ({ present: next, past: [...state.past, copy(state.present)].slice(-100), future: [] });
 const point = (document: RouteEditorDocument, pointId: string) => document.points.find((item) => item.id === pointId)!;
 const directGeometry = (document: RouteEditorDocument, segment: RouteSegment): RouteCoordinate[] => [point(document, segment.fromId).coordinate, point(document, segment.toId).coordinate];
@@ -39,6 +41,7 @@ export type EditorAction =
   | { type: "routing-start"; segmentId: string; version: number }
   | { type: "routing-success"; segmentId: string; version: number; geometry: RouteCoordinate[] }
   | { type: "routing-failure"; segmentId: string; version: number }
+  | { type: "matched"; source: RouteEditorDocument; segmentIds: string[]; pointIds: string[]; result: MatchedRoute }
   | { type: "undo" } | { type: "redo" };
 
 /** Returns a snapped point and two polylines whose concatenation is the original shape. */
@@ -61,23 +64,37 @@ export function previewPointMove(source: RouteEditorDocument, pointId: string, c
     if (segment.mode === "DIRECT") segment.geometry = directGeometry(document, segment);
     else if (segment.fromId === pointId) segment.geometry[0] = coordinate;
     else segment.geometry[segment.geometry.length - 1] = coordinate;
-    segment.routingStatus = "idle";
+    segment.routingStatus = "idle"; segment.requestVersion++;
   }
   return document;
 }
 
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
-  if (action.type === "undo") return state.past.length ? { present: state.past.at(-1)!, past: state.past.slice(0, -1), future: [copy(state.present), ...state.future] } : state;
-  if (action.type === "redo") return state.future.length ? { present: state.future[0], past: [...state.past, copy(state.present)], future: state.future.slice(1) } : state;
+  if (action.type === "undo") return state.past.length ? { present: recoverInterruptedRouting(state.past.at(-1)!), past: state.past.slice(0, -1), future: [copy(state.present), ...state.future] } : state;
+  if (action.type === "redo") return state.future.length ? { present: recoverInterruptedRouting(state.future[0]), past: [...state.past, copy(state.present)], future: state.future.slice(1) } : state;
+  if (action.type === "matched") {
+    // Compare the entire input, including request versions. Undo, redo, mode changes,
+    // further drags or a competing response invalidate an old routing result.
+    if (JSON.stringify(state.present) !== JSON.stringify(action.source)) return state;
+    if(action.result.waypoints.length!==action.pointIds.length || action.result.segments.length!==action.segmentIds.length)return state;
+    const document=copy(state.present);
+    action.pointIds.forEach((id,i)=>{point(document,id).coordinate=action.result.waypoints[i];});
+    action.segmentIds.forEach((id,i)=>{const segment=document.segments.find(s=>s.id===id)!;segment.geometry=action.result.segments[i];segment.intendedGeometry=directGeometry(document,segment);segment.routingStatus="idle";});
+    // Direct neighbours must share the saved control coordinate too.
+    document.segments.forEach(segment=>{
+      const from=point(document,segment.fromId).coordinate,to=point(document,segment.toId).coordinate;
+      segment.geometry=[from,...segment.geometry.slice(1,-1),to];segment.intendedGeometry=[from,to];
+    });
+    return {...state,present:document};
+  }
   const document = copy(state.present);
   if (action.type === "routing-start" || action.type === "routing-success" || action.type === "routing-failure") {
     const segment = document.segments.find((item) => item.id === action.segmentId);
     if (!segment || (action.type !== "routing-start" && segment.requestVersion !== action.version)) return state;
     if (action.type === "routing-start") { segment.requestVersion = action.version; segment.routingStatus = "routing"; }
     if (action.type === "routing-success") {
-      const from = point(document, segment.fromId).coordinate, to = point(document, segment.toId).coordinate;
-      segment.geometry = action.geometry.length >= 2 ? [from, ...action.geometry.slice(1, -1), to] : [from, to];
-      segment.intendedGeometry = [from, to]; segment.routingStatus = "idle";
+      if(action.geometry.length<2)return state;
+      return editorReducer(state,{type:"matched",source:state.present,pointIds:[segment.fromId,segment.toId],segmentIds:[segment.id],result:{coordinates:action.geometry,waypoints:[action.geometry[0],action.geometry.at(-1)!],segments:[action.geometry]}});
     }
     if (action.type === "routing-failure") segment.routingStatus = "failed";
     return { ...state, present: document };
@@ -94,7 +111,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
   if (action.type === "move") return commit(state, previewPointMove(document, action.pointId, action.coordinate));
   if (action.type === "mode") {
     const segment = document.segments.find((item) => item.id === action.segmentId); if (!segment) return state;
-    segment.mode = action.mode;
+    segment.mode = action.mode; segment.requestVersion++;
     if (action.mode === "DIRECT") { segment.geometry = directGeometry(document, segment); segment.intendedGeometry = segment.geometry; segment.routingStatus = "idle"; }
   }
   if (action.type === "insert") {
